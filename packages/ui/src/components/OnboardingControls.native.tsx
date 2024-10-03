@@ -31,7 +31,7 @@ export const OnboardingControls = ({
         br="$10"
         onPress={() => handleSkip()}
       >
-        <Button.Text col="$color">Skip</Button.Text>
+        <Button.Text col="$color">Überspringen</Button.Text>
       </Button>
 
       <Button
@@ -47,7 +47,7 @@ export const OnboardingControls = ({
         onPress={() => handleGoNext()}
         iconAfter={ChevronRight}
       >
-        <Button.Text col="$color">Continue</Button.Text>
+        <Button.Text col="$color">Weiter ohne</Button.Text>
       </Button>
     </XStack>
   )

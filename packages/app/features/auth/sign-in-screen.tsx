@@ -1,4 +1,4 @@
-import { H2, LoadingOverlay, Paragraph, SubmitButton, Text, Theme, YStack, isWeb } from '@my/ui'
+import { H2, LoadingOverlay, Paragraph, SubmitButton, Text, Theme, YStack } from '@my/ui'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
@@ -9,13 +9,11 @@ import { Link } from 'solito/link'
 import { useRouter } from 'solito/router'
 import { z } from 'zod'
 
-import { SocialLogin } from './components/SocialLogin'
-
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
 const SignInSchema = z.object({
-  email: formFields.text.email().describe('Email // Enter your email'),
-  password: formFields.text.min(6).describe('Password // Enter your password'),
+  email: formFields.text.email().describe('E-Mail // Gib deine E-Mail-Adresse ein'),
+  password: formFields.text.min(6).describe('Passwort // Gib dein Passwort ein'),
 })
 
 export const SignInScreen = () => {
@@ -74,11 +72,10 @@ export const SignInScreen = () => {
             <>
               <Theme inverse>
                 <SubmitButton onPress={() => submit()} br="$10">
-                  Sign In
+                  Anmelden
                 </SubmitButton>
               </Theme>
               <SignUpLink />
-              {isWeb && <SocialLogin />}
             </>
           )
         }}
@@ -86,15 +83,10 @@ export const SignInScreen = () => {
         {(fields) => (
           <>
             <YStack gap="$3" mb="$4">
-              <H2 $sm={{ size: '$8' }}>Welcome Back</H2>
-              <Paragraph theme="alt1">Sign in to your account</Paragraph>
+              <H2 $sm={{ size: '$8' }}>Willkommen zurück</H2>
+              <Paragraph theme="alt1">Melde dich bei deinem Konto an</Paragraph>
             </YStack>
             {Object.values(fields)}
-            {!isWeb && (
-              <YStack mt="$4">
-                <SocialLogin />
-              </YStack>
-            )}
           </>
         )}
       </SchemaForm>
@@ -109,7 +101,7 @@ const SignUpLink = () => {
   return (
     <Link href={`/sign-up?${new URLSearchParams(email ? { email } : undefined).toString()}`}>
       <Paragraph ta="center" theme="alt1">
-        Don&apos;t have an account? <Text textDecorationLine="underline">Sign up</Text>
+        Noch kein Konto? <Text textDecorationLine="underline">Registrieren</Text>
       </Paragraph>
     </Link>
   )
@@ -121,7 +113,7 @@ const ForgotPasswordLink = () => {
   return (
     <Link href={`/reset-password?${new URLSearchParams(email ? { email } : undefined)}`}>
       <Paragraph mt="$1" theme="alt2" textDecorationLine="underline">
-        Forgot your password?
+        Passwort vergessen?
       </Paragraph>
     </Link>
   )

@@ -7,7 +7,7 @@ export default function Screen() {
     <SafeAreaView style={{ flex: 1 }}>
       <Stack.Screen
         options={{
-          title: 'Sign Up',
+          title: 'Registrieren',
         }}
       />
       <SignUpScreen />

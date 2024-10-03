@@ -89,15 +89,16 @@ const CheckYourEmail = () => {
     <FormWrapper>
       <FormWrapper.Body>
         <YStack gap="$3">
-          <H2>Check Your Email</H2>
+          <H2>Überprüfe deine E-Mail</H2>
           <Paragraph theme="alt1">
-            We&apos;ve sent you a reset link. Please check your email ({email}) and confirm it.
+            Wir haben dir einen Bestätigungslink gesendet. Bitte überprüfe deine E-Mail ({email})
+            und bestätige sie.
           </Paragraph>
         </YStack>
       </FormWrapper.Body>
       <FormWrapper.Footer>
         <Button themeInverse icon={ChevronLeft} br="$10" onPress={() => reset()}>
-          Back
+          Zurück
         </Button>
       </FormWrapper.Footer>
     </FormWrapper>
@@ -110,7 +111,7 @@ const SignInLink = () => {
   return (
     <Link href={`/sign-in?${new URLSearchParams(email ? { email } : undefined)}`}>
       <Paragraph ta="center" theme="alt1">
-        Done resetting? <Text textDecorationLine="underline">Sign in</Text>
+        Passwort zurückgesetzt? <Text textDecorationLine="underline">Einloggen</Text>
       </Paragraph>
     </Link>
   )

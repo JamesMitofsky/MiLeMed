@@ -1,14 +1,4 @@
-import {
-  Button,
-  FormWrapper,
-  H2,
-  Paragraph,
-  SubmitButton,
-  Text,
-  Theme,
-  YStack,
-  isWeb,
-} from '@my/ui'
+import { Button, FormWrapper, H2, Paragraph, SubmitButton, Text, Theme, YStack } from '@my/ui'
 import { ChevronLeft } from '@tamagui/lucide-icons'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
@@ -18,13 +8,18 @@ import { createParam } from 'solito'
 import { Link } from 'solito/link'
 import { z } from 'zod'
 
-import { SocialLogin } from './components/SocialLogin'
-
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
+const isProd = process.env.NODE_ENV === 'production'
+
+const emailPattern = isProd ? /^[a-zA-Z0-9._%+-]+@unibonn\.de$/ : /.*/
+
 const SignUpSchema = z.object({
-  email: formFields.text.email().describe('Email // your@email.acme'),
-  password: formFields.text.min(6).describe('Password // Choose a password'),
+  email: formFields.text
+    .email()
+    .regex(emailPattern, 'E-Mail muss die Domain "@unibonn.de" haben') // Validate domain
+    .describe('E-Mail // jona@unibonn.de'),
+  password: formFields.text.min(6).describe('Passwort // Wähle ein Passwort'),
 })
 
 export const SignUpScreen = () => {
@@ -88,26 +83,20 @@ export const SignUpScreen = () => {
             <>
               <Theme inverse>
                 <SubmitButton onPress={() => submit()} br="$10">
-                  Sign Up
+                  Registrieren
                 </SubmitButton>
               </Theme>
               <SignInLink />
-              {isWeb && <SocialLogin />}
             </>
           )}
         >
           {(fields) => (
             <>
               <YStack gap="$3" mb="$4">
-                <H2 $sm={{ size: '$8' }}>Get Started</H2>
-                <Paragraph theme="alt2">Create a new account</Paragraph>
+                <H2 $sm={{ size: '$8' }}>Loslegen</H2>
+                <Paragraph theme="alt2">Neues Konto erstellen</Paragraph>
               </YStack>
               {Object.values(fields)}
-              {!isWeb && (
-                <YStack mt="$4">
-                  <SocialLogin />
-                </YStack>
-              )}
             </>
           )}
         </SchemaForm>
@@ -122,7 +111,7 @@ const SignInLink = () => {
   return (
     <Link href={`/sign-in?${new URLSearchParams(email ? { email } : undefined).toString()}`}>
       <Paragraph ta="center" theme="alt1" mt="$2">
-        Already signed up? <Text textDecorationLine="underline">Sign in</Text>
+        Bereits registriert? <Text textDecorationLine="underline">Anmelden</Text>
       </Paragraph>
     </Link>
   )
@@ -136,16 +125,16 @@ const CheckYourEmail = () => {
     <FormWrapper>
       <FormWrapper.Body>
         <YStack gap="$3">
-          <H2>Check Your Email</H2>
+          <H2>Überprüfe deine E-Mail</H2>
           <Paragraph theme="alt1">
-            We&apos;ve sent you a confirmation link. Please check your email ({email}) and confirm
-            it.
+            Wir haben dir einen Bestätigungslink gesendet. Bitte überprüfe deine E-Mail ({email})
+            und bestätige sie.
           </Paragraph>
         </YStack>
       </FormWrapper.Body>
       <FormWrapper.Footer>
         <Button themeInverse icon={ChevronLeft} br="$10" onPress={() => reset()}>
-          Back
+          Zurück
         </Button>
       </FormWrapper.Footer>
     </FormWrapper>

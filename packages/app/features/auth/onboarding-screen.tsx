@@ -1,6 +1,5 @@
 import { Onboarding, OnboardingStepInfo, StepContent } from '@my/ui'
 import { ArrowUp, Rocket, Sparkles } from '@tamagui/lucide-icons'
-import React from 'react'
 import { useRouter } from 'solito/router'
 
 const steps: OnboardingStepInfo[] = [
@@ -8,9 +7,9 @@ const steps: OnboardingStepInfo[] = [
     theme: 'orange',
     Content: () => (
       <StepContent
-        title="Kickstart"
+        title="Lernen"
         icon={Sparkles}
-        description="Auth, profile, settings, adaptive layouts and many more ready for you to build on top of"
+        description="Entdecke prägnante Vorlesungen in der Geburtshilfe für effizientes Lernen."
       />
     ),
   },
@@ -18,9 +17,9 @@ const steps: OnboardingStepInfo[] = [
     theme: 'green',
     Content: () => (
       <StepContent
-        title="Updates"
+        title="Eintauchen"
         icon={ArrowUp}
-        description="As we make the starter better, we'll keep sending PRs with our GitHub app so your app keeps improving"
+        description="Tauche ein in maßgeschneiderte, kompakte Module nur für dich."
       />
     ),
   },
@@ -28,9 +27,9 @@ const steps: OnboardingStepInfo[] = [
     theme: 'blue',
     Content: () => (
       <StepContent
-        title="Deploy"
+        title="Vorankommen"
         icon={Rocket}
-        description="The Takeout starter is the best way to go from zero to deploy and target all platforms at the same time."
+        description="Verbessere deine medizinische Ausbildung mit fokussierten Mikrolektionen."
       />
     ),
   },
