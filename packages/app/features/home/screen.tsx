@@ -17,7 +17,6 @@ import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import useEventsQuery from 'app/utils/react-query/useEventQuery'
 
 import { AchievementsSection } from './components/achievements-section'
-import { Greetings } from './components/greetings'
 import { OverviewSection } from './components/overview-section'
 import { PostsSection } from './components/posts-section'
 
@@ -26,8 +25,8 @@ export function HomeScreen() {
     <XStack maw={1480} als="center" f={1}>
       <ScrollView f={4} fb={0}>
         <ScrollToTopTabBarContainer>
-          <Greetings />
-          <YStack gap="$7" pb="$10">
+          {/* <Greetings /> */}
+          <YStack gap="$7" pb="$10" pt="$5">
             <AchievementsSection />
             <OverviewSection />
             <PostsSection />
