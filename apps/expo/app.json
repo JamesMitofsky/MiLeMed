@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "takeout demo",
-    "slug": "takeout-demo",
+    "name": "MiLeMed",
+    "slug": "milemed",
     "jsEngine": "hermes",
     "scheme": "myapp",
     "version": "1.0.0",
@@ -15,14 +15,14 @@
     },
     "updates": {
       "fallbackToCacheTimeout": 0,
-      "url": "https://u.expo.dev/your-project-id"
+      "url": "https://u.expo.dev/d7927c8c-9306-469b-804f-8fddf70fbe01"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "dev.tamagui.takeoutdemo",
+      "bundleIdentifier": "de.milemed.app",
       "buildNumber": "6"
     },
     "android": {
@@ -31,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "dev.tamagui.takeoutdemo",
+      "package": "de.milemed.app",
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ],
@@ -65,12 +65,12 @@
         "origin": false
       },
       "eas": {
-        "projectId": "b5f02af2-6475-4d9e-81b3-664f89564580"
+        "projectId": "d7927c8c-9306-469b-804f-8fddf70fbe01"
       }
     },
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "owner": "tamagui-team"
+    "owner": "jamesmit"
   }
 }
