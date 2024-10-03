@@ -18,7 +18,7 @@ export default function Layout() {
     <>
       <Stack.Screen
         options={{
-          title: 'Home',
+          title: '',
           headerShown: pathname === '/' || pathname === '/create',
           headerTintColor: accentColor.val,
           headerLeft: () => (
