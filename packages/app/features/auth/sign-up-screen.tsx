@@ -10,15 +10,13 @@ import { z } from 'zod'
 
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
-const isProd = process.env.NODE_ENV === 'production'
-
-const emailPattern = isProd ? /^[a-zA-Z0-9._%+-]+@unibonn\.de$/ : /.*/
+const emailPattern = /^[a-zA-Z0-9._%+-]+@uni-bonn\.de$/
 
 const SignUpSchema = z.object({
   email: formFields.text
     .email()
     .regex(emailPattern, 'E-Mail muss die Domain "@unibonn.de" haben') // Validate domain
-    .describe('E-Mail // jona@unibonn.de'),
+    .describe('E-Mail // jona@uni-bonn.de'),
   password: formFields.text.min(6).describe('Passwort // Wähle ein Passwort'),
 })
 
