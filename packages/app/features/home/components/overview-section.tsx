@@ -8,33 +8,43 @@ export const OverviewSection = () => {
     <YStack>
       <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
         <H4 theme="alt1" fow="400">
-          Overview
+          Stats
         </H4>
         <Theme name="alt2">
           <Button size="$2" chromeless iconAfter={ArrowRight}>
-            View All Stats
+            View All
           </Button>
         </Theme>
       </XStack>
 
       <ScrollAdapt itemWidth={180} withSnap>
         <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
-          <OverviewCard title="MRR" value="$18,908" badgeText="+0.5%" badgeState="success" />
-
-          <OverviewCard title="ARR" value="$204,010" badgeText="+40.5%" badgeState="success" />
-
           <OverviewCard
-            title="Today's new users"
-            value="4 Users"
-            badgeText="+25%"
+            title="Modules Completed"
+            value="75 Modules"
+            badgeText="+5 Modules"
             badgeState="success"
           />
 
           <OverviewCard
-            title="Weekly Post Views"
-            value="30,104"
-            badgeText="-2%"
-            badgeState="failure"
+            title="Average Course Score"
+            value="92%"
+            badgeText="+2%"
+            badgeState="success"
+          />
+
+          <OverviewCard
+            title="New Students This Month"
+            value="120 Students"
+            badgeText="+15%"
+            badgeState="success"
+          />
+
+          <OverviewCard
+            title="Weekly Assignments Submitted"
+            value="1,200 Assignments"
+            badgeText="+10%"
+            badgeState="success"
           />
         </XStack>
       </ScrollAdapt>

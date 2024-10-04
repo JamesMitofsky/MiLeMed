@@ -41,11 +41,11 @@ export const PostsSection = () => {
         marginBottom="$4"
       >
         <H4 theme="alt1" fontWeight="400">
-          Latest Posts
+          Updates
         </H4>
         <Theme name="alt2">
           <Button size="$2" chromeless iconAfter={ArrowRight}>
-            View All Posts
+            View All
           </Button>
         </Theme>
       </XStack>

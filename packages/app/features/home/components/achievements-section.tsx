@@ -1,5 +1,5 @@
 import { validToken, AchievementCard, Button, H4, Theme, XStack, YStack } from '@my/ui'
-import { ArrowRight, DollarSign, Pencil, User, Users } from '@tamagui/lucide-icons'
+import { ArrowRight, Pencil, User, Users } from '@tamagui/lucide-icons'
 import { Platform } from 'react-native'
 import { useLink } from 'solito/link'
 
@@ -24,16 +24,16 @@ export const AchievementsSection = () => {
     <YStack>
       <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
         <H4 theme="alt1" fow="400">
-          Getting Started
+          Modules
         </H4>
         <Button theme="alt2" size="$2" chromeless iconAfter={ArrowRight}>
-          All Achievements
+          See all modules
         </Button>
       </XStack>
 
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
-          <Theme name="green">
+          {/* <Theme name="green">
             <AchievementCard
               w={300}
               $gtMd={{
@@ -50,7 +50,7 @@ export const AchievementsSection = () => {
                 props: useLink({ href: '#' }),
               }}
             />
-          </Theme>
+          </Theme> */}
           <Theme name="blue">
             <AchievementCard
               w={300}
@@ -61,10 +61,10 @@ export const AchievementsSection = () => {
                 w: quarterMinusSpace,
               }}
               icon={User}
-              title="Build your community"
-              progress={{ current: 280, full: 500, label: 'members' }}
+              title="Anatomy Module"
+              progress={{ current: 3, full: 5, label: 'modules completed' }}
               action={{
-                text: 'Boost your community',
+                text: 'Continue with Anatomy',
                 props: useLink({ href: '#' }),
               }}
             />
@@ -79,10 +79,10 @@ export const AchievementsSection = () => {
                 w: quarterMinusSpace,
               }}
               icon={Pencil}
-              title="Set up your profile"
-              progress={{ current: 2, full: 3, label: 'steps completed' }}
+              title="Physiology Module"
+              progress={{ current: 2, full: 4, label: 'modules completed' }}
               action={{
-                text: 'Continue profile setup',
+                text: 'Continue with Physiology',
                 props: useLink({ href: '#' }),
               }}
             />
@@ -97,10 +97,10 @@ export const AchievementsSection = () => {
                 w: quarterMinusSpace,
               }}
               icon={Users}
-              title="Refer 5 friends"
-              progress={{ current: 4, full: 5, label: 'friends referred' }}
+              title="Pharmacology Module"
+              progress={{ current: 1, full: 3, label: 'modules completed' }}
               action={{
-                text: 'Refer friends',
+                text: 'Continue with Pharmacology',
                 props: useLink({ href: '#' }),
               }}
             />

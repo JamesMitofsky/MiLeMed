@@ -30,8 +30,8 @@ export const EditProfileScreen = () => {
 }
 
 const ProfileSchema = z.object({
-  name: formFields.text.describe('Name // John Doe'),
-  about: formFields.textarea.describe('About // Tell us a bit about yourself'),
+  name: formFields.text.describe('Name // Max Mustermann'), // Changed to a more common German name
+  about: formFields.textarea.describe('Über // Erzählen Sie uns ein wenig über sich selbst'),
 })
 
 const EditProfileForm = ({
@@ -56,7 +56,7 @@ const EditProfileForm = ({
     },
 
     async onSuccess() {
-      toast.show('Successfully updated!')
+      toast.show('Erfolgreich aktualisiert!') // Translated message
       await queryClient.invalidateQueries(['profile', userId])
       await apiUtils.greeting.invalidate()
       router.back()
@@ -81,7 +81,7 @@ const EditProfileForm = ({
       onSubmit={(values) => mutation.mutate(values)}
       renderAfter={({ submit }) => (
         <Theme inverse>
-          <SubmitButton onPress={() => submit()}>Update Profile</SubmitButton>
+          <SubmitButton onPress={() => submit()}>Profil aktualisieren</SubmitButton>
         </Theme>
       )}
     >
@@ -105,7 +105,7 @@ const UserAvatar = () => {
   const { avatarUrl } = useUser()
   return (
     <Avatar circular size={128}>
-      <SolitoImage src={avatarUrl} alt="your avatar" width={128} height={128} />
+      <SolitoImage src={avatarUrl} alt="Ihr Avatar" width={128} height={128} />
     </Avatar>
   )
 }

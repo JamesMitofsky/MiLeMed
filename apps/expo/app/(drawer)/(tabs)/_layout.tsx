@@ -1,8 +1,8 @@
 import { useTheme, Button } from '@my/ui'
 import { DrawerActions } from '@react-navigation/native'
-import { Home, Menu, Plus, User } from '@tamagui/lucide-icons'
+import { Home, Menu, User } from '@tamagui/lucide-icons'
 // import { IconGearFill, IconGear, IconHouse, IconHouseFill } from '@tamagui-icons/icon-ph'
-import { router, Stack, Tabs, useNavigation, usePathname } from 'expo-router'
+import { Stack, Tabs, useNavigation, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Layout() {
@@ -14,6 +14,7 @@ export default function Layout() {
   if (__DEV__) {
     console.log('pathname', pathname)
   }
+  // Home
   return (
     <>
       <Stack.Screen
@@ -35,19 +36,19 @@ export default function Layout() {
               <Menu size={24} />
             </Button>
           ),
-          headerRight: () => (
-            <Button
-              borderStyle="unset"
-              borderWidth={0}
-              marginRight="$-1"
-              backgroundColor="transparent"
-              onPress={() => {
-                router.navigate('create')
-              }}
-            >
-              <Plus size={24} />
-            </Button>
-          ),
+          // headerRight: () => (
+          //   <Button
+          //     borderStyle="unset"
+          //     borderWidth={0}
+          //     marginRight="$-1"
+          //     backgroundColor="transparent"
+          //     onPress={() => {
+          //       router.navigate('create')
+          //     }}
+          //   >
+          //     <Plus size={24} />
+          //   </Button>
+          // ),
         }}
       />
       <Tabs

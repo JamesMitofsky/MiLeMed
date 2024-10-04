@@ -1,6 +1,6 @@
 import { Avatar, Paragraph, Settings, XStack, YStack, getTokens, useWindowDimensions } from '@my/ui'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
-import { Box, Cog, Milestone, ShoppingCart, User, Users } from '@tamagui/lucide-icons'
+import { Cog, User } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'app/utils/useSafeAreaInsets'
 import { useUser } from 'app/utils/useUser'
 import { SolitoImage } from 'solito/image'
@@ -27,9 +27,9 @@ export function DrawerMenu(props) {
           <Settings.Items>
             <Settings.Group>
               <Settings.Item icon={User} {...useLink({ href: '/profile/edit' })} accentTheme="pink">
-                Edit profile
+                Profil bearbeiten
               </Settings.Item>
-              <Settings.Item icon={Box} accentTheme="green">
+              {/* <Settings.Item icon={Box} accentTheme="green">
                 My Items
               </Settings.Item>
               <Settings.Item icon={Users} accentTheme="orange">
@@ -40,9 +40,9 @@ export function DrawerMenu(props) {
               </Settings.Item>
               <Settings.Item icon={ShoppingCart} accentTheme="blue">
                 Purchase History
-              </Settings.Item>
+              </Settings.Item> */}
               <Settings.Item {...useLink({ href: '/settings' })} icon={Cog}>
-                Settings
+                Einstellungen
               </Settings.Item>
             </Settings.Group>
           </Settings.Items>
@@ -58,7 +58,7 @@ export function DrawerMenu(props) {
             />
           </Avatar>
           <Paragraph ta="center" ml="$-1.5">
-            {name ?? 'No Name'}
+            {name ?? ''}
           </Paragraph>
         </XStack>
       </YStack>
