@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from 'react'
 import type { TabsContentProps } from 'tamagui'
 import { Separator, Tabs, Text, View, useEvent } from 'tamagui'
 
-const tabs = ['Create Project', 'New Post', 'Add Event']
-// const tabs = ['Create Project', 'Add Event']
+const tabs = ['Create Module', 'New Lecture']
 
 /** ------ EXAMPLE ------ */
 export const TabbarSwippable = ({
@@ -86,16 +85,12 @@ export const TabbarSwippable = ({
         </Tabs.List>
       </View>
       <Separator />
-      <TabsContent value="Create Project">
+      <TabsContent value="Create Module">
         <CreateProjectForm />
       </TabsContent>
 
-      <TabsContent value="New Post">
+      <TabsContent value="New Lecture">
         <CreatePostForm />
-      </TabsContent>
-
-      <TabsContent value="Add Event">
-        <CreateEventForm />
       </TabsContent>
     </Tabs>
   )
