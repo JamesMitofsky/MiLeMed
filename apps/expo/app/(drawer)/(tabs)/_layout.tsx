@@ -1,8 +1,9 @@
 import { useTheme, Button } from '@my/ui'
 import { DrawerActions } from '@react-navigation/native'
-import { Home, Menu, User } from '@tamagui/lucide-icons'
+import { Home, Menu, Plus, User } from '@tamagui/lucide-icons'
+import { useUser } from 'app/utils/useUser'
 // import { IconGearFill, IconGear, IconHouse, IconHouseFill } from '@tamagui-icons/icon-ph'
-import { Stack, Tabs, useNavigation, usePathname } from 'expo-router'
+import { router, Stack, Tabs, useNavigation, usePathname } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function Layout() {
@@ -10,7 +11,9 @@ export default function Layout() {
   const navigation = useNavigation()
   const pathname = usePathname()
   const insets = useSafeAreaInsets()
+  const { profile } = useUser()
 
+  console.log('profile', profile)
   if (__DEV__) {
     console.log('pathname', pathname)
   }
@@ -36,19 +39,20 @@ export default function Layout() {
               <Menu size={24} />
             </Button>
           ),
-          // headerRight: () => (
-          //   <Button
-          //     borderStyle="unset"
-          //     borderWidth={0}
-          //     marginRight="$-1"
-          //     backgroundColor="transparent"
-          //     onPress={() => {
-          //       router.navigate('create')
-          //     }}
-          //   >
-          //     <Plus size={24} />
-          //   </Button>
-          // ),
+          headerRight: () =>
+            profile?.role === 'admin' && (
+              <Button
+                borderStyle="unset"
+                borderWidth={0}
+                marginRight="$-1"
+                backgroundColor="transparent"
+                onPress={() => {
+                  router.navigate('create')
+                }}
+              >
+                <Plus size={24} />
+              </Button>
+            ),
         }}
       />
       <Tabs

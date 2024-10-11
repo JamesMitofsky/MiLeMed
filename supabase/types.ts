@@ -192,6 +192,7 @@ export type Database = {
           avatar_url: string | null
           id: string
           name: string | null
+          role?: "admin" | "user"
         }
         Insert: {
           about?: string | null
