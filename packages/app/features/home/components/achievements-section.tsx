@@ -1,5 +1,6 @@
 import { validToken, AchievementCard, Button, H4, Theme, XStack, YStack } from '@my/ui'
 import { ArrowRight, Pencil, User, Users } from '@tamagui/lucide-icons'
+import { router } from 'expo-router'
 import { Platform } from 'react-native'
 import { useLink } from 'solito/link'
 
@@ -26,7 +27,15 @@ export const AchievementsSection = () => {
         <H4 theme="alt1" fow="400">
           Modules
         </H4>
-        <Button theme="alt2" size="$2" chromeless iconAfter={ArrowRight}>
+        <Button
+          theme="alt2"
+          size="$2"
+          chromeless
+          iconAfter={ArrowRight}
+          onPress={() => {
+            router.navigate('modules')
+          }}
+        >
           See all modules
         </Button>
       </XStack>

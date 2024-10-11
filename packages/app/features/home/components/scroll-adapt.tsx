@@ -10,6 +10,8 @@ export function ScrollAdapt({
   itemWidth?: number
 }) {
   const { md } = useMedia()
+
+  console.log('is md', md)
   return md ? (
     <ScrollView
       horizontal

@@ -15,7 +15,7 @@ import { useRouter } from 'solito/router'
 import { z } from 'zod'
 
 const CreateProjectSchema = z.object({
-  title: formFields.text.min(10).describe('Name // Name of the module'),
+  title: formFields.text.describe('Name // Name of the module'),
   description: formFields.textarea.describe(
     'Description // Maternity tracking is more than just following mothers...'
   ),
