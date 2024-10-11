@@ -8,11 +8,9 @@ const tabs = ['Create Module', 'New Lecture']
 export const TabbarSwippable = ({
   CreateProjectForm,
   CreatePostForm,
-  CreateEventForm,
 }: {
   CreateProjectForm: React.ComponentType<unknown>
   CreatePostForm: React.ComponentType<unknown>
-  CreateEventForm: React.ComponentType<unknown>
 }) => {
   const [activeTabIndex, _setActiveTabIndex] = React.useState(0)
   const activeTabRef = useRef(activeTabIndex)

@@ -15,14 +15,10 @@ import { useRouter } from 'solito/router'
 import { z } from 'zod'
 
 const CreateProjectSchema = z.object({
-  title: formFields.text.min(10).describe("Name // Your project's name"),
+  title: formFields.text.min(10).describe('Name // Name of the module'),
   description: formFields.textarea.describe(
-    'Description // I need a mobile app for this one customer...'
+    'Description // Maternity tracking is more than just following mothers...'
   ),
-  numOfDays: formFields.number.min(2).max(200).describe('Number of Days // 60 '),
-  paidProject: formFields.boolean.describe('Paid Project'),
-  billingAddress: formFields.address.describe('Billing Address'),
-  type: formFields.select.describe('Project Type'),
 })
 export const CreateProjectForm = () => {
   const { setToggleCreateModal } = useGlobalStore()
@@ -40,10 +36,7 @@ export const CreateProjectForm = () => {
     async mutationFn(data: z.infer<typeof CreateProjectSchema>) {
       await supabase.from('projects').insert({
         name: data.title,
-        number_of_days: data.numOfDays,
         description: data.description,
-        paid_project: data.paidProject,
-        project_type: data.type,
         profile_id: user?.id,
       })
     },
@@ -73,36 +66,11 @@ export const CreateProjectForm = () => {
         defaultValues={{
           title: '',
           description: '',
-          numOfDays: 10,
-          paidProject: false,
-          billingAddress: {
-            street: '',
-            zipCode: '',
-          },
-          type: 'code',
         }}
-        props={{
-          type: {
-            placeholder: 'Choose a project type',
-            options: [
-              {
-                name: 'Code',
-                value: 'code',
-              },
-              {
-                name: 'Design',
-                value: 'design',
-              },
-              {
-                name: 'Consulting',
-                value: 'consulting',
-              },
-            ],
-          },
-        }}
+        props={{}}
         renderAfter={({ submit }) => (
           <Theme inverse>
-            <SubmitButton onPress={() => submit()}>Create Project</SubmitButton>
+            <SubmitButton onPress={() => submit()}>Create Module</SubmitButton>
           </Theme>
         )}
       >
