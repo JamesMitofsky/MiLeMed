@@ -1,7 +1,6 @@
 import { AchievementCard, ScrollView } from '@my/ui'
 import { Users } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
-import { useLink } from 'solito/link'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
 import { supabase } from '../../utils/supabase/client.native'
@@ -9,8 +8,6 @@ import { supabase } from '../../utils/supabase/client.native'
 const colors = ['orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red', 'gray'] as const
 
 const ViewModulesScreen = () => {
-  const linkProps = useLink({ href: '#' })
-
   const { data: modules, isLoading } = useQuery(['projects'], {
     queryFn: async () => {
       const { data, error } = await supabase.from('projects').select('*')
@@ -47,26 +44,15 @@ const ViewModulesScreen = () => {
             <Text>No modules found.</Text>
           ) : (
             modules?.map((project, index) => (
-              // <ProjectItem key={project.id}>
-              //   <Text fontSize="$4">{project.name}</Text>
-              //   <Text fontSize="$4">{project.description}</Text>
-              //   {/* Add more project details here if needed */}
-              // </ProjectItem>
-              <Theme name={colors[index]}>
+              <Theme key={project.id} name={colors[index]}>
                 <AchievementCard
                   w={300}
-                  // $gtMd={{
-                  //   width: halfMinusSpace,
-                  // }}
-                  // $gtLg={{
-                  //   w: quarterMinusSpace,
-                  // }}
                   icon={Users}
                   title={project.name}
                   progress={{ current: 1, full: 1 }}
                   action={{
-                    text: project?.description || '',
-                    props: linkProps,
+                    text: 'Continue',
+                    href: `/module/${project.id}`,
                   }}
                 />
               </Theme>

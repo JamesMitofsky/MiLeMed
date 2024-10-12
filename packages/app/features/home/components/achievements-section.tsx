@@ -1,8 +1,8 @@
 import { validToken, AchievementCard, Button, H4, Theme, XStack, YStack } from '@my/ui'
 import { ArrowRight, Pencil, User, Users } from '@tamagui/lucide-icons'
-import { router } from 'expo-router'
 import { Platform } from 'react-native'
 import { useLink } from 'solito/link'
+import { useRouter } from 'solito/router'
 
 import { ScrollAdapt } from './scroll-adapt'
 
@@ -21,6 +21,8 @@ const quarterMinusSpace = validToken(
 )
 
 export const AchievementsSection = () => {
+  const router = useRouter()
+
   return (
     <YStack>
       <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
@@ -33,7 +35,7 @@ export const AchievementsSection = () => {
           chromeless
           iconAfter={ArrowRight}
           onPress={() => {
-            router.navigate('modules')
+            router.push('/modules')
           }}
         >
           See all modules

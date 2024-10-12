@@ -14,8 +14,9 @@ export type AchievementCardProps = {
     label?: string
   }
   action?: {
-    props: ReturnType<typeof useLink>
+    props?: ReturnType<typeof useLink>
     text: string
+    href?: string
   }
 } & CardProps
 
@@ -26,6 +27,7 @@ export const AchievementCard = ({
   action,
   ...props
 }: AchievementCardProps) => {
+  const linkProps = useLink({ href: action?.href || '' })
   return (
     <Card br="$0" chromeless {...props}>
       <Card.Header my="auto" padded gap="$3">
@@ -57,7 +59,14 @@ export const AchievementCard = ({
           </Progress>
 
           {!!action && (
-            <Button mt="$3" als="flex-end" size="$2" iconAfter={<ChevronRight />}>
+            <Button
+              mt="$3"
+              als="flex-end"
+              size="$2"
+              iconAfter={<ChevronRight />}
+              {...action.props}
+              {...linkProps}
+            >
               {action.text}
             </Button>
           )}
