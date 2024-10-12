@@ -41,13 +41,11 @@ const IndividualModuleScreen = () => {
   return (
     <YStack padding="$4">
       <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
-        {id}
         {module.name}
       </Text>
       <Text fontSize="$4" marginBottom="$2">
         {module.description}
       </Text>
-      {/* Add more module details as needed */}
     </YStack>
   )
 }
