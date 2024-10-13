@@ -21,15 +21,12 @@ export const SelectField = ({
   placeholder?: string
 } & Pick<SelectProps, 'size' | 'native'>) => {
   const {
+    field: { value, onChange },
     error,
-    formState: { isSubmitting },
   } = useTsController<string>()
   const { label, isOptional } = useFieldInfo()
   const id = useId()
-  // const disabled = isSubmitting
 
-  console.log('SelectField props', { native })
-  const [val, setVal] = React.useState('')
   const items = options
   return (
     <Theme name={error ? 'red' : null} forceClassName>
@@ -40,8 +37,8 @@ export const SelectField = ({
       )}
       <Fieldset>
         <Select
-          value={val}
-          onValueChange={setVal}
+          value={value}
+          onValueChange={onChange}
           disablePreventBodyScroll
           {...props}
           native={!!native}
@@ -80,48 +77,19 @@ export const SelectField = ({
           </Adapt>
 
           <Select.Content>
-            {/* <Select.ScrollUpButton
-              alignItems="center"
-              justifyContent="center"
-              position="relative"
-              width="100%"
-              height="$3"
-            >
-              <YStack zIndex={10}>
-                <ChevronUp size={20} />
-              </YStack>
-              <LinearGradient
-                start={[0, 0]}
-                end={[0, 1]}
-                fullscreen
-                colors={['$background', 'transparent']}
-                borderRadius="$4"
-              />
-            </Select.ScrollUpButton> */}
-
-            <Select.Viewport
-              // to do animations:
-              // animation="quick"
-              // animateOnly={['transform', 'opacity']}
-              // enterStyle={{ o: 0, y: -10 }}
-              // exitStyle={{ o: 0, y: 10 }}
-              minWidth={200}
-            >
+            <Select.Viewport minWidth={200}>
               <Select.Group>
                 <Select.Label>Connected Module</Select.Label>
-                {/* for longer lists memoizing these is useful */}
                 {React.useMemo(
                   () =>
-                    items.map((item, i) => {
-                      return (
-                        <Select.Item index={i} key={item.name} value={item.name.toLowerCase()}>
-                          <Select.ItemText>{item.name}</Select.ItemText>
-                          <Select.ItemIndicator marginLeft="auto">
-                            <Check size={16} />
-                          </Select.ItemIndicator>
-                        </Select.Item>
-                      )
-                    }),
+                    items.map((item, i) => (
+                      <Select.Item index={i} key={item.name} value={item.value}>
+                        <Select.ItemText>{item.name}</Select.ItemText>
+                        <Select.ItemIndicator marginLeft="auto">
+                          <Check size={16} />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    )),
                   [items]
                 )}
               </Select.Group>
