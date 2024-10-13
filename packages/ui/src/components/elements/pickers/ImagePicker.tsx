@@ -1,6 +1,6 @@
 import { X } from '@tamagui/lucide-icons'
-import { useId, useState, forwardRef } from 'react'
-import { Button, Image, Label, ScrollView, View, XStack } from 'tamagui'
+import { useState, forwardRef } from 'react'
+import { Button, Image, ScrollView, View, XStack } from 'tamagui'
 
 import { useFilePicker } from './hooks/useFilePicker'
 
@@ -8,20 +8,21 @@ enum MediaTypeOptions {
   /**
    * Images and videos.
    */
-  All = 'All',
+  // All = 'All',
   /**
    * Only videos.
    */
-  Videos = 'Videos',
+  // Videos = 'Videos',
   /**
    * Only images.
    */
   Images = 'Images',
 }
 
-/** ------ EXAMPLE ------ */
+/** ------ REFACTORED IMAGE PICKER FOR NATIVE DEVICES ------ */
 export const ImagePicker = forwardRef<
-  HTMLInputElement,
+  // Adjust the ref type for native components, e.g., View or another native component
+  React.ElementRef<typeof View>,
   {
     disabled: boolean
     value: { fileURL: string; path: string } | undefined
@@ -31,25 +32,22 @@ export const ImagePicker = forwardRef<
     [key: string]: any
   }
 >(({ disabled, value, onChangeText, onBlur, placeholder, ...props }, ref) => {
-  const id = useId()
   const [images, setImages] = useState<string[]>([])
-  const { open, getInputProps, getRootProps, dragStatus } = useFilePicker({
+  const { open, getRootProps, dragStatus } = useFilePicker({
     typeOfPicker: 'image',
     mediaTypes: [MediaTypeOptions.Images],
     multiple: true,
 
-    onPick: ({ webFiles, nativeFiles }) => {
-      if (webFiles?.length) {
-        const pickedImages = webFiles?.map((file: File) => {
+    onPick: ({ nativeFiles }) => {
+      if (nativeFiles?.length) {
+        const pickedImages = nativeFiles.map((file: any) => {
           return {
-            fileURL: URL.createObjectURL(file),
-            path: (file as any)?.path, // Type assertion to bypass the TypeScript error
+            fileURL: file.uri,
+            path: file.path,
           }
         })
         onChangeText(pickedImages[0])
         setImages((images) => [...images, pickedImages[0].fileURL])
-      } else if (nativeFiles?.length) {
-        // setImages((images) => [...images, pickedImages[0]])
       }
     },
   })
@@ -57,10 +55,9 @@ export const ImagePicker = forwardRef<
   const { isDragActive } = dragStatus
 
   return (
-    // @ts-ignore reason: getRootProps() which is web specific return some react-native incompatible props, but it's fine
     <View
       flexDirection="column"
-      {...getRootProps()}
+      // Remove getRootProps as it's web-specific
       borderStyle="dashed"
       id="image-picker"
       maxWidth={600}
@@ -72,32 +69,14 @@ export const ImagePicker = forwardRef<
       borderColor={isDragActive ? '$gray11' : '$gray9'}
       gap="$2"
       borderRadius="$true"
+      {...props}
+      ref={ref}
     >
-      {/* need an empty input div just have image drop feature in the web */}
-      {/* @ts-ignore */}
-      <View id={id} tag="input" width={0} height={0} {...getInputProps()} ref={ref} />
-      <View>
-        <Button size="$3" onPress={open}>
-          Pick image
-        </Button>
+      {/* Removed the input element as it's web-specific */}
 
-        <View width="100%" alignItems="center" justifyContent="center">
-          <Label
-            display={images.length ? 'none' : 'flex'}
-            $platform-native={{
-              display: 'none',
-            }}
-            size="$3"
-            htmlFor={id}
-            color="$color9"
-            t="$1"
-            pos="absolute"
-            whiteSpace="nowrap"
-          >
-            Drag cover image into this area
-          </Label>
-        </View>
-      </View>
+      <Button size="$3" onPress={open} disabled={disabled}>
+        Pick image
+      </Button>
 
       <ScrollView
         display={images.length ? 'flex' : 'none'}
@@ -114,25 +93,18 @@ export const ImagePicker = forwardRef<
         maxHeight={110}
       >
         <XStack gap="$4" flexWrap="nowrap" minWidth="100%" maxHeight={110} px="$4" pt={10}>
-          {[images[0]]?.map((image, i) => (
-            <View key={image} maxHeight={110}>
-              <Image
-                borderRadius={10}
-                key={image}
-                width={400}
-                height={200}
-                source={{ uri: image }}
-              />
+          {images.map((image, i) => (
+            <View key={image} maxHeight={110} position="relative">
+              <Image borderRadius={10} width={100} height={100} source={{ uri: image }} />
               <Button
                 onPress={() => {
                   setImages(images.filter((_, index) => index !== i))
                 }}
-                right={0}
-                y={-6}
-                x={6}
                 size="$1"
                 circular
                 position="absolute"
+                top={-6}
+                right={6}
               >
                 <X size={12} />
               </Button>
