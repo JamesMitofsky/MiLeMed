@@ -19,7 +19,7 @@ async function run() {
   await seed.posts([
     {
       title: (x) => copycat.sentence(x.seed, { max: 10 }),
-      category_id: '7cc01a01-8fb0-470e-baf9-100504ac1839',
+      project_id: '7cc01a01-8fb0-470e-baf9-100504ac1839',
       content(ctx) {
         return copycat.sentence(ctx.seed, {
           max: 500,

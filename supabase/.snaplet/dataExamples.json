@@ -43,14 +43,7 @@
   },
   {
     "shape": "SYSTEM_FILE_TYPE",
-    "examples": [
-      "application",
-      "text",
-      "image",
-      "video",
-      "audio",
-      "font"
-    ]
+    "examples": ["application", "text", "image", "video", "audio", "font"]
   },
   {
     "shape": "SYSTEM_FILE_PATH",
@@ -364,13 +357,7 @@
   },
   {
     "shape": "INTERNET_HTTP_METHOD",
-    "examples": [
-      "POST",
-      "PATCH",
-      "PUT",
-      "DELETE",
-      "GET"
-    ]
+    "examples": ["POST", "PATCH", "PUT", "DELETE", "GET"]
   },
   {
     "shape": "INTERNET_DOMAIN_NAME",
@@ -483,9 +470,7 @@
   },
   {
     "shape": "IMAGE_URL",
-    "examples": [
-      "https://loremflickr.com/640/480"
-    ]
+    "examples": ["https://loremflickr.com/640/480"]
   },
   {
     "shape": "STREET_ADDRESS",
@@ -598,12 +583,7 @@
   },
   {
     "shape": "FINANCE_TRANSACTION_TYPE",
-    "examples": [
-      "invoice",
-      "payment",
-      "withdrawal",
-      "deposit"
-    ]
+    "examples": ["invoice", "payment", "withdrawal", "deposit"]
   },
   {
     "shape": "POST_BODY",
@@ -782,14 +762,7 @@
   },
   {
     "shape": "ROLE",
-    "examples": [
-      "Owner",
-      "Contributor",
-      "Admin",
-      "Developer",
-      "Editor",
-      "Viewer"
-    ]
+    "examples": ["Owner", "Contributor", "Admin", "Developer", "Editor", "Viewer"]
   },
   {
     "shape": "EMAIL",
@@ -2278,7 +2251,7 @@
       "User not found. Please check your username and try again.",
       "Your session has expired. Please log in again to continue.",
       "{\"achievement_id\":1,\"title\":\"Newbie\",\"description\":\"You have completed your first task!\"}",
-      "{\"category_id\":1,\"title\":\"Music\",\"description\":\"Category for music related posts\"}",
+      "{\"project_id\":1,\"title\":\"Music\",\"description\":\"Category for music related posts\"}",
       "Post created successfully! Your post will be reviewed by our moderators.",
       "Event created successfully! Your event will be reviewed by our moderators.",
       "Installation successful! You can now use our application.",

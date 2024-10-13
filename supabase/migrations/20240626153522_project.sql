@@ -37,7 +37,7 @@ CREATE TABLE categories (
 CREATE TABLE posts (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   profile_id UUID REFERENCES auth.users(id),
-  category_id UUID REFERENCES categories(id),
+  project_id UUID REFERENCES categories(id),
   title VARCHAR(255) NOT NULL,
   content TEXT,
   image_url VARCHAR(255),
@@ -83,7 +83,7 @@ CREATE TABLE projects (
 -- Create indexes
 -- CREATE INDEX idx_achievements_profile_id ON achievements(profile_id);
 -- CREATE INDEX idx_posts_profile_id ON posts(profile_id);
--- CREATE INDEX idx_posts_category_id ON posts(category_id);
+-- CREATE INDEX idx_posts_category_id ON posts(project_id);
 -- CREATE INDEX idx_user_stats_profile_id ON user_stats(profile_id);
 -- CREATE INDEX idx_referrals_referrer_id ON referrals(referrer_id);
 -- CREATE INDEX idx_referrals_referred_id ON referrals(referred_id);

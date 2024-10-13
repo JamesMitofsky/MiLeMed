@@ -17,10 +17,11 @@ import { z } from 'zod'
 const CreatePostSchema = z.object({
   title: formFields.text.describe('Name // Lecture title'),
   content: formFields.textarea.describe('Description // Content of the lecture'),
-  category_id: formFields.select.describe('Module // Connected to which module'),
-  image_url: formFields.image.describe('Image URL // Image for the lecture'),
+  project_id: formFields.select.describe('Module // Connected to which module'),
+  // image_url: formFields.image.describe('Image URL // Image for the lecture'),
 })
 
+// post LECTURE --------------- project MODULE
 export const CreatePostForm = () => {
   const { setToggleCreateModal } = useGlobalStore()
   const { sm } = useMedia()
@@ -58,6 +59,7 @@ export const CreatePostForm = () => {
     if (uploadError) {
       // throw uploadError
       console.log('error', uploadError)
+      throw new Error('Error uploading image')
     }
 
     const { data: publicUrlData } = supabase.storage
@@ -72,25 +74,31 @@ export const CreatePostForm = () => {
     },
     async mutationFn(data: z.infer<typeof CreatePostSchema>) {
       console.log('here data', data)
-      const imageUrl = await uploadImageAndGetUrl(
-        data.image_url as {
-          fileURL: string
-          path: string
-        }
-      )
+      // const imageUrl = await uploadImageAndGetUrl(
+      //   data.image_url as {
+      //     fileURL: string
+      //     path: string
+      //   }
+      // )
 
       // Insert post with the image URL
-      await supabase.from('posts').insert({
+      const { data: insertData, error } = await supabase.from('posts').insert({
         title: data.title,
         content: data.content,
-        category_id: data.category_id,
-        image_url: imageUrl,
+        project_id: data.project_id,
+        // image_url: imageUrl,
         profile_id: user?.id,
       })
+
+      if (error) {
+        console.error('Insert error:', error)
+      } else {
+        console.log('Insert success:', insertData)
+      }
     },
 
     async onSuccess() {
-      console.log('success')
+      console.log('success: ')
       toast.show('Successfully created!')
       if (sm) {
         router.back()
@@ -112,10 +120,10 @@ export const CreatePostForm = () => {
         defaultValues={{
           title: '',
           content: '',
-          category_id: '',
+          project_id: '',
         }}
         props={{
-          category_id: {
+          project_id: {
             placeholder: 'Choose a module',
             options:
               modules?.map(({ name, id }) => ({
