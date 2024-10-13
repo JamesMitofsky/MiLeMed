@@ -40,10 +40,10 @@ export const ImagePicker = forwardRef<
 
     onPick: ({ nativeFiles }) => {
       if (nativeFiles?.length) {
-        const pickedImages = nativeFiles.map((file: any) => {
+        const pickedImages = nativeFiles.map((file) => {
           return {
             fileURL: file.uri,
-            path: file.path,
+            path: file.uri,
           }
         })
         onChangeText(pickedImages[0])
