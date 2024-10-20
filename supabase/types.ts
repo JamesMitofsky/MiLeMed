@@ -3,333 +3,143 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
-      achievements: {
+      chapters: {
         Row: {
           created_at: string
-          goal: number
-          id: string
-          name: string
-          profile_id: string | null
-          progress: number
-          type: string
-          updated_at: string
+          description: string | null
+          id: number
+          mode: Database['public']['Enums']['mode']
+          title: string
         }
         Insert: {
           created_at?: string
-          goal: number
-          id?: string
-          name: string
-          profile_id?: string | null
-          progress: number
-          type: string
-          updated_at?: string
+          description?: string | null
+          id?: number
+          mode: Database['public']['Enums']['mode']
+          title: string
         }
         Update: {
           created_at?: string
-          goal?: number
-          id?: string
-          name?: string
-          profile_id?: string | null
-          progress?: number
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'achievements_profile_id_fkey'
-            columns: ['profile_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      }
-      categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          updated_at?: string
+          description?: string | null
+          id?: number
+          mode?: Database['public']['Enums']['mode']
+          title?: string
         }
         Relationships: []
       }
-      events: {
+      images: {
         Row: {
-          created_at: string
-          description: string | null
-          end_time: string | null
-          id: string
-          name: string
-          profile_id: string | null
-          start_time: string | null
-          status: string
-          updated_at: string
+          created_at: string | null
+          id: number
+          image_url: string
+          lecture_id: number | null
         }
         Insert: {
-          created_at?: string
-          description?: string | null
-          end_time?: string | null
-          id?: string
-          name: string
-          profile_id?: string | null
-          start_time?: string | null
-          status: string
-          updated_at?: string
+          created_at?: string | null
+          id?: number
+          image_url: string
+          lecture_id?: number | null
         }
         Update: {
-          created_at?: string
-          description?: string | null
-          end_time?: string | null
-          id?: string
-          name?: string
-          profile_id?: string | null
-          start_time?: string | null
-          status?: string
-          updated_at?: string
+          created_at?: string | null
+          id?: number
+          image_url?: string
+          lecture_id?: number | null
         }
         Relationships: [
           {
-            foreignKeyName: 'events_user_id_fkey'
-            columns: ['profile_id']
+            foreignKeyName: 'images_lecture_id_fkey'
+            columns: ['lecture_id']
             isOneToOne: false
-            referencedRelation: 'profiles'
+            referencedRelation: 'lectures'
             referencedColumns: ['id']
           }
         ]
       }
-      installs: {
+      lecture_clicks: {
         Row: {
-          expo_tokens: string[] | null
-          user_id: string
+          clicked_at: string | null
+          id: number
+          lecture_id: number | null
+          profile_id: string | null
         }
         Insert: {
-          expo_tokens?: string[] | null
-          user_id: string
+          clicked_at?: string | null
+          id?: number
+          lecture_id?: number | null
+          profile_id?: string | null
         }
         Update: {
-          expo_tokens?: string[] | null
-          user_id?: string
+          clicked_at?: string | null
+          id?: number
+          lecture_id?: number | null
+          profile_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: 'installs_user_id_fkey'
-            columns: ['user_id']
-            isOneToOne: true
-            referencedRelation: 'users'
+            foreignKeyName: 'lecture_clicks_lecture_id_fkey'
+            columns: ['lecture_id']
+            isOneToOne: false
+            referencedRelation: 'lectures'
             referencedColumns: ['id']
           }
         ]
       }
-      posts: {
+      lectures: {
         Row: {
-          project_id: string | null
-          content: string | null
+          chapter_id: number | null
+          content: string
           created_at: string
-          id: string
-          image_url: string | null
-          profile_id: string | null
+          id: number
           title: string
-          updated_at: string
         }
         Insert: {
-          project_id?: string | null
-          content?: string | null
+          chapter_id?: number | null
+          content: string
           created_at?: string
-          id?: string
-          image_url?: string | null
-          profile_id?: string | null
+          id?: number
           title: string
-          updated_at?: string
         }
         Update: {
-          project_id?: string | null
-          content?: string | null
+          chapter_id?: number | null
+          content?: string
           created_at?: string
-          id?: string
-          image_url?: string | null
-          profile_id?: string | null
+          id?: number
           title?: string
-          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: 'posts_category_id_fkey'
-            columns: ['project_id']
+            foreignKeyName: 'fk_chapter'
+            columns: ['chapter_id']
             isOneToOne: false
-            referencedRelation: 'categories'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'posts_profile_id_fkey'
-            columns: ['profile_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      }
-      profiles: {
-        Row: {
-          about: string | null
-          avatar_url: string | null
-          id: string
-          name: string | null
-          role?: 'admin' | 'user'
-        }
-        Insert: {
-          about?: string | null
-          avatar_url?: string | null
-          id: string
-          name?: string | null
-        }
-        Update: {
-          about?: string | null
-          avatar_url?: string | null
-          id?: string
-          name?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'profiles_id_fkey'
-            columns: ['id']
-            isOneToOne: true
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      }
-      projects: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          profile_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          number_of_days?: number | null
-          paid_project?: boolean | null
-          profile_id?: string | null
-          project_type?: string | null
-          street?: string | null
-          updated_at?: string
-          us_zip_code?: string | null
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          number_of_days?: number | null
-          paid_project?: boolean | null
-          profile_id?: string | null
-          project_type?: string | null
-          street?: string | null
-          updated_at?: string
-          us_zip_code?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'projects_profile_id_fkey'
-            columns: ['profile_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
-      }
-      referrals: {
-        Row: {
-          created_at: string
-          id: string
-          referred_id: string | null
-          referrer_id: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          referred_id?: string | null
-          referrer_id?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          referred_id?: string | null
-          referrer_id?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: 'referrals_referred_id_fkey'
-            columns: ['referred_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          },
-          {
-            foreignKeyName: 'referrals_referrer_id_fkey'
-            columns: ['referrer_id']
-            isOneToOne: false
-            referencedRelation: 'users'
+            referencedRelation: 'chapters'
             referencedColumns: ['id']
           }
         ]
       }
       user_stats: {
         Row: {
-          arr: number | null
-          created_at: string
-          id: string
-          mrr: number | null
-          profile_id: string | null
-          updated_at: string
-          weekly_post_views: number | null
+          age: number | null
+          click_count: number | null
+          gender: Database['public']['Enums']['gender'] | null
+          profile_id: string
+          semester_number: number | null
         }
         Insert: {
-          arr?: number | null
-          created_at?: string
-          id?: string
-          mrr?: number | null
-          profile_id?: string | null
-          updated_at?: string
-          weekly_post_views?: number | null
+          age?: number | null
+          click_count?: number | null
+          gender?: Database['public']['Enums']['gender'] | null
+          profile_id: string
+          semester_number?: number | null
         }
         Update: {
-          arr?: number | null
-          created_at?: string
-          id?: string
-          mrr?: number | null
-          profile_id?: string | null
-          updated_at?: string
-          weekly_post_views?: number | null
+          age?: number | null
+          click_count?: number | null
+          gender?: Database['public']['Enums']['gender'] | null
+          profile_id?: string
+          semester_number?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: 'user_stats_profile_id_fkey'
-            columns: ['profile_id']
-            isOneToOne: false
-            referencedRelation: 'users'
-            referencedColumns: ['id']
-          }
-        ]
+        Relationships: []
       }
     }
     Views: {
@@ -339,7 +149,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      gender: 'MALE' | 'FEMALE' | 'OTHER'
+      mode: 'THEORETICAL' | 'PRACTICAL'
     }
     CompositeTypes: {
       [_ in never]: never
@@ -419,4 +230,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions['schema']]['Enums'][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema['Enums']
   ? PublicSchema['Enums'][PublicEnumNameOrOptions]
+  : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema['CompositeTypes']
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes']
+    : never = never
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions['schema']]['CompositeTypes'][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema['CompositeTypes']
+  ? PublicSchema['CompositeTypes'][PublicCompositeTypeNameOrOptions]
   : never

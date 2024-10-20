@@ -12,9 +12,9 @@ type ListOfModulesProps = {
 }
 
 const ListOfModules = ({ limit }: ListOfModulesProps) => {
-  const { data: modules, isLoading } = useQuery(['projects'], {
+  const { data: modules, isLoading } = useQuery(['chapters'], {
     queryFn: async () => {
-      let query = supabase.from('projects').select('*')
+      let query = supabase.from('chapters').select('*')
 
       if (typeof limit === 'number') {
         query = query.limit(limit)

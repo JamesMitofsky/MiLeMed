@@ -17,7 +17,7 @@ import { z } from 'zod'
 const CreatePostSchema = z.object({
   title: formFields.text.describe('Name // Lecture title'),
   content: formFields.textarea.describe('Description // Content of the lecture'),
-  project_id: formFields.select.describe('Module // Connected to which module'),
+  chapter_id: formFields.select.describe('Module // Connected to which module'),
   // image_url: formFields.image.describe('Image URL // Image for the lecture'),
 })
 
@@ -30,9 +30,9 @@ export const CreatePostForm = () => {
   const { profile, user } = useUser()
   const supabase = useSupabase()
 
-  const { data: modules } = useQuery(['projects'], {
+  const { data: modules } = useQuery(['chapters'], {
     queryFn: async () => {
-      const { data, error } = await supabase.from('projects').select('*')
+      const { data, error } = await supabase.from('chapters').select('*')
 
       if (error) {
         // no rows - edge case of user being deleted
@@ -82,10 +82,10 @@ export const CreatePostForm = () => {
       // )
 
       // Insert post with the image URL
-      const { data: insertData, error } = await supabase.from('posts').insert({
+      const { data: insertData, error } = await supabase.from('lectures').insert({
         title: data.title,
         content: data.content,
-        project_id: data.project_id,
+        chapter_id: data.chapter_id,
         // image_url: imageUrl,
         profile_id: user?.id,
       })
@@ -120,10 +120,10 @@ export const CreatePostForm = () => {
         defaultValues={{
           title: '',
           content: '',
-          project_id: '',
+          chapter_id: '',
         }}
         props={{
-          project_id: {
+          chapter_id: {
             placeholder: 'Choose a module',
             options:
               modules?.map(({ name, id }) => ({

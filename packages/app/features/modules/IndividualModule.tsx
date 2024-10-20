@@ -13,7 +13,7 @@ const IndividualModuleScreen = () => {
   const { data: module, isLoading } = useQuery(['module', id], {
     queryFn: async () => {
       if (!id) return null
-      const { data, error } = await supabase.from('projects').select('*').eq('id', id).single()
+      const { data, error } = await supabase.from('chapters').select('*').eq('id', id).single()
       if (error) {
         throw new Error(error.message)
       }

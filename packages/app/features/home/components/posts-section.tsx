@@ -28,7 +28,7 @@ export const PostsSection = () => {
   const { data, isLoading, isError } = usePostQuery()
   const toast = useToastController()
   useEffect(() => {
-    isError && toast.show('Error loading posts.')
+    isError && toast.show('Error loading lectures.')
   }, [data, isLoading, isError])
   if (isLoading) return <FullscreenSpinner />
   return (
@@ -91,7 +91,7 @@ export const PostsSection = () => {
               marginLeft="$0"
               borderRadius="$5"
             >
-              <Text>No posts created yet</Text>
+              <Text>No lectures created yet</Text>
             </View>
           </View>
         )}

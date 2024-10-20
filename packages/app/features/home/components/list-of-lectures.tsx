@@ -13,9 +13,9 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
-  const { data: lectures, isLoading } = useQuery(['projects'], {
+  const { data: lectures, isLoading } = useQuery(['chapters'], {
     queryFn: async () => {
-      let query = supabase.from('posts').select('*').eq('project_id', moduleId)
+      let query = supabase.from('lectures').select('*').eq('chapter_id', moduleId)
 
       if (typeof limit === 'number') {
         query = query.limit(limit)

@@ -12,7 +12,7 @@ const IndividualLecture = () => {
   const { data: lecture, isLoading } = useQuery(['lecture', id], {
     queryFn: async () => {
       if (!id) return null
-      const { data, error } = await supabase.from('posts').select('*').eq('id', id).single()
+      const { data, error } = await supabase.from('lectures').select('*').eq('id', id).single()
       if (error) {
         throw new Error(error.message)
       }

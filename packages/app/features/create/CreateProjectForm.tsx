@@ -34,7 +34,7 @@ export const CreateProjectForm = () => {
       console.log('error', error)
     },
     async mutationFn(data: z.infer<typeof CreateProjectSchema>) {
-      await supabase.from('projects').insert({
+      await supabase.from('chapters').insert({
         name: data.title,
         description: data.description,
         profile_id: user?.id,
