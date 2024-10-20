@@ -1,5 +1,4 @@
 -- Create Enums
-CREATE TYPE gender AS ENUM ('MALE', 'FEMALE', 'OTHER');
 CREATE TYPE mode AS ENUM ('THEORETICAL', 'PRACTICAL');
 
 -- Create Tables
@@ -37,15 +36,6 @@ CREATE TABLE lecture_clicks (
     FOREIGN KEY (lecture_id) REFERENCES lectures (id) ON DELETE SET NULL,
     FOREIGN KEY (profile_id) REFERENCES auth.users(id) ON DELETE SET NULL  -- Reference to auth.users
 );
-
-CREATE TABLE user_stats (
-    profile_id UUID PRIMARY KEY,  -- Change to UUID to match auth.users.id type
-    age INTEGER,
-    gender gender,
-    semester_number INTEGER,
-    FOREIGN KEY (profile_id) REFERENCES auth.users(id) ON DELETE CASCADE  -- Reference to auth.users
-);
-
 
 -- Table for storing questions related to each lecture
 CREATE TABLE quiz_questions (
