@@ -8,7 +8,9 @@ CREATE TABLE chapters (
     title TEXT NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    mode mode NOT NULL
+    mode mode NOT NULL,
+    sort_order INTEGER NOT NULL DEFAULT 1,  -- Order column to define the sequence of chapters
+    CONSTRAINT unique_chapter_order UNIQUE (sort_order) -- Ensure unique ordering for chapters globally
 );
 
 CREATE TABLE lectures (
@@ -17,7 +19,9 @@ CREATE TABLE lectures (
     content TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     chapter_id INTEGER NOT NULL,
-    FOREIGN KEY (chapter_id) REFERENCES chapters (id) ON DELETE CASCADE
+    sort_order INTEGER NOT NULL DEFAULT 1,  -- Order column to define the sequence of lectures within a chapter
+    FOREIGN KEY (chapter_id) REFERENCES chapters (id) ON DELETE CASCADE,
+    CONSTRAINT unique_lecture_order UNIQUE (chapter_id, sort_order) -- Ensure unique ordering within a chapter
 );
 
 CREATE TABLE images (
@@ -26,15 +30,6 @@ CREATE TABLE images (
     lecture_id INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (lecture_id) REFERENCES lectures (id) ON DELETE CASCADE  -- Change to CASCADE
-);
-
-CREATE TABLE lecture_clicks (
-    id SERIAL PRIMARY KEY,
-    clicked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    lecture_id INTEGER,
-    profile_id UUID,  -- Change to UUID to match auth.users.id type
-    FOREIGN KEY (lecture_id) REFERENCES lectures (id) ON DELETE SET NULL,
-    FOREIGN KEY (profile_id) REFERENCES auth.users(id) ON DELETE SET NULL  -- Reference to auth.users
 );
 
 -- Table for storing questions related to each lecture
