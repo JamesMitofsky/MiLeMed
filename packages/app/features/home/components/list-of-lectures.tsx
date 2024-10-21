@@ -13,7 +13,7 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
-  const { data: lectures, isLoading } = useQuery(['chapters'], {
+  const { data: lectures, isLoading } = useQuery(['lectures'], {
     queryFn: async () => {
       let query = supabase.from('lectures').select('*').eq('chapter_id', moduleId)
 
@@ -38,7 +38,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
     return (
       <YStack padding="$4" alignItems="center">
         <Spinner size="small" />
-        <Text marginTop="$2">Loading lectures...</Text>
+        <Text marginTop="$2">Lade Lektion...</Text>
       </YStack>
     )
   }
@@ -46,7 +46,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
   return (
     <>
       {lectures?.length === 0 ? (
-        <Text>No modules found.</Text>
+        <Text>Keine Lektion gefunden.</Text>
       ) : (
         lectures?.map((lecture, index) => (
           <Theme key={lecture.id} name={colors[index]}>

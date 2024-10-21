@@ -10,7 +10,7 @@ const IndividualModuleScreen = () => {
   const { id }: { id: string } = useLocalSearchParams()
 
   // Use the ID to query specific module data
-  const { data: module, isLoading } = useQuery(['module', id], {
+  const { data: chapter, isLoading } = useQuery(['chapter', id], {
     queryFn: async () => {
       if (!id) return null
       const { data, error } = await supabase.from('chapters').select('*').eq('id', id).single()
@@ -26,15 +26,15 @@ const IndividualModuleScreen = () => {
     return (
       <YStack padding="$4" alignItems="center">
         <Spinner size="small" />
-        <Text marginTop="$2">Loading module...</Text>
+        <Text marginTop="$2">Lade Kapitel...</Text>
       </YStack>
     )
   }
 
-  if (!module) {
+  if (!chapter) {
     return (
       <YStack padding="$4" alignItems="center">
-        <Text marginTop="$2">Module not found.</Text>
+        <Text marginTop="$2">Kapitel nicht gefunden.</Text>
       </YStack>
     )
   }
@@ -42,14 +42,14 @@ const IndividualModuleScreen = () => {
   return (
     <YStack padding="$4">
       <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
-        {module.name}
+        {chapter.title}
       </Text>
       <Text fontSize="$4" marginBottom="$2">
-        {module.description}
+        {chapter.description}
       </Text>
       <Separator />
       <Text fontSize="$5" marginBottom="$4" marginTop="$5">
-        Lectures
+        Lektion
       </Text>
       <ListOfLectures moduleId={id || ''} limit={5} />
     </YStack>
