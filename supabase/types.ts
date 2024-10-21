@@ -9,12 +9,45 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      app_events: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          event_type: string
+          id: number
+          profile_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          event_type: string
+          id?: number
+          profile_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          event_type?: string
+          id?: number
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_events_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       chapters: {
         Row: {
           created_at: string | null
           description: string | null
           id: number
           mode: Database["public"]["Enums"]["mode"]
+          sort_order: number
           title: string
         }
         Insert: {
@@ -22,6 +55,7 @@ export type Database = {
           description?: string | null
           id?: number
           mode: Database["public"]["Enums"]["mode"]
+          sort_order?: number
           title: string
         }
         Update: {
@@ -29,6 +63,7 @@ export type Database = {
           description?: string | null
           id?: number
           mode?: Database["public"]["Enums"]["mode"]
+          sort_order?: number
           title?: string
         }
         Relationships: []
@@ -62,35 +97,41 @@ export type Database = {
           },
         ]
       }
-      lecture_clicks: {
+      lecture_events: {
         Row: {
-          clicked_at: string | null
+          created_at: string | null
+          description: string | null
+          event_type: string
           id: number
-          lecture_id: number | null
-          profile_id: string | null
+          lecture_id: number
+          profile_id: string
         }
         Insert: {
-          clicked_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          event_type: string
           id?: number
-          lecture_id?: number | null
-          profile_id?: string | null
+          lecture_id: number
+          profile_id: string
         }
         Update: {
-          clicked_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          event_type?: string
           id?: number
-          lecture_id?: number | null
-          profile_id?: string | null
+          lecture_id?: number
+          profile_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "lecture_clicks_lecture_id_fkey"
+            foreignKeyName: "lecture_events_lecture_id_fkey"
             columns: ["lecture_id"]
             isOneToOne: false
             referencedRelation: "lectures"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "lecture_clicks_profile_id_fkey"
+            foreignKeyName: "lecture_events_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -104,6 +145,7 @@ export type Database = {
           content: string
           created_at: string | null
           id: number
+          sort_order: number
           title: string
         }
         Insert: {
@@ -111,6 +153,7 @@ export type Database = {
           content: string
           created_at?: string | null
           id?: number
+          sort_order?: number
           title: string
         }
         Update: {
@@ -118,6 +161,7 @@ export type Database = {
           content?: string
           created_at?: string | null
           id?: number
+          sort_order?: number
           title?: string
         }
         Relationships: [
