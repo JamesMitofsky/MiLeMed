@@ -7,7 +7,7 @@ const ViewModulesScreen = () => {
   return (
     <YStack padding="$4">
       <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
-        Modules
+        Kapitel
       </Text>
 
       <ScrollView snapToAlignment="start">

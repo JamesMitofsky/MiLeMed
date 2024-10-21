@@ -52,11 +52,11 @@ const ListOfModules = ({ limit }: ListOfModulesProps) => {
             <AchievementCard
               w={300}
               icon={Users}
-              title={project.name}
+              title={project.title}
               progress={{ current: 1, full: 1 }}
               action={{
                 text: 'Continue',
-                href: `/module/${project.id}`,
+                href: `/chapter/${project.id}`,
               }}
             />
           </Theme>

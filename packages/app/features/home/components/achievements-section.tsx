@@ -27,7 +27,7 @@ export const AchievementsSection = () => {
     <YStack>
       <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
         <H4 theme="alt1" fow="400">
-          Modules
+          Kapitel
         </H4>
         <Button
           theme="alt2"
@@ -38,7 +38,7 @@ export const AchievementsSection = () => {
             router.push('/modules')
           }}
         >
-          See all modules
+          Alle Kapitel ansehen
         </Button>
       </XStack>
 

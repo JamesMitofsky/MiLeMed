@@ -20,9 +20,9 @@ export const OverviewSection = () => {
       <ScrollAdapt itemWidth={180} withSnap>
         <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
           <OverviewCard
-            title="Modules Completed"
-            value="75 Modules"
-            badgeText="+5 Modules"
+            title="Kapitel abgeschlossen"
+            value="75 Kapitel"
+            badgeText="+5 Kapitel"
             badgeState="success"
           />
 
