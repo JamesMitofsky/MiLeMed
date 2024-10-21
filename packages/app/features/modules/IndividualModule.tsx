@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { YStack, Text, Spinner, Separator } from 'tamagui'
+import { YStack, Text, Spinner, Separator, ScrollView } from 'tamagui'
 
 import { supabase } from '../../utils/supabase/client.native'
 import ListOfLectures from '../home/components/list-of-lectures'
@@ -40,19 +40,22 @@ const IndividualModuleScreen = () => {
   }
 
   return (
-    <YStack padding="$4">
-      <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
-        {chapter.title}
-      </Text>
-      <Text fontSize="$4" marginBottom="$2">
-        {chapter.description}
-      </Text>
-      <Separator />
-      <Text fontSize="$5" marginBottom="$4" marginTop="$5">
-        Lektion
-      </Text>
-      <ListOfLectures moduleId={id || ''} limit={5} />
-    </YStack>
+    <ScrollView snapToAlignment="start">
+      <YStack padding="$4">
+        <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
+          {chapter.title}
+        </Text>
+        <Text fontSize="$4" marginBottom="$2">
+          {chapter.description}
+        </Text>
+        <Separator />
+        <Text fontSize="$5" marginBottom="$4" marginTop="$5">
+          Lektion
+        </Text>
+
+        <ListOfLectures moduleId={id || ''} limit={5} />
+      </YStack>
+    </ScrollView>
   )
 }
 

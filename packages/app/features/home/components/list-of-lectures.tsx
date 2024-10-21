@@ -46,22 +46,24 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
   return (
     <>
       {lectures?.length === 0 ? (
-        <Text>Keine Lektion gefunden.</Text>
+        <Text>Keine Lektionen gefunden.</Text>
       ) : (
-        lectures?.map((lecture, index) => (
-          <Theme key={lecture.id} name={colors[index]}>
-            <AchievementCard
-              w={300}
-              icon={Users}
-              title={lecture.title}
-              progress={{ current: 1, full: 1 }}
-              action={{
-                text: 'Continue',
-                href: `/lecture/${lecture.id}`,
-              }}
-            />
-          </Theme>
-        ))
+        <YStack px="$4" fw="wrap" f={1} gap="$3">
+          {lectures?.map((lecture, index) => (
+            <Theme key={lecture.id} name={colors[index]}>
+              <AchievementCard
+                w={300}
+                icon={Users}
+                title={lecture.title}
+                progress={{ current: 1, full: 1 }}
+                action={{
+                  text: 'Continue',
+                  href: `/lecture/${lecture.id}`,
+                }}
+              />
+            </Theme>
+          ))}
+        </YStack>
       )}
     </>
   )
