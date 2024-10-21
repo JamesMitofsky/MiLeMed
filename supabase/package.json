@@ -32,5 +32,8 @@
     "dotenv-cli": "^6.0.0",
     "pg": "^8.12.0",
     "supabase": "^1.99.0"
+  },
+  "dependencies": {
+    "react-native-markdown-display": "^7.0.2"
   }
 }

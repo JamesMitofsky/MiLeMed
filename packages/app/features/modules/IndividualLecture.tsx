@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { YStack, Text, Spinner } from 'tamagui'
+import Markdown from 'react-native-markdown-display'
+import { YStack, Text, Spinner, ScrollView, Button } from 'tamagui'
 
 import { supabase } from '../../utils/supabase/client.native'
 
@@ -25,7 +26,7 @@ const IndividualLecture = () => {
     return (
       <YStack padding="$4" alignItems="center">
         <Spinner size="small" />
-        <Text marginTop="$2">Loading lecture...</Text>
+        <Text marginTop="$2">Lade Vorlesung...</Text>
       </YStack>
     )
   }
@@ -33,20 +34,31 @@ const IndividualLecture = () => {
   if (!lecture) {
     return (
       <YStack padding="$4" alignItems="center">
-        <Text marginTop="$2">Lecture not found.</Text>
+        <Text marginTop="$2">Vorlesung nicht gefunden.</Text>
       </YStack>
     )
   }
 
   return (
-    <YStack padding="$4">
-      <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
-        {lecture.title}
-      </Text>
-      <Text fontSize="$4" marginBottom="$2">
-        {lecture.content}
-      </Text>
-    </YStack>
+    <ScrollView snapToAlignment="start">
+      <YStack padding="$4">
+        <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
+          {lecture.title}
+        </Text>
+        <Text fontSize="$4" marginBottom="$2">
+          <Markdown>{lecture.content}</Markdown>
+        </Text>
+        <Button
+          marginTop="$4"
+          themeInverse
+          onPress={() => {
+            /* Add your quiz navigation logic here */
+          }}
+        >
+          Bereit für das Quiz?!
+        </Button>
+      </YStack>
+    </ScrollView>
   )
 }
 
