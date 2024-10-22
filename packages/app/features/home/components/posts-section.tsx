@@ -1,20 +1,5 @@
-import {
-  Button,
-  FeedCard,
-  FullscreenSpinner,
-  H4,
-  Stack,
-  Text,
-  Theme,
-  View,
-  XStack,
-  isWeb,
-  useToastController,
-  validToken,
-} from '@my/ui'
-import { ArrowRight } from '@tamagui/lucide-icons'
-import usePostQuery from 'app/utils/react-query/usePostQuery'
-import { useEffect } from 'react'
+import { H4, Stack, Text, View, XStack, Card, isWeb, validToken, Button, TextArea } from '@my/ui'
+import { Info } from '@tamagui/lucide-icons'
 import { Platform } from 'react-native'
 
 const feedCardWidthMd = validToken(
@@ -25,12 +10,6 @@ const feedCardWidthMd = validToken(
 )
 
 export const PostsSection = () => {
-  const { data, isLoading, isError } = usePostQuery()
-  const toast = useToastController()
-  useEffect(() => {
-    isError && toast.show('Error loading lectures.')
-  }, [data, isLoading, isError])
-  if (isLoading) return <FullscreenSpinner />
   return (
     <View>
       <XStack
@@ -41,13 +20,8 @@ export const PostsSection = () => {
         marginBottom="$4"
       >
         <H4 theme="alt1" fontWeight="400">
-          Updates
+          Feedback
         </H4>
-        <Theme name="alt2">
-          <Button size="$2" chromeless iconAfter={ArrowRight}>
-            Alle updates
-          </Button>
-        </Theme>
       </XStack>
       <Stack
         maxWidth={1070}
@@ -60,41 +34,43 @@ export const PostsSection = () => {
           gap: '$4',
         }}
       >
-        {data?.length ? (
-          data.map((card, index) => (
-            <FeedCard
-              imageUrl={card.image_url}
-              key={`${card.title}-${index}`}
-              withImages
-              marginBottom="$3"
-              $gtMd={{ width: feedCardWidthMd, marginBottom: '1%', minWidth: '32.333%' }}
-              title={card.title}
-              description={`${card?.content?.substring(0, 150)}...`}
-              tag={card.tag}
-              authors={card.authors}
-              $platform-web={{ maxWidth: 300 }}
-              $platform-native={{ minWidth: '100%', maxWidth: '100%' }}
+        <Card
+          br="$3"
+          bordered
+          overflow="hidden"
+          padding="$4"
+          marginBottom="$3"
+          $gtMd={{ width: feedCardWidthMd, marginBottom: '1%', minWidth: '32.333%' }}
+        >
+          <View
+            flexDirection="column"
+            width={400}
+            maxWidth="100%"
+            gap="$1"
+            $sm={{
+              paddingVertical: '$3',
+            }}
+          >
+            <TextArea
+              id="feedback-content"
+              size="$3"
+              fontWeight="300"
+              height={180}
+              placeholder="Teilen Sie uns Ihr Feedback mit"
             />
-          ))
-        ) : (
-          <View marginHorizontal="$4" $gtSm={{ minWidth: '100%', marginBottom: '$4' }}>
-            <View
-              height={200}
-              maxWidth="100%"
-              minWidth="100%"
-              alignItems="center"
-              justifyContent="center"
-              flex={1}
-              backgroundColor="$gray1"
-              margin="$2"
-              $platform-native={{ margin: '$0', marginBottom: '$3' }}
-              marginLeft="$0"
-              borderRadius="$5"
-            >
-              <Text>No lectures created yet</Text>
+            <View flexDirection="row" theme="alt1" marginTop="$2.5" alignItems="center" gap="$2">
+              <Info size={15} />
+              <Text fontWeight="300" theme="alt2" fontSize="$2">
+                Wir freuen uns über Ihr Feedback zu Funktionen, die Sie lieben oder vermissen, oder
+                zu etwas, das Sie frustrierend finden.
+              </Text>
             </View>
+
+            <Button themeInverse marginTop="$3">
+              <Button.Text>Absenden</Button.Text>
+            </Button>
           </View>
-        )}
+        </Card>
       </Stack>
     </View>
   )
