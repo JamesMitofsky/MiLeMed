@@ -2,9 +2,8 @@ import { AchievementCard } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
+import { colors } from '../../../../constants/colors'
 import { supabase } from '../../../utils/supabase/client.native'
-
-const colors = ['orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red', 'gray'] as const
 
 type ListOfLecturesProps = {
   moduleId: string
