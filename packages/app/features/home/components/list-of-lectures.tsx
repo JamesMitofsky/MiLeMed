@@ -55,9 +55,8 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
                 w={300}
                 icon={Users}
                 title={lecture.title}
-                progress={{ current: 1, full: 1 }}
                 action={{
-                  text: 'Continue',
+                  text: 'Weiter',
                   href: `/lecture/${lecture.id}`,
                 }}
               />

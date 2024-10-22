@@ -8,7 +8,7 @@ import { Button, Card, CardProps, H4, Progress, SizableText, XStack, YStack } fr
 export type AchievementCardProps = {
   icon: React.FC<IconProps>
   title?: string
-  progress: {
+  progress?: {
     current: number
     full: number
     label?: string
@@ -37,26 +37,30 @@ export const AchievementCard = ({
             {title}
           </H4>
 
-          <XStack ai="center">
-            <SizableText size="$4" theme="alt1">
-              {progress.current}
-            </SizableText>
-            <SizableText size="$2" theme="alt1">
-              {' '}
-              / {progress.full} {progress.label}
-            </SizableText>
-          </XStack>
+          {progress && (
+            <XStack ai="center">
+              <SizableText size="$4" theme="alt1">
+                {progress.current}
+              </SizableText>
+              <SizableText size="$2" theme="alt1">
+                {' '}
+                / {progress.full} {progress.label}
+              </SizableText>
+            </XStack>
+          )}
 
-          <Progress
-            mt="$2"
-            theme="alt2"
-            value={(progress.current / progress.full) * 100}
-            bg="$color2"
-            boc="$color5"
-            bw={1}
-          >
-            <Progress.Indicator bc="$color7" animation="bouncy" />
-          </Progress>
+          {progress && (
+            <Progress
+              mt="$2"
+              theme="alt2"
+              value={(progress.current / progress.full) * 100}
+              bg="$color2"
+              boc="$color5"
+              bw={1}
+            >
+              <Progress.Indicator bc="$color7" animation="bouncy" />
+            </Progress>
+          )}
 
           {!!action && (
             <Button
