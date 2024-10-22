@@ -14,7 +14,7 @@ type ListOfChaptersProps = {
 const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
   const { data: chapters, isLoading } = useQuery(['chapters'], {
     queryFn: async () => {
-      let query = supabase.from('chapters').select('*')
+      let query = supabase.rpc('get_chapter_summary').select('*')
 
       if (typeof limit === 'number') {
         query = query.limit(limit)
@@ -47,16 +47,19 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
       {chapters?.length === 0 ? (
         <Text>Keine Kapitel gefunden.</Text>
       ) : (
-        chapters?.map((project, index) => (
-          <Theme key={project.id} name={colors[index]}>
+        chapters?.map((chapter, index) => (
+          <Theme key={chapter.id} name={colors[index]}>
             <AchievementCard
               w={300}
               icon={Users}
-              title={project.title}
-              progress={{ current: 1, full: 1 }}
+              title={chapter.title}
+              progress={{
+                current: chapter.lectures_completed,
+                full: chapter.lecture_count,
+              }}
               action={{
                 text: 'Weiter',
-                href: `/chapter/${project.id}`,
+                href: `/chapter/${chapter.id}`,
               }}
             />
           </Theme>
