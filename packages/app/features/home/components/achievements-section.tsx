@@ -1,24 +1,9 @@
-import { validToken, Button, H4, XStack, YStack } from '@my/ui'
+import { Button, H4, XStack, YStack } from '@my/ui'
 import { ArrowRight } from '@tamagui/lucide-icons'
-import { Platform } from 'react-native'
 import { useRouter } from 'solito/router'
 
 import ListOfChapters from './list-of-chapters'
 import { ScrollAdapt } from './scroll-adapt'
-
-const halfMinusSpace = validToken(
-  Platform.select({
-    web: 'calc(50% - 12px)',
-    native: '53%',
-  })
-)
-
-const quarterMinusSpace = validToken(
-  Platform.select({
-    web: 'calc(25% - 12px)',
-    native: '21%',
-  })
-)
 
 export const AchievementsSection = () => {
   const router = useRouter()

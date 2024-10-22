@@ -3,7 +3,7 @@ import { YStack, Text } from 'tamagui'
 
 import ListOfChapters from '../home/components/list-of-chapters'
 
-const ViewChapterssScreen = () => {
+const ViewChaptersScreen = () => {
   return (
     <YStack padding="$4">
       <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
@@ -19,4 +19,4 @@ const ViewChapterssScreen = () => {
   )
 }
 
-export default ViewChapterssScreen
+export default ViewChaptersScreen
