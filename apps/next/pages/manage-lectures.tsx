@@ -8,13 +8,15 @@ import {
   FullscreenSpinner,
   View,
   styled,
+  Button,
 } from '@my/ui'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
+import { useRouter } from 'next/navigation'
 
 import { NextPageWithLayout } from './_app'
-import useLecturesQuery from '../../../packages/app/utils/react-query/usePostQuery'
+import useLecturesQuery from '../../../packages/app/utils/react-query/useLecturesQuery'
 import { LecturesType } from '../../../packages/app/utils/supabase/databaseTypes'
 
 export const Page: NextPageWithLayout = () => {
@@ -67,6 +69,7 @@ const SizeableText = styled(Text, {
 })
 
 const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boolean }) => {
+  const router = useRouter()
   return (
     <View
       justifyContent="space-between"
@@ -80,14 +83,17 @@ const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boole
         alignItems: 'flex-start',
       }}
     >
-      <SizeableText
-        size="$6"
-        $xs={{
-          color: '$gray5',
-        }}
-      >
-        {lecture.title}
-      </SizeableText>
+      <XStack w="100%" justifyContent="space-between" alignItems="center">
+        <SizeableText
+          size="$6"
+          $xs={{
+            color: '$gray5',
+          }}
+        >
+          {lecture.title}
+        </SizeableText>
+        <Button onPress={() => router.push(`lecture/${lecture.id}`)}>Edit</Button>
+      </XStack>
       <SizeableText
         size="$4"
         color="$gray11"
