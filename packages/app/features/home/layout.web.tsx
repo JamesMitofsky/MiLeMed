@@ -11,10 +11,8 @@ import {
   XStack,
   YStack,
   getTokens,
-  useThemeName,
   validToken,
   useMedia,
-  isWeb,
 } from '@my/ui'
 import { CreateModal } from '@my/ui/src/components/CreateModal'
 import { Menu, Plus } from '@tamagui/lucide-icons'
@@ -63,10 +61,10 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
               </YStack>
             </MobileNavbar>
           </YStack>
-          <XStack ai="center" gap="$4" py="$3">
+          {/* <XStack ai="center" gap="$4" py="$3">
             <CtaButton />
             <ProfileButton />
-          </XStack>
+          </XStack> */}
         </XStack>
       </YStack>
 
