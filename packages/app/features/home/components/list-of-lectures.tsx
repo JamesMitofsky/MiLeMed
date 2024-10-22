@@ -2,8 +2,8 @@ import { AchievementCard } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
-import { colors } from '../../../../constants/colors'
-import { supabase } from '../../../utils/supabase/client.native'
+import { colors } from '../../../utils/constants/colors'
+import { useSupabase } from '../../../utils/supabase/useSupabase'
 
 type ListOfLecturesProps = {
   moduleId: string
@@ -11,6 +11,7 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
+  const supabase = useSupabase()
   const { data: lectures, isLoading } = useQuery(['lectures'], {
     queryFn: async () => {
       let query = supabase.from('lectures').select('*').eq('chapter_id', moduleId)

@@ -3,9 +3,10 @@ import { ArrowRight } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 
 import { ScrollAdapt } from './scroll-adapt'
-import { supabase } from '../../../utils/supabase/client.native'
+import { useSupabase } from '../../../utils/supabase/useSupabase'
 
 export const OverviewSection = () => {
+  const supabase = useSupabase()
   /**
    * Query 1: Count of Completed Lectures
    * A lecture is considered completed if there exists at least one

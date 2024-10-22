@@ -2,14 +2,15 @@ import { AchievementCard } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
-import { colors } from '../../../../constants/colors'
-import { supabase } from '../../../utils/supabase/client.native'
+import { colors } from '../../../utils/constants/colors'
+import { useSupabase } from '../../../utils/supabase/useSupabase'
 
 type ListOfChaptersProps = {
   limit?: number
 }
 
 const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
+  const supabase = useSupabase()
   const { data: chapters, isLoading } = useQuery(['chapters'], {
     queryFn: async () => {
       let query = supabase.rpc('get_chapter_summary').select('*')
