@@ -1,5 +1,4 @@
 import { AchievementCard } from '@my/ui'
-import { Users } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
@@ -51,7 +50,7 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
           <Theme key={chapter.id} name={colors[index]}>
             <AchievementCard
               w={300}
-              icon={Users}
+              // icon={Users}
               title={chapter.title}
               progress={{
                 current: chapter.lectures_completed || 0,

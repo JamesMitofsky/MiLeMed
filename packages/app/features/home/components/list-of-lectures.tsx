@@ -1,5 +1,4 @@
 import { AchievementCard } from '@my/ui'
-import { Users } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme } from 'tamagui'
 
@@ -53,7 +52,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
             <Theme key={lecture.id} name={colors[index]}>
               <AchievementCard
                 w={300}
-                icon={Users}
+                // icon={Users}
                 title={lecture.title}
                 action={{
                   text: 'Weiter',
