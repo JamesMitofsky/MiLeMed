@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-const getPosts = async (supabase) => {
-  return supabase.from('lectures').select('*').order('created_at', { ascending: false }).limit(4)
+const getLectures = async (supabase) => {
+  return supabase.from('lectures').select('*').order('sort_order', { ascending: false })
 }
 
 function useLecturesQuery() {
@@ -11,7 +11,7 @@ function useLecturesQuery() {
   const queryKey = ['lectures']
 
   const queryFn = async () => {
-    return getPosts(supabase).then((result) => result.data)
+    return getLectures(supabase).then((result) => result.data)
   }
 
   return useQuery({ queryKey, queryFn })
