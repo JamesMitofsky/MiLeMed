@@ -54,7 +54,7 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
               icon={Users}
               title={chapter.title}
               progress={{
-                current: chapter.lectures_completed,
+                current: chapter.lectures_completed || 0,
                 full: chapter.lecture_count,
               }}
               action={{
