@@ -1,4 +1,4 @@
-import IndividualModule from 'app/features/modules/IndividualModule'
+import IndividualModule from '@my/app/features/chapters/IndividualModule'
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

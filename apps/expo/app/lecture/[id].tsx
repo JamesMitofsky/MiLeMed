@@ -1,4 +1,4 @@
-import IndividualLecture from 'app/features/modules/IndividualLecture'
+import IndividualLecture from '@my/app/features/chapters/IndividualLecture'
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 

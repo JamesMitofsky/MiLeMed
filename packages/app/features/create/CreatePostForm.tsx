@@ -30,7 +30,7 @@ export const CreatePostForm = () => {
   const { profile, user } = useUser()
   const supabase = useSupabase()
 
-  const { data: modules } = useQuery(['chapters'], {
+  const { data: chapters } = useQuery(['chapters'], {
     queryFn: async () => {
       const { data, error } = await supabase.from('chapters').select('*')
 
@@ -74,6 +74,7 @@ export const CreatePostForm = () => {
     },
     async mutationFn(data: z.infer<typeof CreatePostSchema>) {
       console.log('here data', data)
+      //TODO add back in the code for insert
       // const imageUrl = await uploadImageAndGetUrl(
       //   data.image_url as {
       //     fileURL: string
@@ -82,19 +83,19 @@ export const CreatePostForm = () => {
       // )
 
       // Insert post with the image URL
-      const { data: insertData, error } = await supabase.from('lectures').insert({
-        title: data.title,
-        content: data.content,
-        chapter_id: data.chapter_id,
-        // image_url: imageUrl,
-        profile_id: user?.id,
-      })
+      // const { data: insertData, error } = await supabase.from('lectures').insert({
+      //   title: data.title,
+      //   content: data.content,
+      //   chapter_id: data.chapter_id,
+      //   // image_url: imageUrl,
+      //   profile_id: user?.id,
+      // })
 
-      if (error) {
-        console.error('Insert error:', error)
-      } else {
-        console.log('Insert success:', insertData)
-      }
+      // if (error) {
+      //   console.error('Insert error:', error)
+      // } else {
+      //   console.log('Insert success:', insertData)
+      // }
     },
 
     async onSuccess() {
@@ -126,10 +127,11 @@ export const CreatePostForm = () => {
           chapter_id: {
             placeholder: 'Choose a module',
             options:
-              modules?.map(({ name, id }) => ({
-                name,
-                value: id,
-              })) || [],
+              // chapters?.map(({ title, id }) => ({
+              //   name: title,
+              //   value: id,
+              // })) ||
+              [],
           },
         }}
         renderAfter={({ submit }) => (

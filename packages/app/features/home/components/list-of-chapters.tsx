@@ -7,12 +7,12 @@ import { supabase } from '../../../utils/supabase/client.native'
 
 const colors = ['orange', 'yellow', 'green', 'blue', 'purple', 'pink', 'red', 'gray'] as const
 
-type ListOfModulesProps = {
+type ListOfChaptersProps = {
   limit?: number
 }
 
-const ListOfModules = ({ limit }: ListOfModulesProps) => {
-  const { data: modules, isLoading } = useQuery(['chapters'], {
+const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
+  const { data: chapters, isLoading } = useQuery(['chapters'], {
     queryFn: async () => {
       let query = supabase.from('chapters').select('*')
 
@@ -37,17 +37,17 @@ const ListOfModules = ({ limit }: ListOfModulesProps) => {
     return (
       <YStack padding="$4" alignItems="center">
         <Spinner size="small" />
-        <Text marginTop="$2">Loading modules...</Text>
+        <Text marginTop="$2">Lade Kapitel...</Text>
       </YStack>
     )
   }
 
   return (
     <>
-      {modules?.length === 0 ? (
-        <Text>No modules found.</Text>
+      {chapters?.length === 0 ? (
+        <Text>Keine Kapitel gefunden.</Text>
       ) : (
-        modules?.map((project, index) => (
+        chapters?.map((project, index) => (
           <Theme key={project.id} name={colors[index]}>
             <AchievementCard
               w={300}
@@ -55,7 +55,7 @@ const ListOfModules = ({ limit }: ListOfModulesProps) => {
               title={project.title}
               progress={{ current: 1, full: 1 }}
               action={{
-                text: 'Continue',
+                text: 'Weiter',
                 href: `/chapter/${project.id}`,
               }}
             />
@@ -66,4 +66,4 @@ const ListOfModules = ({ limit }: ListOfModulesProps) => {
   )
 }
 
-export default ListOfModules
+export default ListOfChapters

@@ -3,7 +3,7 @@ import { ArrowRight } from '@tamagui/lucide-icons'
 import { Platform } from 'react-native'
 import { useRouter } from 'solito/router'
 
-import ListOfModules from './list-of-modules'
+import ListOfChapters from './list-of-chapters'
 import { ScrollAdapt } from './scroll-adapt'
 
 const halfMinusSpace = validToken(
@@ -35,7 +35,7 @@ export const AchievementsSection = () => {
           chromeless
           iconAfter={ArrowRight}
           onPress={() => {
-            router.push('/modules')
+            router.push('/chapters')
           }}
         >
           Alle Kapitel ansehen
@@ -44,7 +44,7 @@ export const AchievementsSection = () => {
 
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
-          <ListOfModules limit={4} />
+          <ListOfChapters limit={4} />
         </XStack>
       </ScrollAdapt>
     </YStack>

@@ -1,4 +1,4 @@
-import ViewModulesScreen from 'app/features/modules/ViewModulesScreen'
+import ViewChapterssScreen from '@my/app/features/chapters/ViewChaptersScreen'
 import { Stack } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -7,7 +7,7 @@ export default function Screen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: 'About' }} />
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
-        <ViewModulesScreen />
+        <ViewChapterssScreen />
       </SafeAreaView>
     </>
   )
