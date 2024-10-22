@@ -45,7 +45,7 @@ export const PostsSection = () => {
         </H4>
         <Theme name="alt2">
           <Button size="$2" chromeless iconAfter={ArrowRight}>
-            View All
+            Alle updates
           </Button>
         </Theme>
       </XStack>
