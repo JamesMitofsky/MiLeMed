@@ -6,7 +6,7 @@ const getPosts = async (supabase) => {
   return supabase.from('lectures').select('*').order('created_at', { ascending: false }).limit(4)
 }
 
-function usePostQuery() {
+function useLecturesQuery() {
   const supabase = useSupabase()
   const queryKey = ['lectures']
 
@@ -17,4 +17,4 @@ function usePostQuery() {
   return useQuery({ queryKey, queryFn })
 }
 
-export default usePostQuery
+export default useLecturesQuery
