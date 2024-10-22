@@ -13,6 +13,9 @@ import { useRouter as useNextRouter } from 'next/router'
 import { useState } from 'react'
 import { useRouter } from 'solito/router'
 
+import { UserRoleEnum } from '../../../types/userRoleEnum'
+import { useUser } from '../../../utils/useUser'
+
 /**
  * this component is web-only
  */
@@ -37,6 +40,8 @@ export const NavTabs = (props: TabsProps) => {
       setIntentIndicator(layout)
     }
   }
+
+  const user = useUser()
 
   return (
     <Tabs
@@ -95,6 +100,16 @@ export const NavTabs = (props: TabsProps) => {
         <Tab value="/" onInteraction={handleOnInteraction}>
           Home
         </Tab>
+        {user.profile?.role === UserRoleEnum.ADMIN && (
+          <>
+            <Tab value="/dashboard" onInteraction={handleOnInteraction}>
+              Dashboard
+            </Tab>
+            <Tab value="/manage-lectures" onInteraction={handleOnInteraction}>
+              Manage Lectures
+            </Tab>
+          </>
+        )}
         <Tab value="/settings" onInteraction={handleOnInteraction}>
           Settings
         </Tab>
