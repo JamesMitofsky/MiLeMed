@@ -333,19 +333,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_chapter_completion_data: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          chapter_id: number
-          chapter_title: string
-          description: string
-          created_at: string
-          mode: Database["public"]["Enums"]["mode"]
-          sort_order: number
-          total_lectures: number
-          completed_or_skipped_lectures: number
-        }[]
-      }
       get_chapter_summary: {
         Args: Record<PropertyKey, never>
         Returns: {
