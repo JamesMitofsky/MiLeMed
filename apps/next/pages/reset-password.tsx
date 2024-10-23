@@ -1,18 +1,19 @@
 import { AuthLayout } from 'app/features/auth/layout.web'
-import { ResetPasswordScreen } from 'app/features/auth/reset-password-screen'
+import { ChangePasswordScreen } from 'app/features/settings/change-password-screen'
 import Head from 'next/head'
+import type { NextPageWithLayout } from 'pages/_app'
 
-import { NextPageWithLayout } from './_app'
+const Page: NextPageWithLayout = () => {
+  return (
+    <>
+      <Head>
+        <title>Change Password</title>
+      </Head>
+      <ChangePasswordScreen />
+    </>
+  )
+}
 
-const Page: NextPageWithLayout = () => (
-  <>
-    <Head>
-      <title>Reset Password</title>
-    </Head>
-    <ResetPasswordScreen />
-  </>
-)
-
-Page.getLayout = (children) => <AuthLayout>{children}</AuthLayout>
+Page.getLayout = (page) => <AuthLayout>{page}</AuthLayout>
 
 export default Page
