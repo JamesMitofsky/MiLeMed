@@ -1,15 +1,14 @@
-import { createPagesServerClient } from '@supabase/auth-helpers-nextjs'
-import { EmailOtpType } from '@supabase/supabase-js'
+import { createClient, EmailOtpType } from '@supabase/supabase-js'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 import { Database } from '../../../../supabase/types'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const supabaseServerClient = createPagesServerClient<Database>({
-    req,
-    res,
-  })
+const supabase = createClient<Database>(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'GET') {
     const { token_hash, type } = req.query
 
@@ -18,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-      const { error } = await supabaseServerClient.auth.verifyOtp({
+      const { error } = await supabase.auth.verifyOtp({
         type: type as EmailOtpType, // Type narrowing for the type (EmailOtpType)
         token_hash,
       })
