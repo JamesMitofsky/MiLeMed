@@ -7383,6 +7383,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@supabase/auth-helpers-react@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@supabase/auth-helpers-react@npm:0.5.0"
+  peerDependencies:
+    "@supabase/supabase-js": ^2.39.8
+  checksum: 10/465ae1d5de923a49447becbf1bdde2f2f22ef0498d829a2b5e74e039273107a3b167f8f52ee17222718f5ba1804879d2e9f946d9b49b0eb9b8f73c77ed7f4726
+  languageName: node
+  linkType: hard
+
 "@supabase/auth-helpers-shared@npm:0.6.3":
   version: 0.6.3
   resolution: "@supabase/auth-helpers-shared@npm:0.6.3"
@@ -22022,7 +22031,7 @@ __metadata:
     "@next/bundle-analyzer": "npm:^13.5.6"
     "@next/eslint-plugin-next": "npm:^14.0.4"
     "@supabase/auth-helpers-nextjs": "npm:^0.9.0"
-    "@supabase/auth-helpers-react": "npm:^0.4.2"
+    "@supabase/auth-helpers-react": "npm:^0.5.0"
     "@supabase/supabase-js": "npm:^2.39.3"
     "@tamagui/next-plugin": "npm:^1.116.1"
     "@tamagui/next-theme": "npm:^1.116.1"
