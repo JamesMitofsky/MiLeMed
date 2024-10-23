@@ -32,9 +32,12 @@ function MyApp({
   return (
     <>
       <Head>
-        <title>Tamagui Universal App</title>
-        <meta name="description" content="Tamagui Universal Starter" />
-        <link rel="icon" href="/favicon.svg" />
+        <title>MiLeMed</title>
+        <meta
+          name="description"
+          content="MiLeMed ist eine Mikro-Lernplattform für die medizinische Ausbildung. Sie bietet kurze Vorlesungen und Quizze, die Studierenden und Fachleuten helfen, ihr Wissen in verschiedenen medizinischen Fachgebieten zu vertiefen. Mit einem Fokus auf interaktives Lernen macht MiLeMed komplexe Themen zugänglicher und bietet flexible, mobile Bildung für vielbeschäftigte Lernende."
+        />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <NextThemeProvider
         onChangeTheme={(next) => {
