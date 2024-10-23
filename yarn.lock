@@ -7442,6 +7442,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@supabase/ssr@npm:^0.5.1":
+  version: 0.5.1
+  resolution: "@supabase/ssr@npm:0.5.1"
+  dependencies:
+    cookie: "npm:^0.6.0"
+  peerDependencies:
+    "@supabase/supabase-js": ^2.43.4
+  checksum: 10/04fe6e0f76464d2017f6f8ee2d8bd81fffceb390276af48f368c04af7346a61f54b31aa8f49e53f33b7f329fcd01382b4d6b2460c83a8639d0f4f9daab1b38a4
+  languageName: node
+  linkType: hard
+
 "@supabase/storage-js@npm:2.6.0":
   version: 2.6.0
   resolution: "@supabase/storage-js@npm:2.6.0"
@@ -22023,6 +22034,7 @@ __metadata:
     "@next/eslint-plugin-next": "npm:^14.0.4"
     "@supabase/auth-helpers-nextjs": "npm:^0.9.0"
     "@supabase/auth-helpers-react": "npm:^0.4.2"
+    "@supabase/ssr": "npm:^0.5.1"
     "@supabase/supabase-js": "npm:^2.39.3"
     "@tamagui/next-plugin": "npm:^1.116.1"
     "@tamagui/next-theme": "npm:^1.116.1"

@@ -1,41 +1,57 @@
-import { createClient, EmailOtpType } from '@supabase/supabase-js'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { createServerClient } from '@supabase/ssr'
+import { type EmailOtpType } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 
-import { Database } from '../../../../supabase/types'
+// Followed these docs for server side: https://supabase.com/docs/guides/auth/server-side/creating-a-client?queryGroups=framework&framework=nextjs&queryGroups=environment&environment=server
+export function createClient() {
+  const cookieStore = cookies()
 
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    const { token_hash, type } = req.query
-
-    if (typeof token_hash !== 'string' || typeof type !== 'string') {
-      return res.status(400).json({ error: 'Invalid token or type' })
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll()
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            )
+          } catch {
+            // The `setAll` method was called from a Server Component.
+            // This can be ignored if you have middleware refreshing
+            // user sessions.
+          }
+        },
+      },
     }
+  )
+}
 
-    try {
-      const { error } = await supabase.auth.verifyOtp({
-        type: type as EmailOtpType, // Type narrowing for the type (EmailOtpType)
-        token_hash,
-      })
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url)
+  const token_hash = searchParams.get('token_hash')
+  const type = searchParams.get('type') as EmailOtpType | null
+  const next = searchParams.get('next') ?? '/'
+  const redirectTo = request.nextUrl.clone()
+  redirectTo.pathname = next
 
-      if (error) {
-        console.error('OTP verification error:', error)
-        return res.status(400).json({ error: error.message })
-      }
+  if (token_hash && type) {
+    const supabase = createClient()
 
-      // Redirect user or respond with success
-      return res.redirect(302, '/reset-password')
-    } catch (err) {
-      console.error('Error during verification:', err)
-      return res.status(500).json({ error: 'Internal server error' })
+    const { error } = await supabase.auth.verifyOtp({
+      type,
+      token_hash,
+    })
+    if (!error) {
+      return NextResponse.redirect(redirectTo)
     }
-  } else {
-    // Method not allowed
-    res.setHeader('Allow', ['GET'])
-    res.status(405).end(`Method ${req.method} Not Allowed`)
   }
+
+  // return the user to an error page with some instructions
+  redirectTo.pathname = '/auth/auth-code-error'
+  return NextResponse.redirect(redirectTo)
 }
