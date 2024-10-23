@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
 
       // Redirect user or respond with success
-      return res.status(200).json({ message: 'OTP verified successfully' })
+      return res.redirect(302, '/reset-password')
     } catch (err) {
       console.error('Error during verification:', err)
       return res.status(500).json({ error: 'Internal server error' })
