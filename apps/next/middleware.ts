@@ -5,9 +5,9 @@ import type { NextRequest } from 'next/server'
 // by default, all routes are protected
 
 // put the public routes here - these will be accessed by both guests and users
-const publicRoutes = ['/terms-of-service', '/privacy-policy']
+const publicRoutes = ['/terms-of-service', '/privacy-policy', '/reset-password']
 // put the authentication routes here - these will only be accessed by guests
-const authRoutes = ['/sign-in', '/sign-up', '/request-password-reset', '/reset-password']
+const authRoutes = ['/sign-in', '/sign-up', '/request-password-reset']
 
 export async function middleware(req: NextRequest) {
   // we need to create a response and hand it to the supabase client to be able to modify the response headers.
