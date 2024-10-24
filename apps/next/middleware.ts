@@ -27,7 +27,9 @@ export async function middleware(req: NextRequest) {
   if (user && isAuthRoute) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/'
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(redirectUrl, {
+      headers: res.headers,
+    })
   }
   // show auth routes for guests
   if (!user && isAuthRoute) {
