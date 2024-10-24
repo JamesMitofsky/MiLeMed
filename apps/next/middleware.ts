@@ -34,11 +34,16 @@ export async function middleware(req: NextRequest) {
     return res
   }
   // restrict the user if trying to access protected routes
+  console.log('User:', user)
+  console.log('Requested URL:', req.nextUrl.pathname)
+  console.log('Is Auth Route:', isAuthRoute)
   if (!user) {
     console.log(`User not logged in. Attempted to access: ${req.nextUrl.pathname}`)
+    // redirectUrl.searchParams.set(`redirected_from`, req.nextUrl.pathname)
+
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/sign-in'
-    // redirectUrl.searchParams.set(`redirected_from`, req.nextUrl.pathname)
+    res.headers.set('location', redirectUrl.toString())
     return NextResponse.redirect(redirectUrl)
   }
   // show the protected page to logged in route
