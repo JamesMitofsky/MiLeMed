@@ -1,12 +1,9 @@
 -- Create Enums
-DO $$ BEGIN
-   IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'gender') THEN
-      CREATE TYPE gender AS ENUM ('MALE', 'FEMALE', 'OTHER');
-   END IF;
-END $$;
+CREATE TYPE gender AS ENUM ('MALE', 'FEMALE', 'OTHER');
+CREATE TYPE user_role AS ENUM ('ADMIN', 'MEDICAL_PROFESSIONAL', 'STUDENT', 'STUDENT_TESTER');
 
 -- Create Tables
-CREATE TABLE IF NOT EXISTS public.profiles (
+CREATE TABLE profiles (
     id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,  -- Primary key defined inline
     avatar_url TEXT,
     name TEXT,
@@ -14,72 +11,45 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     age INTEGER,
     gender gender,
     semester_number INTEGER,
-    role TEXT DEFAULT 'user' NOT NULL
+    role user_role,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Enable Row-Level Security (This doesn't have an IF NOT EXISTS equivalent, but you can run it safely)
-ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Create Policies
-DO $$ BEGIN
-   IF NOT EXISTS (SELECT 1 FROM information_schema.policies 
-                  WHERE policy_name = 'Public profiles are viewable by everyone.'
-                  AND table_name = 'profiles') THEN
-      CREATE POLICY "Public profiles are viewable by everyone."
-      ON public.profiles FOR SELECT
-      USING (true);
-   END IF;
-END $$;
+CREATE POLICY "Public profiles are viewable by everyone."
+  ON profiles FOR SELECT
+  USING ( true );
 
--- Uncomment this if profiles should be private:
--- DO $$ BEGIN
---    IF NOT EXISTS (SELECT 1 FROM information_schema.policies 
---                   WHERE policy_name = 'Profiles are viewable by users who created them.'
---                   AND table_name = 'profiles') THEN
---       CREATE POLICY "Profiles are viewable by users who created them."
---       ON public.profiles FOR SELECT
---       USING (auth.uid() = id);
---    END IF;
--- END $$;
+-- the policy above could be replaced by this if profiles are private:
 
-DO $$ BEGIN
-   IF NOT EXISTS (SELECT 1 FROM information_schema.policies 
-                  WHERE policy_name = 'Users can insert their own profile.'
-                  AND table_name = 'profiles') THEN
-      CREATE POLICY "Users can insert their own profile."
-      ON public.profiles FOR INSERT
-      WITH CHECK (auth.uid() = id);
-   END IF;
-END $$;
+-- CREATE POLICY "Profiles are viewable by users who created them."
+-- ON profiles FOR SELECT
+-- USING ( auth.uid() = id );
 
-DO $$ BEGIN
-   IF NOT EXISTS (SELECT 1 FROM information_schema.policies 
-                  WHERE policy_name = 'Users can update own profile.'
-                  AND table_name = 'profiles') THEN
-      CREATE POLICY "Users can update own profile."
-      ON public.profiles FOR UPDATE
-      USING (auth.uid() = id);
-   END IF;
-END $$;
+CREATE POLICY "Users can insert their own profile."
+  ON profiles FOR INSERT
+  WITH CHECK ( auth.uid() = id );
 
--- Inserts a row into public.profiles when a user is created
-DO $$ BEGIN
-   IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'on_auth_user_created') THEN
-      CREATE FUNCTION public.handle_new_user()
-      RETURNS trigger
-      LANGUAGE plpgsql
-      SECURITY DEFINER SET search_path = public
-      AS $$
-      BEGIN
-         INSERT INTO public.profiles (id, name, avatar_url, about, age, gender, semester_number, role)
-         VALUES (NEW.id, NULL, NULL, NULL, NULL, NULL, NULL, 'user');
-         RETURN NEW;
-      END;
-      $$;
-   
-      -- Trigger the function every time a user is created
-      CREATE TRIGGER on_auth_user_created
-      AFTER INSERT ON auth.users
-      FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
-   END IF;
-END $$;
+CREATE POLICY "Users can update own profile."
+  ON profiles FOR UPDATE
+  USING ( auth.uid() = id );
+
+-- inserts a row into profiles
+CREATE FUNCTION handle_new_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = public
+AS $$
+BEGIN
+  INSERT INTO profiles (id)
+  VALUES (NEW.id);
+  RETURN NEW;
+END;
+$$;
+
+-- trigger the function every time a user is created
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE handle_new_user();

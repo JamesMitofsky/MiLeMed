@@ -1,4 +1,4 @@
-create policy "Give users access to own folder 1oj01fe_0"
+create policy "Give users access to own folder"
 on "storage"."objects"
 as permissive
 for select
@@ -6,7 +6,7 @@ to public
 using (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])));
 
 
-create policy "Give users access to own folder 1oj01fe_1"
+create policy "Give users access to own folder"
 on "storage"."objects"
 as permissive
 for insert
@@ -14,7 +14,7 @@ to public
 with check (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])));
 
 
-create policy "Give users access to own folder 1oj01fe_2"
+create policy "Give users access to own folder"
 on "storage"."objects"
 as permissive
 for delete
@@ -22,7 +22,7 @@ to public
 using (((bucket_id = 'avatars'::text) AND ((auth.uid())::text = (storage.foldername(name))[1])));
 
 
-create policy "Give users access to own folder 1oj01fe_3"
+create policy "Give users access to own folder"
 on "storage"."objects"
 as permissive
 for update
