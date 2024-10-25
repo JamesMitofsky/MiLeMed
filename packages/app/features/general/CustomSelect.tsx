@@ -14,7 +14,7 @@ type CustomSelectProps = SelectProps & {
 export function CustomSelect({ placeholder, items, value, onChange, ...props }: CustomSelectProps) {
   return (
     <Select value={value} onValueChange={onChange} disablePreventBodyScroll {...props}>
-      <Select.Trigger width={220} iconAfter={ChevronDown}>
+      <Select.Trigger iconAfter={ChevronDown}>
         <Select.Value placeholder={placeholder} />
       </Select.Trigger>
 
