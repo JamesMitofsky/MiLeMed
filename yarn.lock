@@ -9670,6 +9670,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/canvas-confetti@npm:^1.6.4":
+  version: 1.6.4
+  resolution: "@types/canvas-confetti@npm:1.6.4"
+  checksum: 10/8573c61a78987abd24e7cd2483b94ba8f3ed014e736890b4d23861b21d6e1ce1cda9ca6608bc5e06988a7ac5bc58fbd55d3fb3d4b5647763f18d6c323a2d5acc
+  languageName: node
+  linkType: hard
+
 "@types/connect@npm:*":
   version: 3.4.38
   resolution: "@types/connect@npm:3.4.38"
@@ -11595,6 +11602,7 @@ __metadata:
     expo-linking: "npm:~6.3.1"
     expo-secure-store: "npm:~13.0.2"
     i18next: "npm:^23.16.4"
+    react-canvas-confetti: "npm:^2.0.7"
     react-dropzone: "npm:^14.2.3"
     react-hook-form: "npm:^7.46.1"
     react-native: "npm:0.74.1"
@@ -12922,6 +12930,13 @@ __metadata:
   version: 1.0.30001638
   resolution: "caniuse-lite@npm:1.0.30001638"
   checksum: 10/f30c80a5a33e659c990909046d5299af1584441059785460b012d10a58f0885da25fde08ab655ed0cf76b2695d0b3a32c41875bb9b7a730b34f992ec2512d430
+  languageName: node
+  linkType: hard
+
+"canvas-confetti@npm:^1.9.2":
+  version: 1.9.3
+  resolution: "canvas-confetti@npm:1.9.3"
+  checksum: 10/50378c45a10030f0e6c5d2e93972d6e01170dd197b74ef150dcc2ef0166c8e3eb600ea0e930cf923143be6ae4c7ff15ccf74fb6c347a177e6aa4de966afcb610
   languageName: node
   linkType: hard
 
@@ -25152,6 +25167,18 @@ __metadata:
   bin:
     rc: ./cli.js
   checksum: 10/5c4d72ae7eec44357171585938c85ce066da8ca79146b5635baf3d55d74584c92575fa4e2c9eac03efbed3b46a0b2e7c30634c012b4b4fa40d654353d3c163eb
+  languageName: node
+  linkType: hard
+
+"react-canvas-confetti@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "react-canvas-confetti@npm:2.0.7"
+  dependencies:
+    "@types/canvas-confetti": "npm:^1.6.4"
+    canvas-confetti: "npm:^1.9.2"
+  peerDependencies:
+    react: "*"
+  checksum: 10/4b4d23f3c718bc3e3e9a6ffb88eb81194550908e6122810fed7c8cd67dfb5f02067b03bce8f9cdf9c27e5eb4978c46ffb071be0eebaa2ac6860820bb930460de
   languageName: node
   linkType: hard
 

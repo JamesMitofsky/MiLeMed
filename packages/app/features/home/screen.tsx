@@ -12,7 +12,9 @@ import {
   SizableText,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
+import ReactCanvasConfetti from 'react-canvas-confetti'
+import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
 import { useForm, Controller } from 'react-hook-form'
 import { Progress } from 'tamagui'
 
@@ -75,6 +77,20 @@ export function HomeScreen() {
   const { profile, isLoadingProfile, updateProfile } = useUser()
   const toast = useToastController()
 
+  const instance = useRef<TCanvasConfettiInstance>()
+
+  const onInitHandler = ({ confetti }: { confetti: TCanvasConfettiInstance }) =>
+    (instance.current = confetti)
+
+  const onShootHandler = useCallback(() => {
+    instance.current?.({
+      particleCount: 170,
+      spread: 120,
+      origin: { x: 0.57, y: 0.4 },
+      ticks: 250,
+    })
+  }, [])
+
   const onSubmit = async (data) => {
     const { data: responseData, error } = await supabase
       .from('profiles')
@@ -82,9 +98,10 @@ export function HomeScreen() {
       .eq('id', profile?.id)
     if (error) toast.show('Something went wrong with the update')
     else {
+      onShootHandler()
       updateProfile()
       console.log('successfully updated user', responseData)
-      toast.show('Profile updated successfully')
+      // toast.show('Profile updated successfully')
     }
   }
 
@@ -103,6 +120,7 @@ export function HomeScreen() {
 
   return (
     <XStack maw={1480} als="center" f={1}>
+      <ReactCanvasConfetti onInit={onInitHandler} />
       <ScrollView f={4} fb={0}>
         <YStack gap="$4" p="$10">
           {profile?.role ? (
