@@ -1,117 +1,160 @@
-import { ScrollView, XStack, YStack } from '@my/ui'
-import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
+import {
+  ScrollView,
+  XStack,
+  YStack,
+  Input,
+  Button,
+  Text,
+  H1,
+  useToastController,
+  FullscreenSpinner,
+  SizableText,
+} from '@my/ui'
+import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useForm, Controller } from 'react-hook-form'
 
-import { AchievementsSection } from './components/achievements-section'
-import { OverviewSection } from './components/overview-section'
-import { PostsSection } from './components/posts-section'
+import { UserRoleEnum } from '../../types/userRoleEnum'
+import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
+import { useUser } from '../../utils/useUser'
+import { CustomSelect } from '../general/CustomSelect'
+
+type ProfileFormType = Pick<ProfilesType, 'name' | 'gender' | 'age' | 'semester_number' | 'role'>
+
+interface RoleOption {
+  label: string
+  value: UserRoleEnum
+}
+
+const roleOptions: RoleOption[] = [
+  { label: 'Medizinischer Fachmann / Administrator', value: UserRoleEnum.MEDICAL_PROFESSIONAL },
+  { label: 'Student', value: UserRoleEnum.STUDENT_TESTER },
+]
+
+interface GenderOption {
+  label: string
+  value: GenderType
+}
+const genderOptions: GenderOption[] = [
+  { label: 'Weiblich', value: 'FEMALE' },
+  { label: 'Männlich', value: 'MALE' },
+  { label: 'Divers', value: 'OTHER' },
+]
 
 export function HomeScreen() {
+  const supabase = useSupabaseClient()
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ProfileFormType>({
+    defaultValues: {
+      name: '',
+      age: undefined,
+      gender: undefined,
+      semester_number: undefined,
+    },
+  })
+  const { profile, isLoadingProfile } = useUser()
+  const toast = useToastController()
+
+  const onSubmit = async (data) => {
+    const { data: responseData, error } = await supabase
+      .from('profiles')
+      .update(data)
+      .eq('id', profile?.id)
+
+    if (error) toast.show('Something went wrong with the update')
+    else {
+      console.log('successfully updated user', responseData)
+      toast.show('Profile updated successfully')
+    }
+  }
+
+  if (isLoadingProfile) {
+    return <FullscreenSpinner />
+  }
+
   return (
     <XStack maw={1480} als="center" f={1}>
       <ScrollView f={4} fb={0}>
-        <ScrollToTopTabBarContainer>
-          {/* <Greetings /> */}
-          <YStack gap="$7" pb="$10" pt="$5">
-            <AchievementsSection />
-            <OverviewSection />
-            <PostsSection />
-          </YStack>
-        </ScrollToTopTabBarContainer>
+        <YStack gap="$4" p="$10">
+          {profile?.role ? (
+            // If the role is already set, show confirmation message
+            <YStack p="$10" gap="$6" justifyContent="center" alignItems="center" mt="$10">
+              <SizableText size="$6">
+                Ihr Profil ist vollständig eingerichtet, gute Arbeit! 🙌
+              </SizableText>
+              <SizableText>Weiter in der App</SizableText>
+              {/* TODO: Add confetti animation here */}
+            </YStack>
+          ) : (
+            // If no role is set, show the form
+            <>
+              <H1 size="$9" fontWeight="bold">
+                Complete Registration
+              </H1>
+              <Controller
+                name="name"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Input placeholder="Name" value={value || ''} onChangeText={onChange} />
+                )}
+              />
+              <Controller
+                name="age"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    placeholder="Age"
+                    keyboardType="numeric"
+                    value={value ? value.toString() : ''}
+                    onChangeText={(text) => onChange(Number(text))}
+                  />
+                )}
+              />
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field: { value, ...field } }) => (
+                  <CustomSelect
+                    placeholder="Gender"
+                    value={value || ''}
+                    {...field}
+                    items={genderOptions}
+                  />
+                )}
+              />
+              <Controller
+                name="semester_number"
+                control={control}
+                render={({ field: { onChange, value } }) => (
+                  <Input
+                    placeholder="Semester Number"
+                    keyboardType="numeric"
+                    value={value ? value.toString() : ''}
+                    onChangeText={(text) => onChange(Number(text))}
+                  />
+                )}
+              />
+              <Controller
+                name="role"
+                control={control}
+                render={({ field: { value, ...field } }) => (
+                  <CustomSelect
+                    placeholder="Role"
+                    value={value || ''}
+                    {...field}
+                    items={roleOptions}
+                  />
+                )}
+              />
+              <Button onPress={handleSubmit(onSubmit)}>
+                <Text>Submit</Text>
+              </Button>
+            </>
+          )}
+        </YStack>
       </ScrollView>
-
-      {/* {isWeb && (
-        <>
-          <EventCards />
-          <Separator vertical />
-        </>
-      )} */}
     </XStack>
   )
 }
-
-// const eventDummyData = [
-//   {
-//     id: 1,
-//     name: 'Event 1',
-//     description: 'Lorem ipsum dolor sit, amet.',
-//     start_time: new Date('2023-05-01T00:00:00.000Z'),
-//     end_time: new Date('2023-05-01T00:00:00.000Z'),
-//     status: 'Upcoming',
-//   },
-//   {
-//     id: 2,
-//     name: 'Event 2',
-//     description: 'Lorem ipsum dolor sit, amet.',
-//     start_time: new Date('2023-05-01T00:00:00.000Z'),
-//     end_time: new Date('2023-05-01T00:00:00.000Z'),
-//     status: 'Upcoming',
-//   },
-//   {
-//     id: 3,
-//     name: 'Event 3',
-//     description: 'Lorem ipsum dolor sit, amet.',
-//     start_time: new Date('2023-05-01T00:00:00.000Z'),
-//     end_time: new Date('2023-05-01T00:00:00.000Z'),
-//     status: 'Upcoming',
-//   },
-// ]
-
-// const EventCards = () => {
-//   const { data, isLoading } = useEventsQuery()
-
-//   if (isLoading) return null
-
-//   const eventData = data?.length ? data : eventDummyData
-//   return (
-//     <ScrollView f={1} fb={0} $md={{ dsp: 'none' }}>
-//       <YStack separator={<Separator />} gap="$3">
-//         <YStack>
-//           {eventData.length ? (
-//             eventData?.map((event) => (
-//               <EventCard
-//                 key={event.id}
-//                 title={event.name}
-//                 description={event.description}
-//                 action={{
-//                   text: 'Show Event',
-//                   props: {
-//                     href: `/event/${event.id}`,
-//                     accessibilityRole: 'link',
-//                     onPress: () => undefined,
-//                   },
-//                 }}
-//                 tags={[
-//                   { text: event.status, theme: 'green_alt2' },
-//                   {
-//                     text: `${new Date(event.end_time).toLocaleDateString()} Remaining`,
-//                     theme: 'blue_alt2',
-//                   },
-//                 ]}
-//               />
-//             ))
-//           ) : (
-//             <View h={400} miw="100%" ai="center" jc="center" f={1} background="$gray1">
-//               <Text>No events yet?</Text>
-//             </View>
-//           )}
-//         </YStack>
-//         <YStack marginRight="$3">
-//           <Theme name="blue_alt1">
-//             <Banner cur="pointer">
-//               <H4>Upgrade Now!</H4>
-//               <Paragraph size="$2" mt="$1">
-//                 Upgrade to access exclusive features and more!
-//               </Paragraph>
-//             </Banner>
-//           </Theme>
-//         </YStack>
-//         <YStack>
-//           <TodoCard label="Contribute to OSS" checked={false} />
-//           <TodoCard label="Contribute to OSS" checked />
-//           <TodoCard label="Upgrade to the new Expo version" checked={false} />
-//           <TodoCard label="Do the dishes" checked={false} />
-//         </YStack>
-//       </YStack>
-//     </ScrollView>
-//   )
-// }
