@@ -1,7 +1,8 @@
 import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
-import { Save, Plus, Trash } from '@tamagui/lucide-icons'
+import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
 import React, { useCallback } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { Checkbox } from 'tamagui'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
@@ -42,7 +43,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     },
   })
   const supabase = useSupabase()
-  const { fields, append, remove } = useFieldArray({ control, name: 'options' })
+  const { fields: options, append, remove, update } = useFieldArray({ control, name: 'options' })
   const questionType = watch('question_type')
 
   const handleAddOption = useCallback(
@@ -66,6 +67,10 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     },
     [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
   )
+
+  // useEffect(() => {
+  //   console.log('all fields', options)
+  // }, [options])
   return (
     <>
       <YStack gap="$4" p="$5" borderWidth={1} borderColor="$gray3" borderRadius="$2">
@@ -90,36 +95,42 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         {questionType === 'MULTIPLE_CHOICE' && (
           <YStack gap="$3">
             <SizableText fontWeight="bold">Options:</SizableText>
-            {fields.map((option, index) => (
-              <XStack key={option.id} gap="$2" alignItems="center">
-                <Controller
-                  name={`options.${index}.option_text`}
-                  control={control}
-                  render={({ field }) => (
-                    <Input {...field} placeholder={`Option ${index + 1}`} size="$2" />
-                  )}
-                />
-                <Controller
-                  name={`options.${index}.is_correct`}
-                  control={control}
-                  render={({ field: { value, ...field } }) => (
-                    <input
-                      {...field}
-                      type="checkbox"
-                      checked={value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                    />
-                  )}
-                />
-                <Button
-                  themeShallow
-                  size="$2"
-                  icon={Trash}
-                  onPress={() => handleRemoveOption(index)}
-                />
-              </XStack>
-            ))}
-            <Button themeShallow size="$2" icon={Plus} onPress={handleAddOption}>
+            {options.map((option, index) => {
+              return (
+                <XStack key={option.id} gap="$6" alignItems="center">
+                  <Controller
+                    name={`options.${index}.option_text`}
+                    control={control}
+                    defaultValue={option.option_text}
+                    render={({ field }) => <Input {...field} placeholder={`Option ${index + 1}`} />}
+                  />
+
+                  <Controller
+                    name={`options.${index}.is_correct`}
+                    control={control}
+                    defaultValue={option.is_correct}
+                    render={({ field }) => (
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(v) => field.onChange(v === true)}
+                        size="$6"
+                      >
+                        <Checkbox.Indicator>
+                          <Check />
+                        </Checkbox.Indicator>
+                      </Checkbox>
+                    )}
+                  />
+                  <Button
+                    themeShallow
+                    size="$2"
+                    icon={Trash}
+                    onPress={() => handleRemoveOption(index)}
+                  />
+                </XStack>
+              )
+            })}
+            <Button themeShallow icon={Plus} onPress={handleAddOption}>
               Add Option
             </Button>
           </YStack>
