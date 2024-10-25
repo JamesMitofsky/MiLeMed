@@ -1,6 +1,5 @@
-import { XStack, ScrollView, YStack, Button, TextArea, Input, Spinner } from '@my/ui'
-import { Save } from '@tamagui/lucide-icons'
-import { ArrowLeft } from '@tamagui/lucide-icons/dist/esm/icons/arrow-left'
+import { XStack, ScrollView, YStack, Button, TextArea, Input, Spinner, SizableText } from '@my/ui'
+import { Save, ArrowLeft } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import Head from 'next/head'
@@ -8,12 +7,18 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 import useLectureQuery from '../../../../packages/app/utils/react-query/useLectureQuery'
+import useQuizQuestionsQuery from '../../../../packages/app/utils/react-query/useQuizQuestions'
 import { FullscreenSpinner } from '../../../../packages/ui/src/components/FullscreenSpinner'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
   const { data: lecture } = useLectureQuery(router.query.id as string)
+  const {
+    data: quizQuestions,
+    isLoading: isQuestionsLoading,
+    error,
+  } = useQuizQuestionsQuery(router.query.id as string)
   const supabase = useSupabase()
 
   const [title, setTitle] = useState('')
@@ -28,10 +33,6 @@ export const Page: NextPageWithLayout = () => {
   }, [lecture])
 
   const handleSaveChanges = async () => {
-    console.log('Save changes')
-    console.log('Title:', title)
-    console.log('Content:', content)
-
     setLoading(true) // Set loading to true when request starts
 
     try {
@@ -40,18 +41,14 @@ export const Page: NextPageWithLayout = () => {
         .update({ title, content })
         .eq('id', router.query.id as string)
 
-      if (error) {
-        throw error
-      }
+      if (error) throw error
 
       // Successfully updated the lecture, now go back
       router.back()
     } catch (error) {
       console.error('Error updating lecture:', error)
       setLoading(false) // Set loading to false if something went wrong.
-      alert(
-        'An error occurred while updating the lecture. Nothing has been changed. Please try again.'
-      )
+      alert('An error occurred while updating the lecture. Please try again.')
     }
   }
 
@@ -108,6 +105,41 @@ export const Page: NextPageWithLayout = () => {
             >
               {loading ? <Spinner /> : 'Save'}
             </Button>
+
+            {/* Quiz Questions Section */}
+            <YStack gap="$4" pt="$5">
+              {isQuestionsLoading ? (
+                <Spinner />
+              ) : error ? (
+                <SizableText color="red">Failed to load quiz questions</SizableText>
+              ) : quizQuestions && quizQuestions.length > 0 ? (
+                quizQuestions.map((question) => (
+                  <YStack key={question.id} gap="$3" p="$4" borderWidth={1} borderColor="$gray3">
+                    <SizableText fontWeight="bold" size="$4">
+                      {question.question_text}
+                    </SizableText>
+                    {question.question_type === 'MULTIPLE_CHOICE' && (
+                      <YStack gap="$2" pl="$4">
+                        {question.quiz_question_options.map((option) => (
+                          <SizableText key={option.id}>
+                            {option.option_text} {option.is_correct ? '(Correct)' : ''}
+                          </SizableText>
+                        ))}
+                      </YStack>
+                    )}
+                    {question.question_type === 'OPEN' && (
+                      <SizableText size="$3" fontStyle="italic">
+                        Open-ended question. [Add response input here]
+                      </SizableText>
+                    )}
+                  </YStack>
+                ))
+              ) : (
+                <SizableText size="$4" fontStyle="italic">
+                  No quiz questions found.
+                </SizableText>
+              )}
+            </YStack>
           </YStack>
         </ScrollView>
       </XStack>
