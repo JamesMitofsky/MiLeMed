@@ -67,7 +67,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
   )
   return (
-    <form>
+    <>
       <YStack gap="$4" p="$5" borderWidth={1} borderColor="$gray3" borderRadius="$2">
         <SizableText fontWeight="bold" size="$5">
           {initialData ? 'Edit Quiz Question' : 'Create New Quiz Question'}
@@ -129,7 +129,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
           {initialData ? 'Update Question' : 'Save Question'}
         </Button>
       </YStack>
-    </form>
+    </>
   )
 }
 
