@@ -1,8 +1,8 @@
 import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
 import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { Checkbox } from 'tamagui'
+import { Checkbox, TextArea } from 'tamagui'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
@@ -38,12 +38,12 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   const { control, handleSubmit, watch, reset } = useForm<QuizQuestionFormData>({
     defaultValues: initialData || {
       question_text: '',
-      question_type: 'OPEN',
+      question_type: 'MULTIPLE_CHOICE',
       options: [{ option_text: '', is_correct: false }],
     },
   })
   const supabase = useSupabase()
-  const { fields: options, append, remove, update } = useFieldArray({ control, name: 'options' })
+  const { fields: options, append, remove } = useFieldArray({ control, name: 'options' })
   const questionType = watch('question_type')
 
   const handleAddOption = useCallback(
@@ -68,9 +68,15 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
   )
 
-  // useEffect(() => {
-  //   console.log('all fields', options)
-  // }, [options])
+  // if the user changes between multiple choice and open-ended, reset the options
+  useEffect(() => {
+    reset({ ...watch(), options: [{ option_text: '', is_correct: false }] })
+  }, [questionType, reset, watch])
+
+  useEffect(() => {
+    console.log('all fields', options)
+  }, [options])
+
   return (
     <>
       <YStack gap="$4" p="$5" borderWidth={1} borderColor="$gray3" borderRadius="$2">
@@ -92,7 +98,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
           )}
         />
 
-        {questionType === 'MULTIPLE_CHOICE' && (
+        {questionType === 'MULTIPLE_CHOICE' ? (
           <YStack gap="$3">
             <SizableText fontWeight="bold">Options:</SizableText>
             {options.map((option, index) => {
@@ -134,6 +140,24 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
               Add Option
             </Button>
           </YStack>
+        ) : (
+          <>
+            <Controller
+              name="options.0.option_text"
+              control={control}
+              defaultValue=""
+              render={({ field: { onChange, ...field } }) => (
+                <TextArea
+                  fontWeight="300"
+                  height={300}
+                  placeholder="Quiz answer content here"
+                  // @ts-ignore
+                  onChange={(e) => onChange(e.target.value)}
+                  {...field}
+                />
+              )}
+            />
+          </>
         )}
 
         <Button themeInverse size="$3" icon={Save} onPress={handleSubmit(submitForm)}>

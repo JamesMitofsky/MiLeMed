@@ -53,6 +53,8 @@ export const Page: NextPageWithLayout = () => {
     }
   }
 
+  console.log(quizQuestions)
+
   return (
     <>
       <Head>
@@ -130,7 +132,7 @@ export const Page: NextPageWithLayout = () => {
                     )}
                     {question.question_type === 'OPEN' && (
                       <SizableText size="$3" fontStyle="italic">
-                        Open-ended question. [Add response input here]
+                        {question.quiz_question_options[0]?.option_text}
                       </SizableText>
                     )}
                   </YStack>

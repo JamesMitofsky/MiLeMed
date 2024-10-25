@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-const getEvents = async (supabase, lectureId) => {
+const getQuizQuestions = async (supabase, lectureId) => {
   const { data, error } = await supabase
     .from('quiz_questions')
     .select(
@@ -22,7 +22,7 @@ const getEvents = async (supabase, lectureId) => {
 function useQuizQuestionsQuery(lectureId) {
   const supabase = useSupabase()
 
-  const queryFn = () => getEvents(supabase, lectureId)
+  const queryFn = () => getQuizQuestions(supabase, lectureId)
 
   return useQuery({
     queryKey: ['quizQuestions', lectureId],

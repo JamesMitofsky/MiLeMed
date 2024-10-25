@@ -8,6 +8,8 @@ export const addQuizQuestion = async (
   questionData: QuizQuestionFormData
 ) => {
   // Insert question
+
+  console.log(questionData)
   const { data: question, error: questionError } = await supabase
     .from('quiz_questions')
     .insert([
@@ -23,7 +25,7 @@ export const addQuizQuestion = async (
   if (questionError) throw new Error(questionError.message)
 
   // Insert options if the question is multiple-choice
-  if (questionData.question_type === 'MULTIPLE_CHOICE' && questionData.options.length) {
+  if (questionData.options.length) {
     const options = questionData.options.map((option) => ({
       question_id: question.id,
       option_text: option.option_text,
