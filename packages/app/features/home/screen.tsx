@@ -1,3 +1,4 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ScrollView,
   XStack,
@@ -12,6 +13,7 @@ import {
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useForm, Controller } from 'react-hook-form'
+import { z } from 'zod'
 
 import { UserRoleEnum } from '../../types/userRoleEnum'
 import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
@@ -40,6 +42,17 @@ const genderOptions: GenderOption[] = [
   { label: 'Divers', value: 'OTHER' },
 ]
 
+// Define Zod schema for validation
+const profileSchema = z.object({
+  name: z.string().min(1, { message: 'Name is required' }),
+  age: z.number().min(1, { message: 'Age is required' }),
+  gender: z.enum(['FEMALE', 'MALE', 'OTHER'], {
+    errorMap: () => ({ message: 'Gender is required' }),
+  }),
+  semester_number: z.number().min(1, { message: 'Semester number is required' }),
+  role: z.nativeEnum(UserRoleEnum, { errorMap: () => ({ message: 'Role is required' }) }),
+})
+
 export function HomeScreen() {
   const supabase = useSupabaseClient()
   const {
@@ -47,11 +60,13 @@ export function HomeScreen() {
     handleSubmit,
     formState: { errors },
   } = useForm<ProfileFormType>({
+    resolver: zodResolver(profileSchema),
     defaultValues: {
       name: '',
       age: undefined,
       gender: undefined,
       semester_number: undefined,
+      role: undefined,
     },
   })
   const { profile, isLoadingProfile } = useUser()
@@ -79,7 +94,6 @@ export function HomeScreen() {
       <ScrollView f={4} fb={0}>
         <YStack gap="$4" p="$10">
           {profile?.role ? (
-            // If the role is already set, show confirmation message
             <YStack p="$10" gap="$6" justifyContent="center" alignItems="center" mt="$10">
               <SizableText size="$6">
                 Ihr Profil ist vollständig eingerichtet, gute Arbeit! 🙌
@@ -88,68 +102,84 @@ export function HomeScreen() {
               {/* TODO: Add confetti animation here */}
             </YStack>
           ) : (
-            // If no role is set, show the form
             <>
               <H1 size="$9" fontWeight="bold">
-                Complete Registration
+                Registrierung abschließen
               </H1>
               <Controller
                 name="name"
                 control={control}
                 render={({ field: { onChange, value } }) => (
-                  <Input placeholder="Name" value={value || ''} onChangeText={onChange} />
+                  <Input
+                    placeholder="Name"
+                    value={value || ''}
+                    onChangeText={onChange}
+                    style={{ borderColor: errors.name ? 'red' : undefined }}
+                  />
                 )}
               />
+              {errors.name && <Text color="red">{errors.name.message}</Text>}
+
               <Controller
                 name="age"
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <Input
-                    placeholder="Age"
+                    placeholder="Alter"
                     keyboardType="numeric"
                     value={value ? value.toString() : ''}
                     onChangeText={(text) => onChange(Number(text))}
+                    style={{ borderColor: errors.age ? 'red' : undefined }}
                   />
                 )}
               />
+              {errors.age && <Text color="red">{errors.age.message}</Text>}
+
               <Controller
                 name="gender"
                 control={control}
                 render={({ field: { value, ...field } }) => (
                   <CustomSelect
-                    placeholder="Gender"
+                    placeholder="Geschlecht"
                     value={value || ''}
                     {...field}
                     items={genderOptions}
                   />
                 )}
               />
+              {errors.gender && <Text color="red">{errors.gender.message}</Text>}
+
               <Controller
                 name="semester_number"
                 control={control}
                 render={({ field: { onChange, value } }) => (
                   <Input
-                    placeholder="Semester Number"
+                    placeholder="Semesterzahl"
                     keyboardType="numeric"
                     value={value ? value.toString() : ''}
                     onChangeText={(text) => onChange(Number(text))}
+                    style={{ borderColor: errors.semester_number ? 'red' : undefined }}
                   />
                 )}
               />
+              {errors.semester_number && <Text color="red">{errors.semester_number.message}</Text>}
+
               <Controller
                 name="role"
                 control={control}
                 render={({ field: { value, ...field } }) => (
                   <CustomSelect
-                    placeholder="Role"
+                    placeholder="Rolle"
                     value={value || ''}
                     {...field}
                     items={roleOptions}
                   />
                 )}
               />
+              {errors.role && <Text color="red">{errors.role.message}</Text>}
+
               <Button onPress={handleSubmit(onSubmit)}>
-                <Text>Submit</Text>
+                <Text>Absenden</Text>
               </Button>
             </>
           )}
