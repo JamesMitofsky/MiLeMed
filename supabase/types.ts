@@ -49,6 +49,7 @@ export type Database = {
           mode: Database["public"]["Enums"]["mode"]
           sort_order: number
           title: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -57,6 +58,7 @@ export type Database = {
           mode: Database["public"]["Enums"]["mode"]
           sort_order?: number
           title: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -65,6 +67,7 @@ export type Database = {
           mode?: Database["public"]["Enums"]["mode"]
           sort_order?: number
           title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -147,6 +150,7 @@ export type Database = {
           id: number
           sort_order: number
           title: string
+          updated_at: string | null
         }
         Insert: {
           chapter_id: number
@@ -155,6 +159,7 @@ export type Database = {
           id?: number
           sort_order?: number
           title: string
+          updated_at?: string | null
         }
         Update: {
           chapter_id?: number
@@ -163,6 +168,7 @@ export type Database = {
           id?: number
           sort_order?: number
           title?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -179,31 +185,37 @@ export type Database = {
           about: string | null
           age: number | null
           avatar_url: string | null
+          created_at: string | null
           gender: Database["public"]["Enums"]["gender"] | null
           id: string
           name: string | null
-          role: string
+          role: Database["public"]["Enums"]["user_role"] | null
           semester_number: number | null
+          updated_at: string | null
         }
         Insert: {
           about?: string | null
           age?: number | null
           avatar_url?: string | null
+          created_at?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           id: string
           name?: string | null
-          role?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           semester_number?: number | null
+          updated_at?: string | null
         }
         Update: {
           about?: string | null
           age?: number | null
           avatar_url?: string | null
+          created_at?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           id?: string
           name?: string | null
-          role?: string
+          role?: Database["public"]["Enums"]["user_role"] | null
           semester_number?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -224,6 +236,7 @@ export type Database = {
           is_correct: boolean | null
           profile_id: string
           question_id: number
+          quiz_attempt_id: number
         }
         Insert: {
           answer_text?: string | null
@@ -233,6 +246,7 @@ export type Database = {
           is_correct?: boolean | null
           profile_id: string
           question_id: number
+          quiz_attempt_id: number
         }
         Update: {
           answer_text?: string | null
@@ -242,6 +256,7 @@ export type Database = {
           is_correct?: boolean | null
           profile_id?: string
           question_id?: number
+          quiz_attempt_id?: number
         }
         Relationships: [
           {
@@ -263,6 +278,55 @@ export type Database = {
             columns: ["question_id"]
             isOneToOne: false
             referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_answers_quiz_attempt_id_fkey"
+            columns: ["quiz_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_attempts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_attempts: {
+        Row: {
+          attempt_number: number
+          completed_at: string | null
+          id: number
+          lecture_id: number
+          profile_id: string
+          started_at: string | null
+        }
+        Insert: {
+          attempt_number: number
+          completed_at?: string | null
+          id?: number
+          lecture_id: number
+          profile_id: string
+          started_at?: string | null
+        }
+        Update: {
+          attempt_number?: number
+          completed_at?: string | null
+          id?: number
+          lecture_id?: number
+          profile_id?: string
+          started_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_lecture_id_fkey"
+            columns: ["lecture_id"]
+            isOneToOne: false
+            referencedRelation: "lectures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_attempts_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -302,21 +366,24 @@ export type Database = {
           id: number
           lecture_id: number
           question_text: string
-          question_type: string | null
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id?: number
           lecture_id: number
           question_text: string
-          question_type?: string | null
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: number
           lecture_id?: number
           question_text?: string
-          question_type?: string | null
+          question_type?: Database["public"]["Enums"]["question_type"]
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -349,6 +416,8 @@ export type Database = {
     Enums: {
       gender: "MALE" | "FEMALE" | "OTHER"
       mode: "THEORETICAL" | "PRACTICAL"
+      question_type: "OPEN" | "MULTIPLE_CHOICE"
+      user_role: "ADMIN" | "MEDICAL_PROFESSIONAL" | "STUDENT" | "STUDENT_TESTER"
     }
     CompositeTypes: {
       [_ in never]: never

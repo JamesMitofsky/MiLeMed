@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
+import QuizQuestionForm from '../../../../packages/app/features/lectures/QuizQuestionForm'
 import useLectureQuery from '../../../../packages/app/utils/react-query/useLectureQuery'
 import useQuizQuestionsQuery from '../../../../packages/app/utils/react-query/useQuizQuestions'
 import { FullscreenSpinner } from '../../../../packages/ui/src/components/FullscreenSpinner'
@@ -140,6 +141,11 @@ export const Page: NextPageWithLayout = () => {
                 </SizableText>
               )}
             </YStack>
+
+            <QuizQuestionForm
+              onSubmitSuccess={() => console.log('submitted')}
+              lectureId={lecture?.id}
+            />
           </YStack>
         </ScrollView>
       </XStack>
