@@ -202,7 +202,7 @@ export function HomeScreen() {
                 control={control}
                 render={({ field: { value, ...field } }) => (
                   <CustomSelect
-                    placeholder="Rolle"
+                    placeholder="Wer bist du?"
                     value={value || ''}
                     {...field}
                     items={roleOptions}
