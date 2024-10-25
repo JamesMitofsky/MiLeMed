@@ -1,6 +1,6 @@
 import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
 import { Save, Plus, Trash } from '@tamagui/lucide-icons'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
@@ -42,24 +42,30 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     },
   })
   const supabase = useSupabase()
-
   const { fields, append, remove } = useFieldArray({ control, name: 'options' })
   const questionType = watch('question_type')
 
-  const handleAddOption = () => append({ option_text: '', is_correct: false })
-  const handleRemoveOption = (index: number) => remove(index)
+  const handleAddOption = useCallback(
+    () => append({ option_text: '', is_correct: false }),
+    [append]
+  )
 
-  const submitForm = async (data: QuizQuestionFormData) => {
-    try {
+  const handleRemoveOption = useCallback((index: number) => remove(index), [remove])
+
+  const submitForm = useCallback(
+    async (data: QuizQuestionFormData) => {
       if (!lectureId) return
-      await addQuizQuestion(supabase, lectureId, data)
-      reset()
-      onSubmitSuccess() // Callback function on successful submission
-    } catch (error) {
-      console.error('Failed to add quiz question:', error)
-    }
-  }
-
+      try {
+        await addQuizQuestion(supabase, lectureId, data)
+        reset()
+        console.log('submitted to lectureID: ', lectureId)
+        onSubmitSuccess()
+      } catch (error) {
+        console.error('Failed to add quiz question:', error)
+      }
+    },
+    [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
+  )
   return (
     <form>
       <YStack gap="$4" p="$5" borderWidth={1} borderColor="$gray3" borderRadius="$2">
