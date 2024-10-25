@@ -1,8 +1,10 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
 import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
 import React, { useCallback, useEffect } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Checkbox, TextArea } from 'tamagui'
+import { z } from 'zod'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
@@ -30,18 +32,42 @@ const questionTypes = [
   { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
 ]
 
+const quizQuestionSchema = z.object({
+  question_text: z.string().nonempty('Question text is required'),
+  question_type: z.enum(['OPEN', 'MULTIPLE_CHOICE']),
+  options: z
+    .array(
+      z.object({
+        option_text: z.string().nonempty('Option text is required'),
+        is_correct: z.boolean(),
+      })
+    )
+    .min(1, 'At least one option is required for multiple choice questions')
+    .refine((options) => options.every((option) => option.option_text.trim() !== ''), {
+      message: 'Each option must have text',
+    }),
+})
+
 const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   onSubmitSuccess,
   lectureId,
   initialData,
 }) => {
-  const { control, handleSubmit, watch, reset } = useForm<QuizQuestionFormData>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<QuizQuestionFormData>({
+    resolver: zodResolver(quizQuestionSchema),
     defaultValues: initialData || {
       question_text: '',
       question_type: 'MULTIPLE_CHOICE',
       options: [{ option_text: '', is_correct: false }],
     },
   })
+
   const supabase = useSupabase()
   const { fields: options, append, remove } = useFieldArray({ control, name: 'options' })
   const questionType = watch('question_type')
@@ -68,14 +94,10 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
   )
 
-  // if the user changes between multiple choice and open-ended, reset the options
+  // reset options on question type change
   useEffect(() => {
     reset({ ...watch(), options: [{ option_text: '', is_correct: false }] })
   }, [questionType, reset, watch])
-
-  useEffect(() => {
-    console.log('all fields', options)
-  }, [options])
 
   return (
     <>
@@ -87,7 +109,14 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         <Controller
           name="question_text"
           control={control}
-          render={({ field }) => <Input {...field} placeholder="Question text" size="$3" />}
+          render={({ field }) => (
+            <>
+              <Input {...field} placeholder="Question text" size="$3" />
+              {errors.question_text && (
+                <SizableText color="red">{errors.question_text.message}</SizableText>
+              )}
+            </>
+          )}
         />
 
         <Controller
@@ -101,63 +130,68 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         {questionType === 'MULTIPLE_CHOICE' ? (
           <YStack gap="$3">
             <SizableText fontWeight="bold">Options:</SizableText>
-            {options.map((option, index) => {
-              return (
-                <XStack key={option.id} gap="$6" alignItems="center">
-                  <Controller
-                    name={`options.${index}.option_text`}
-                    control={control}
-                    defaultValue={option.option_text}
-                    render={({ field }) => <Input {...field} placeholder={`Option ${index + 1}`} />}
-                  />
+            {options.map((option, index) => (
+              <XStack key={option.id} gap="$6" alignItems="center">
+                <Controller
+                  name={`options.${index}.option_text`}
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Input {...field} placeholder={`Option ${index + 1}`} />
+                      {errors.options?.[index]?.option_text && (
+                        <SizableText color="red">
+                          {errors.options[index].option_text.message}
+                        </SizableText>
+                      )}
+                    </>
+                  )}
+                />
 
-                  <Controller
-                    name={`options.${index}.is_correct`}
-                    control={control}
-                    defaultValue={option.is_correct}
-                    render={({ field }) => (
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={(v) => field.onChange(v === true)}
-                        size="$6"
-                      >
-                        <Checkbox.Indicator>
-                          <Check />
-                        </Checkbox.Indicator>
-                      </Checkbox>
-                    )}
-                  />
-                  <Button
-                    themeShallow
-                    size="$2"
-                    icon={Trash}
-                    onPress={() => handleRemoveOption(index)}
-                  />
-                </XStack>
-              )
-            })}
+                <Controller
+                  name={`options.${index}.is_correct`}
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={(v) => field.onChange(v === true)}
+                      size="$6"
+                    >
+                      <Checkbox.Indicator>
+                        <Check />
+                      </Checkbox.Indicator>
+                    </Checkbox>
+                  )}
+                />
+                <Button
+                  themeShallow
+                  size="$2"
+                  icon={Trash}
+                  onPress={() => handleRemoveOption(index)}
+                />
+              </XStack>
+            ))}
             <Button themeShallow icon={Plus} onPress={handleAddOption}>
               Add Option
             </Button>
           </YStack>
         ) : (
-          <>
-            <Controller
-              name="options.0.option_text"
-              control={control}
-              defaultValue=""
-              render={({ field: { onChange, ...field } }) => (
+          <Controller
+            name="options.0.option_text"
+            control={control}
+            render={({ field }) => (
+              <>
                 <TextArea
+                  {...field}
                   fontWeight="300"
                   height={300}
                   placeholder="Quiz answer content here"
-                  // @ts-ignore
-                  onChange={(e) => onChange(e.target.value)}
-                  {...field}
                 />
-              )}
-            />
-          </>
+                {errors.options?.[0]?.option_text && (
+                  <SizableText color="red">{errors.options[0].option_text.message}</SizableText>
+                )}
+              </>
+            )}
+          />
         )}
 
         <Button themeInverse size="$3" icon={Save} onPress={handleSubmit(submitForm)}>
