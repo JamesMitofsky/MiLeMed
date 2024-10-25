@@ -1,11 +1,12 @@
 import { Button, FormWrapper, H2, Paragraph, SubmitButton, Text, Theme, YStack } from '@my/ui'
-import { ChevronLeft } from '@tamagui/lucide-icons'
+import { LogIn } from '@tamagui/lucide-icons'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useEffect } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { createParam } from 'solito'
 import { Link } from 'solito/link'
+import { useRouter } from 'solito/router'
 import { z } from 'zod'
 
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
@@ -118,6 +119,7 @@ const SignInLink = () => {
 const CheckYourEmail = () => {
   const email = useWatch<z.infer<typeof SignUpSchema>>({ name: 'email' })
   const { reset } = useFormContext()
+  const router = useRouter()
 
   return (
     <FormWrapper>
@@ -131,8 +133,8 @@ const CheckYourEmail = () => {
         </YStack>
       </FormWrapper.Body>
       <FormWrapper.Footer>
-        <Button themeInverse icon={ChevronLeft} br="$10" onPress={() => reset()}>
-          Zurück
+        <Button themeInverse icon={LogIn} br="$10" onPress={() => router.push('/sign-in')}>
+          Zur Anmeldung
         </Button>
       </FormWrapper.Footer>
     </FormWrapper>
