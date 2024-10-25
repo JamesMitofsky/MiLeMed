@@ -14,10 +14,19 @@ import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
 import { useRouter } from 'next/navigation'
+import ReactMarkdown from 'react-markdown'
 
 import { NextPageWithLayout } from './_app'
 import useLecturesQuery from '../../../packages/app/utils/react-query/useLecturesQuery'
 import { LecturesType } from '../../../packages/app/utils/supabase/databaseTypes'
+
+const truncateContent = (content: string, sentenceCount: number = 2): string => {
+  const sentences = content.match(/[^\.!\?]+[\.!\?]+/g)
+  if (!sentences || sentences.length <= sentenceCount) {
+    return content
+  }
+  return sentences.slice(0, sentenceCount).join(' ') + '...'
+}
 
 export const Page: NextPageWithLayout = () => {
   const { data } = useLecturesQuery()
@@ -92,7 +101,7 @@ const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boole
         >
           {lecture.title}
         </SizeableText>
-        <Button onPress={() => router.push(`lecture/${lecture.id}`)}>Edit</Button>
+        <Button onPress={() => router.push(`lecture/${lecture.id}`)}>View</Button>
       </XStack>
       <SizeableText
         size="$4"
@@ -101,7 +110,7 @@ const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boole
           color: '$color',
         }}
       >
-        {lecture.content}
+        <ReactMarkdown>{truncateContent(lecture.content)}</ReactMarkdown>
       </SizeableText>
     </View>
   )
