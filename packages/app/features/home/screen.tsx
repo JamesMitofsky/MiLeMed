@@ -12,7 +12,9 @@ import {
   SizableText,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
+import { Progress } from 'tamagui'
 
 import { UserRoleEnum } from '../../types/userRoleEnum'
 import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
@@ -58,6 +60,7 @@ export function HomeScreen() {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ProfileFormType>({
     resolver: zodResolver(profileSchema),
@@ -69,7 +72,7 @@ export function HomeScreen() {
       role: undefined,
     },
   })
-  const { profile, isLoadingProfile } = useUser()
+  const { profile, isLoadingProfile, updateProfile } = useUser()
   const toast = useToastController()
 
   const onSubmit = async (data) => {
@@ -77,13 +80,22 @@ export function HomeScreen() {
       .from('profiles')
       .update(data)
       .eq('id', profile?.id)
-
     if (error) toast.show('Something went wrong with the update')
     else {
+      updateProfile()
       console.log('successfully updated user', responseData)
       toast.show('Profile updated successfully')
     }
   }
+
+  const formValues = watch()
+  const progress = useMemo(() => {
+    const totalFields = 5
+    const filledFields = Object.values(formValues).filter(
+      (value) => value !== undefined && value !== ''
+    ).length
+    return (filledFields / totalFields) * 100
+  }, [formValues])
 
   if (isLoadingProfile) {
     return <FullscreenSpinner />
@@ -106,6 +118,9 @@ export function HomeScreen() {
               <H1 size="$9" fontWeight="bold">
                 Registrierung abschließen
               </H1>
+              <Progress value={progress}>
+                <Progress.Indicator animation="bouncy" />
+              </Progress>
               <Controller
                 name="name"
                 control={control}
