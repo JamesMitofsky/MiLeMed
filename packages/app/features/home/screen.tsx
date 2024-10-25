@@ -1,22 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   ScrollView,
-  XStack,
   YStack,
-  Input,
-  Button,
-  Text,
-  H1,
   useToastController,
   FullscreenSpinner,
+  XStack,
   SizableText,
+  useMedia,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import ReactCanvasConfetti from 'react-canvas-confetti'
 import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
-import { useForm, Controller } from 'react-hook-form'
-import { Progress } from 'tamagui'
+import { useForm } from 'react-hook-form'
 
 import { UserRoleEnum } from '../../types/userRoleEnum'
 import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
@@ -74,8 +70,10 @@ export function HomeScreen() {
       role: undefined,
     },
   })
-  const { profile, isLoadingProfile, updateProfile } = useUser()
+  const { profile, updateProfile } = useUser()
   const toast = useToastController()
+  // means medium or smaller
+  const { md } = useMedia()
 
   const instance = useRef<TCanvasConfettiInstance>()
 
@@ -84,12 +82,14 @@ export function HomeScreen() {
 
   const onShootHandler = useCallback(() => {
     instance.current?.({
-      particleCount: 170,
-      spread: 120,
-      origin: { x: 0.57, y: 0.4 },
+      particleCount: md ? 70 : 170,
+      spread: md ? 60 : 120,
+      origin: { x: 0.5, y: md ? 0.64 : 0.4 },
       ticks: 250,
     })
-  }, [])
+  }, [md, instance])
+
+  console.log(md)
 
   const onSubmit = async (data) => {
     const { data: responseData, error } = await supabase
@@ -98,12 +98,18 @@ export function HomeScreen() {
       .eq('id', profile?.id)
     if (error) toast.show('Something went wrong with the update')
     else {
-      onShootHandler()
+      // onShootHandler()
       updateProfile()
       console.log('successfully updated user', responseData)
       // toast.show('Profile updated successfully')
     }
   }
+
+  useEffect(() => {
+    if (profile?.role) {
+      onShootHandler()
+    }
+  }, [profile?.role])
 
   const formValues = watch()
   const progress = useMemo(() => {
@@ -114,22 +120,19 @@ export function HomeScreen() {
     return (filledFields / totalFields) * 100
   }, [formValues])
 
-  if (isLoadingProfile) {
-    return <FullscreenSpinner />
-  }
-
   return (
-    <XStack maw={1480} als="center" f={1}>
+    <XStack maw={1480} als="center" ai="center" f={1}>
       <ReactCanvasConfetti onInit={onInitHandler} />
-      <ScrollView f={4} fb={0}>
-        <YStack gap="$4" p="$10">
-          {profile?.role ? (
-            <YStack p="$10" gap="$6" justifyContent="center" alignItems="center" mt="$10">
-              <SizableText size="$6">
-                Ihr Profil ist vollständig eingerichtet, gute Arbeit! 🙌
+      <ScrollView f={1} fb={0}>
+        <YStack gap="$4" p="$10" f={1}>
+          {!profile?.id ? (
+            <FullscreenSpinner />
+          ) : profile?.role ? (
+            <YStack pb="$10" gap="$6" justifyContent="center" alignItems="center" pt="$0">
+              <SizableText size="$6" textAlign="center">
+                Ihr Profil ist vollständig eingerichtet, gute Arbeit!
               </SizableText>
-              <SizableText>Weiter in der App</SizableText>
-              {/* TODO: Add confetti animation here */}
+              <SizableText>Weiter in der App 🙌</SizableText>
             </YStack>
           ) : (
             <>

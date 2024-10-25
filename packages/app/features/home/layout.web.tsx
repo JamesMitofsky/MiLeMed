@@ -69,6 +69,7 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
       </YStack>
 
       <YStack
+        flex={1} // REMEMBER: this was an important addition to make sure it's full screen
         {...(fullPage && { flex: 1 })}
         {...(padded && {
           maw: 800,
