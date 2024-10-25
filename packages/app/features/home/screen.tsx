@@ -13,11 +13,11 @@ import {
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useForm, Controller } from 'react-hook-form'
-import { z } from 'zod'
 
 import { UserRoleEnum } from '../../types/userRoleEnum'
 import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
 import { useUser } from '../../utils/useUser'
+import { z } from '../../utils/zod-de'
 import { CustomSelect } from '../general/CustomSelect'
 
 type ProfileFormType = Pick<ProfilesType, 'name' | 'gender' | 'age' | 'semester_number' | 'role'>
@@ -44,13 +44,13 @@ const genderOptions: GenderOption[] = [
 
 // Define Zod schema for validation
 const profileSchema = z.object({
-  name: z.string().min(1, { message: 'Name is required' }),
-  age: z.number().min(1, { message: 'Age is required' }),
+  name: z.string().min(1, { message: 'Name ist erforderlich' }),
+  age: z.number().min(1, { message: 'Alter ist erforderlich' }),
   gender: z.enum(['FEMALE', 'MALE', 'OTHER'], {
-    errorMap: () => ({ message: 'Gender is required' }),
+    errorMap: () => ({ message: 'Geschlecht ist erforderlich' }),
   }),
-  semester_number: z.number().min(1, { message: 'Semester number is required' }),
-  role: z.nativeEnum(UserRoleEnum, { errorMap: () => ({ message: 'Role is required' }) }),
+  semester_number: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
+  role: z.nativeEnum(UserRoleEnum, { errorMap: () => ({ message: 'Rolle ist erforderlich' }) }),
 })
 
 export function HomeScreen() {

@@ -11594,6 +11594,7 @@ __metadata:
     expo-image-picker: "npm:~15.0.7"
     expo-linking: "npm:~6.3.1"
     expo-secure-store: "npm:~13.0.2"
+    i18next: "npm:^23.16.4"
     react-dropzone: "npm:^14.2.3"
     react-hook-form: "npm:^7.46.1"
     react-native: "npm:0.74.1"
@@ -11602,6 +11603,7 @@ __metadata:
     superjson: "npm:^1.13.1"
     typescript: "npm:^5.3.3"
     zod: "npm:^3.22.2"
+    zod-i18n-map: "npm:^2.27.0"
     zustand: "npm:^4.5.4"
   languageName: unknown
   linkType: soft
@@ -18959,6 +18961,15 @@ __metadata:
   version: 1.1.0
   resolution: "hyphenate-style-name@npm:1.1.0"
   checksum: 10/b9ed74e29181d96bd58a2d0e62fc4a19879db591dba268275829ff0ae595fcdf11faafaeaa63330a45c3004664d7db1f0fc7cdb372af8ee4615ed8260302c207
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^23.16.4":
+  version: 23.16.4
+  resolution: "i18next@npm:23.16.4"
+  dependencies:
+    "@babel/runtime": "npm:^7.23.2"
+  checksum: 10/a3aa6189aa4bf3022c372a03c88a2216d420b70f01369bd1017f7e51d0ed012dcda8b5f6476021835ab9574ee0ac5d056049fe4b720b5458b42bcc6ae66bd38d
   languageName: node
   linkType: hard
 
@@ -30800,6 +30811,16 @@ __metadata:
   version: 1.0.0
   resolution: "yocto-queue@npm:1.0.0"
   checksum: 10/2cac84540f65c64ccc1683c267edce396b26b1e931aa429660aefac8fbe0188167b7aee815a3c22fa59a28a58d898d1a2b1825048f834d8d629f4c2a5d443801
+  languageName: node
+  linkType: hard
+
+"zod-i18n-map@npm:^2.27.0":
+  version: 2.27.0
+  resolution: "zod-i18n-map@npm:2.27.0"
+  peerDependencies:
+    i18next: ">=21.3.0"
+    zod: ">=3.17.0"
+  checksum: 10/4063bb7cfeed3bdd2084de7a5d55e8b3efb940cb8c07ac1d8d4173e4d2c24cd386b10eb6e1353ce8e6a6060a346a77fd0ad190c624fd886a4b516f044c34968d
   languageName: node
   linkType: hard
 
