@@ -65,7 +65,7 @@ const SettingsThemeAction = () => {
 
   return (
     <Settings.Item icon={Moon} accentTheme="blue" onPress={toggle} rightLabel={current}>
-      Theme
+      Thema
     </Settings.Item>
   )
 }
@@ -75,7 +75,7 @@ export const SettingsItemLogoutAction = () => {
 
   return (
     <Settings.Item icon={LogOut} accentTheme="red" onPress={() => supabase.auth.signOut()}>
-      Log Out
+      Abmelden
     </Settings.Item>
   )
 }

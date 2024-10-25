@@ -9,14 +9,14 @@ export const GeneralSettingsScreen = () => {
     <FormWrapper>
       {isWeb && (
         <YStack px="$4" py="$4" pb="$2">
-          <H2>General</H2>
+          <H2>Allgemein</H2>
         </YStack>
       )}
       <FormWrapper.Body mt="$2" gap="$10">
         <Section>
           <KVTable>
             <YStack gap="$4">
-              <H4>Profile Data</H4>
+              <H4>Profildaten</H4>
               <Separator />
             </YStack>
             <KVTable.Row>
@@ -26,7 +26,7 @@ export const GeneralSettingsScreen = () => {
               <KVTable.Value gap="$4">
                 <SizableText>{profile?.name}</SizableText>
                 <Link href="/profile/edit">
-                  <SizableText textDecorationLine="underline">Change</SizableText>
+                  <SizableText textDecorationLine="underline">Ändern</SizableText>
                 </Link>
               </KVTable.Value>
             </KVTable.Row>
@@ -36,24 +36,24 @@ export const GeneralSettingsScreen = () => {
         <Section>
           <KVTable>
             <YStack gap="$4">
-              <H4>Account Data</H4>
+              <H4>Kontodaten</H4>
               <Separator />
             </YStack>
             <KVTable.Row>
               <KVTable.Key>
-                <SizableText fow="900">Email</SizableText>
+                <SizableText fow="900">E-Mail</SizableText>
               </KVTable.Key>
               <KVTable.Value gap="$4">
                 <SizableText>{user?.email}</SizableText>
                 <Link href="/settings/change-email">
-                  <SizableText textDecorationLine="underline">Change</SizableText>
+                  <SizableText textDecorationLine="underline">Ändern</SizableText>
                 </Link>
               </KVTable.Value>
             </KVTable.Row>
 
             <KVTable.Row>
               <KVTable.Key>
-                <SizableText fow="900">User ID</SizableText>
+                <SizableText fow="900">Benutzer-ID</SizableText>
               </KVTable.Key>
               <KVTable.Value>
                 <SizableText>{user?.id}</SizableText>

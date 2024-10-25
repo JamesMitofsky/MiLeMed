@@ -6,19 +6,20 @@ import { z } from 'zod'
 
 const ChangePasswordSchema = z
   .object({
-    password: formFields.text.min(6).describe('New Password // Enter your new password'),
-    passwordConfirm: formFields.text.min(6).describe('Confirm Password // Repeat your password'),
+    password: formFields.text.min(6).describe('Neues Passwort // Geben Sie Ihr neues Passwort ein'), // New Password // Enter your new password
+    passwordConfirm: formFields.text
+      .min(6)
+      .describe('Passwort bestätigen // Wiederholen Sie Ihr Passwort'), // Confirm Password // Repeat your password
   })
   .superRefine(({ passwordConfirm, password }, ctx) => {
     if (passwordConfirm !== password) {
       ctx.addIssue({
         path: ['passwordConfirm'],
         code: 'custom',
-        message: 'The passwords did not match',
+        message: 'Die Passwörter stimmen nicht überein', // The passwords do not match
       })
     }
   })
-
 export const ChangePasswordScreen = () => {
   const supabase = useSupabase()
   const toast = useToastController()
@@ -29,7 +30,7 @@ export const ChangePasswordScreen = () => {
     if (error) {
       toast.show(error.message)
     } else {
-      toast.show('Successfully updated!')
+      toast.show('Erfolgreich aktualisiert!')
       if (!isWeb) {
         router.back()
       }
@@ -55,13 +56,13 @@ export const ChangePasswordScreen = () => {
       renderBefore={() =>
         isWeb && (
           <YStack px="$4" py="$4" pb="$2">
-            <H2>Change Password</H2>
+            <H2>Passwort ändern</H2>
           </YStack>
         )
       }
       renderAfter={({ submit }) => (
         <Theme inverse>
-          <SubmitButton onPress={() => submit()}>Update Password</SubmitButton>
+          <SubmitButton onPress={() => submit()}>Passwort aktualisieren</SubmitButton>
         </Theme>
       )}
     />
