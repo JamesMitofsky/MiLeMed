@@ -3,12 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { useSupabase } from '../supabase/useSupabase'
 
 export type AllSortedLecturesRow = {
-  chapter_id: number | null
-  chapter_sort_order: number | null
-  lecture_content: string | null
-  lecture_id: number | null
-  lecture_sort_order: number | null
-  lecture_title: string | null
+  chapter_id: number
+  chapter_sort_order: number
+  lecture_content: string
+  lecture_id: number
+  lecture_sort_order: number
+  lecture_title: string
 }
 
 // Query to get sorted lectures from the view
@@ -22,7 +22,6 @@ const getLectures = async (supabase) => {
     throw new Error(error.message)
   }
 
-  console.log('data', data)
   return data
 }
 

@@ -9,12 +9,15 @@ import {
   View,
   styled,
   Button,
+  Input,
 } from '@my/ui'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
 
 import { NextPageWithLayout } from './_app'
 import useLecturesQuery, {
@@ -31,6 +34,17 @@ const truncateContent = (content: string, sentenceCount: number = 2): string => 
 
 export const Page: NextPageWithLayout = () => {
   const { data } = useLecturesQuery()
+  const [searchQuery, setSearchQuery] = useState('')
+
+  const handleSearchChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
+    // @ts-ignore
+    setSearchQuery(e.target.value)
+  }
+
+  const filteredData = data?.filter((item) =>
+    item.lecture_title.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
   return (
     <>
       <Head>
@@ -41,10 +55,16 @@ export const Page: NextPageWithLayout = () => {
           <ScrollToTopTabBarContainer>
             <YStack gap="$7" pb="$10" pt="$5">
               {isWeb && <H2>Manage Lectures</H2>}
+              <Input
+                mx="$1"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
               <YStack gap="$3">
-                {data ? (
-                  data.map((item, index) => {
-                    const isLastItem = index === data.length - 1
+                {filteredData ? (
+                  filteredData.map((item, index) => {
+                    const isLastItem = index === filteredData.length - 1
                     return <Row isLastItem={isLastItem} key={index} lecture={item} />
                   })
                 ) : (
@@ -58,7 +78,6 @@ export const Page: NextPageWithLayout = () => {
     </>
   )
 }
-
 Page.getLayout = (page) => <HomeLayout>{page}</HomeLayout>
 
 export default Page
