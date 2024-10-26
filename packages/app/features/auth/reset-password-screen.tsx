@@ -12,7 +12,7 @@ import { z } from '../../utils/zod-de'
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
 const ResetPasswordSchema = z.object({
-  email: formFields.text.email().describe('Email // your@email.acme'),
+  email: formFields.text.email().describe('E-Mail // deine@uni-bonn.de'),
 })
 
 export const ResetPasswordScreen = () => {
@@ -57,7 +57,7 @@ export const ResetPasswordScreen = () => {
               <>
                 <Theme inverse>
                   <SubmitButton onPress={() => submit()} br="$10">
-                    Send Link
+                    Link senden
                   </SubmitButton>
                 </Theme>
                 <SignInLink />
@@ -68,9 +68,10 @@ export const ResetPasswordScreen = () => {
           {(fields) => (
             <>
               <YStack gap="$3" mb="$4">
-                <H2 $sm={{ size: '$8' }}>Reset your password</H2>
+                <H2 $sm={{ size: '$8' }}>Setze dein Passwort zurück</H2>
                 <Paragraph theme="alt1">
-                  Type in your email and we&apos;ll send you a link to reset your password
+                  Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen deines
+                  Passworts
                 </Paragraph>
               </YStack>
               {Object.values(fields)}
