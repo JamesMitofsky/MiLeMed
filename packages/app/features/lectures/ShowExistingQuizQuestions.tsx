@@ -19,6 +19,9 @@ const ShowExistingQuizQuestions: React.FC<ShowExistingQuizQuestionsProps> = ({
 }) => {
   return (
     <YStack gap="$4" pt="$5">
+      <SizableText size="$6" fontStyle="italic">
+        Quiz Questions
+      </SizableText>
       {areQuestionsLoading ? (
         <Spinner />
       ) : error ? (
@@ -61,7 +64,7 @@ const ShowExistingQuizQuestions: React.FC<ShowExistingQuizQuestionsProps> = ({
         ))
       ) : (
         <SizableText size="$4" fontStyle="italic">
-          No quiz questions found.
+          None found.
         </SizableText>
       )}
     </YStack>

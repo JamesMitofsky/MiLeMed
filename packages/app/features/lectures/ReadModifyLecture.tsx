@@ -1,4 +1,4 @@
-import { Button, Input, SizableText, TextArea, FullscreenSpinner, Spinner } from '@my/ui'
+import { Button, Input, SizableText, TextArea, FullscreenSpinner, Spinner, YStack } from '@my/ui'
 import { Save } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
@@ -45,7 +45,7 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
   }
 
   return (
-    <>
+    <YStack gap="$3">
       {lecture ? (
         <>
           <Controller
@@ -104,7 +104,7 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
       >
         {loading ? <Spinner /> : 'Save'}
       </Button>
-    </>
+    </YStack>
   )
 }
 

@@ -40,7 +40,7 @@ export const Page: NextPageWithLayout = () => {
       </Head>
       <XStack maw={1480} width={800} m="auto" f={1}>
         <ScrollView f={4} fb={0}>
-          <YStack gap="$7" pb="$10" pt="$5">
+          <YStack gap="$7" pb="$16" pt="$5">
             <Button
               themeShallow
               f={0}
@@ -51,17 +51,19 @@ export const Page: NextPageWithLayout = () => {
             >
               Back
             </Button>
-            <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
-            <ShowExistingQuizQuestions
-              quizQuestions={quizQuestions}
-              areQuestionsLoading={areQuestionsLoading}
-              error={error}
-              onDelete={(questionId) => {
-                handleQuestionDelete(questionId)
-                refetch()
-              }}
-            />
-            <QuizQuestionForm onSubmitSuccess={refetch} lectureId={lecture?.id} />
+            <YStack gap="$12">
+              <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
+              <ShowExistingQuizQuestions
+                quizQuestions={quizQuestions}
+                areQuestionsLoading={areQuestionsLoading}
+                error={error}
+                onDelete={(questionId) => {
+                  handleQuestionDelete(questionId)
+                  refetch()
+                }}
+              />
+              <QuizQuestionForm onSubmitSuccess={refetch} lectureId={lecture?.id} />
+            </YStack>
           </YStack>
         </ScrollView>
       </XStack>
