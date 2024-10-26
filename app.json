@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "d7927c8c-9306-469b-804f-8fddf70fbe01"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "de.milemed.app"
+    }
+  }
+}

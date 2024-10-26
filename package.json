@@ -1,5 +1,5 @@
 {
-  "name": "milemed-v1",
+  "name": "milemed",
   "private": true,
   "workspaces": [
     "apps/*",
