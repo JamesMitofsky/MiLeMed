@@ -15,7 +15,8 @@ Here is the supabase setup from scratch
   * NEXT_PUBLIC_SUPABASE_URL=https://PROJECT_ID_VALUE_HERE.supabase.co
   * NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxx
 2. Connect sendgrid to supabase for emails: https://app.sendgrid.com/guide/integrate/langs/smtp
-3. Update the email templates for Supabase in 3 locations:
+3. Increase the rate limit of emails per hour from 2
+4. Update the email templates for Supabase in 3 locations:
 
 **Reset Password**
 ```
