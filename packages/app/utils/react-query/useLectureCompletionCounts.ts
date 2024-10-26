@@ -16,7 +16,6 @@ const useLectureCompletionCounts = () => {
     }
 
     // Call the Supabase RPC function
-    console.log('user id', userId)
     const { data, error } = await supabase.rpc('get_lecture_completion_counts', { user_id: userId })
 
     if (error) {

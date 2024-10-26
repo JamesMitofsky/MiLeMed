@@ -11,7 +11,6 @@ export function ScrollAdapt({
 }) {
   const { md } = useMedia()
 
-  console.log('is md', md)
   return md ? (
     <ScrollView
       horizontal

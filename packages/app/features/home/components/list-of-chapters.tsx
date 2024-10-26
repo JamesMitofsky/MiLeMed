@@ -24,10 +24,9 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
           <Theme key={chapter.id} name={colors[index]}>
             <AchievementCard
               w={300}
-              // icon={Users}
               title={chapter.title}
               progress={{
-                current: chapter.lectures_completed || 0,
+                current: chapter.lectures_completed,
                 full: chapter.lecture_count,
                 label: 'Lektionen',
               }}
