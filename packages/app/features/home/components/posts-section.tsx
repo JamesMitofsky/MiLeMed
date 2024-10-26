@@ -9,7 +9,7 @@ const feedCardWidthMd = validToken(
   })
 )
 
-export const PostsSection = () => {
+export const FeedbackPreview = () => {
   return (
     <View>
       <XStack

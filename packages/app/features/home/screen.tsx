@@ -2,7 +2,7 @@ import { ScrollView, YStack, XStack } from '@my/ui'
 
 import { ChaptersPreviewList } from './components/achievements-section'
 import { StatisticsPreviewList } from './components/overview-section'
-import { PostsSection } from './components/posts-section'
+import { FeedbackPreview } from './components/posts-section'
 
 export function HomeScreen() {
   return (
@@ -11,7 +11,7 @@ export function HomeScreen() {
         <YStack gap="$7" pb="$10" pt="$5">
           <ChaptersPreviewList />
           <StatisticsPreviewList />
-          <PostsSection />
+          <FeedbackPreview />
         </YStack>
       </ScrollView>
     </XStack>
