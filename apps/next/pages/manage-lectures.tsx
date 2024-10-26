@@ -17,8 +17,9 @@ import { useRouter } from 'next/navigation'
 import ReactMarkdown from 'react-markdown'
 
 import { NextPageWithLayout } from './_app'
-import useLecturesQuery from '../../../packages/app/utils/react-query/useLecturesQuery'
-import { LecturesType } from '../../../packages/app/utils/supabase/databaseTypes'
+import useLecturesQuery, {
+  AllSortedLecturesRow,
+} from '../../../packages/app/utils/react-query/useLecturesQuery'
 
 const truncateContent = (content: string, sentenceCount: number = 2): string => {
   const sentences = content.match(/[^\.!\?]+[\.!\?]+/g)
@@ -77,7 +78,7 @@ const SizeableText = styled(Text, {
   },
 })
 
-const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boolean }) => {
+const Row = ({ lecture, isLastItem }: { lecture: AllSortedLecturesRow; isLastItem: boolean }) => {
   const router = useRouter()
   return (
     <View
@@ -99,9 +100,9 @@ const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boole
             color: '$gray5',
           }}
         >
-          {lecture.title}
+          {lecture.lecture_title}
         </SizeableText>
-        <Button onPress={() => router.push(`lecture/${lecture.id}`)}>View</Button>
+        <Button onPress={() => router.push(`lecture/${lecture.lecture_id}`)}>View</Button>
       </XStack>
       <SizeableText
         size="$4"
@@ -110,7 +111,7 @@ const Row = ({ lecture, isLastItem }: { lecture: LecturesType; isLastItem: boole
           color: '$color',
         }}
       >
-        <ReactMarkdown>{truncateContent(lecture.content)}</ReactMarkdown>
+        <ReactMarkdown>{truncateContent(lecture.lecture_content ?? '')}</ReactMarkdown>
       </SizeableText>
     </View>
   )
