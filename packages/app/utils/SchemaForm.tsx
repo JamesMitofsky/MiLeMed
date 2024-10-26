@@ -22,7 +22,8 @@ import {
 import { createTsForm, createUniqueFieldSchema } from '@ts-react/form'
 import type { ComponentProps } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { z } from 'zod'
+
+import { z } from './zod-de'
 
 export const formFields = {
   text: z.string(),

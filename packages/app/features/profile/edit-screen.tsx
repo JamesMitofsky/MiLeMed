@@ -14,9 +14,9 @@ import { useUser } from 'app/utils/useUser'
 import { createParam } from 'solito'
 import { SolitoImage } from 'solito/image'
 import { useRouter } from 'solito/router'
-import { z } from 'zod'
 
 import { api } from '../../utils/api'
+import { z } from '../../utils/zod-de'
 import { UploadAvatar } from '../settings/components/upload-avatar'
 
 const { useParams } = createParam<{ edit_name?: '1'; edit_about?: '1' }>()

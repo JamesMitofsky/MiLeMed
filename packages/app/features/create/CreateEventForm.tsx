@@ -13,7 +13,8 @@ import { useGlobalStore } from 'app/utils/global-store'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
 import { useRouter } from 'solito/router'
-import { z } from 'zod'
+
+import { z } from '../../utils/zod-de'
 
 type InsertEvent = Database['public']['Tables']['lecture_events']['Insert']
 

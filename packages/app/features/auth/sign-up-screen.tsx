@@ -7,7 +7,8 @@ import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form
 import { createParam } from 'solito'
 import { Link } from 'solito/link'
 import { useRouter } from 'solito/router'
-import { z } from 'zod'
+
+import { z } from '../../utils/zod-de'
 
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 

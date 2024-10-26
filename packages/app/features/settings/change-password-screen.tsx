@@ -2,7 +2,8 @@ import { H2, SubmitButton, Theme, YStack, isWeb, useToastController } from '@my/
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useRouter } from 'solito/router'
-import { z } from 'zod'
+
+import { z } from '../../utils/zod-de'
 
 const ChangePasswordSchema = z
   .object({

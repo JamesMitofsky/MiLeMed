@@ -4,10 +4,10 @@ import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
 import React, { useCallback, useEffect } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Checkbox, TextArea } from 'tamagui'
-import { z } from 'zod'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
+import { z } from '../../utils/zod-de'
 import { CustomSelect } from '../general/CustomSelect'
 
 interface QuizQuestionOption {
