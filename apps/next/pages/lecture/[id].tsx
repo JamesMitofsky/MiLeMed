@@ -6,6 +6,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
+import { Chip } from '../../../../packages/app/features/general/chipParts'
 import QuizQuestionForm from '../../../../packages/app/features/lectures/QuizQuestionForm'
 import useLectureQuery from '../../../../packages/app/utils/react-query/useLectureQuery'
 import useQuizQuestionsQuery from '../../../../packages/app/utils/react-query/useQuizQuestions'
@@ -124,9 +125,15 @@ export const Page: NextPageWithLayout = () => {
                     {question.question_type === 'MULTIPLE_CHOICE' && (
                       <YStack gap="$2" pl="$4">
                         {question.quiz_question_options.map((option) => (
-                          <SizableText key={option.id}>
-                            {option.option_text} {option.is_correct ? '(Correct)' : ''}
-                          </SizableText>
+                          <Chip
+                            // @ts-ignore
+                            width="fit-content"
+                            rounded
+                            theme={option.is_correct && 'green'}
+                            key={option}
+                          >
+                            <Chip.Text size="$3">{option.option_text}</Chip.Text>
+                          </Chip>
                         ))}
                       </YStack>
                     )}
