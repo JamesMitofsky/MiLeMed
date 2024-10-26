@@ -17,7 +17,7 @@ const emailPattern = /^[a-zA-Z0-9._%+-]+@(uni-bonn|ukbonn)\.de$|^jamesmitofsky@g
 const SignUpSchema = z.object({
   email: formFields.text
     .email()
-    .regex(emailPattern, 'E-Mail muss die Domain "@unibonn.de" haben') // Validate domain
+    .regex(emailPattern, 'E-Mail muss die Domain "@unibonn.de" oder "@ukbonn.de" haben') // Validate domain
     .describe('E-Mail // jona@uni-bonn.de'),
   password: formFields.text.min(6).describe('Passwort // Wähle ein Passwort'),
 })
