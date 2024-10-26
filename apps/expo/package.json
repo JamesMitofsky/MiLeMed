@@ -32,6 +32,7 @@
     "eas:build:prod:ios": "cross-env NODE_ENV=production APP_ENV=production eas build --profile production --platform ios",
     "eas:submit:prod:ios": "cross-env NODE_ENV=production APP_ENV=production eas submit --profile production --platform ios",
     "eas:update:prod:ios": "cross-env NODE_ENV=production APP_ENV=production eas update --channel production --platform ios",
+    "eas:build:dev:sharable": "cross-env NODE_ENV=development APP_ENV=development eas build --profile development",
     "ios": "yarn with-env expo run:ios",
     "with-env": "dotenv -e ../../.env -c --",
     "lint": "eslint ./app",
