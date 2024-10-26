@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { useSupabase } from '../supabase/useSupabase'
 import { useUser } from '../useUser'
 
-const getEvents = async (supabase, userId) => {
+const getLectureEvents = async (supabase, userId) => {
   return supabase
-    .from('events')
+    .from('lecture_events')
     .select('*')
     .eq('profile_id', userId)
     .order('created_at', { ascending: false })
@@ -14,11 +14,11 @@ const getEvents = async (supabase, userId) => {
 
 function useEventsQuery() {
   const supabase = useSupabase()
-  const queryKey = ['events']
+  const queryKey = ['lecture_events']
   const { user } = useUser()
 
   const queryFn = async () => {
-    return getEvents(supabase, user?.id).then((result) => result.data)
+    return getLectureEvents(supabase, user?.id).then((result) => result.data)
   }
 
   return useQuery({ queryKey, queryFn })

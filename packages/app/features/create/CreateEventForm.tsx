@@ -15,7 +15,7 @@ import { useUser } from 'app/utils/useUser'
 import { useRouter } from 'solito/router'
 import { z } from 'zod'
 
-type InsertEvent = Database['public']['Tables']['events']['Insert']
+type InsertEvent = Database['public']['Tables']['lecture_events']['Insert']
 
 const CreateEventFormSchema = z.object({
   name: formFields.text.min(5).describe('Name // Your event name').nullable().optional(),
@@ -38,14 +38,14 @@ export const CreateEventForm = () => {
     },
     async mutationFn(data: z.infer<typeof CreateEventFormSchema>) {
       const { name, description, start_time, end_time, status } = data
-      const insertData: InsertEvent = {
-        name: name?.trim() as string,
-        description,
-        start_time: start_time?.dateValue?.toISOString(),
-        end_time: end_time?.dateValue?.toISOString(),
-        status,
-      }
-      await supabase.from('events').insert(insertData)
+      // const insertData: InsertEvent = {
+      //   name: name?.trim() as string,
+      //   description,
+      //   start_time: start_time?.dateValue?.toISOString(),
+      //   end_time: end_time?.dateValue?.toISOString(),
+      //   status,
+      // }
+      // await supabase.from('lecture_events').insert(insertData)
     },
 
     async onSuccess() {

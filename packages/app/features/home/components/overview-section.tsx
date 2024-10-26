@@ -86,6 +86,29 @@ export const OverviewSection = () => {
       enabled: true,
     }
   )
+  const { data: chapterCompletion } = useQuery(
+    ['chapterCompletionCounts'],
+    async () => {
+      const { data, error } = await supabase.rpc('get_chapter_completion_counts') // Call the Supabase function
+
+      if (error) {
+        console.error('Error fetching chapter completion counts:', error)
+        throw new Error(error.message) // Throw an error to be caught by TanStack Query
+      }
+
+      // Return the first item directly, assuming data[0] exists
+      return data ? data[0] : null
+    },
+    {
+      staleTime: 1000 * 60 * 5, // 5 minutes (optional: cache time)
+      retry: false, // Disable retries or customize as needed
+      onError: (error) => {
+        console.error('Query failed:', error)
+      },
+    }
+  )
+
+  // TODO eventually make it so there are loaders when the data is still coming. THere should only be 0 if there is REALLY no chapters done yet
 
   return (
     <YStack>
@@ -104,10 +127,21 @@ export const OverviewSection = () => {
         <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
           <OverviewCard
             title="Kapitel abgeschlossen"
+            value={`${chapterCompletion?.completed_chapters} ${
+              chapterCompletion?.completed_chapters === 1 ? 'Kapitel' : 'Kapitel'
+            }`}
+            badgeText={`Gesamt: ${chapterCompletion?.total_chapters} ${
+              chapterCompletion?.total_chapters === 1 ? 'Kapitel' : 'Kapitel'
+            }`}
+            badgeState="success"
+          />
+
+          <OverviewCard
+            title="Lektion abgeschlossen" // Lessons Completed
             value={`${completedLecturesCount || 0} ${
               completedLecturesCount === 1 ? 'Lektion' : 'Lektionen'
             }`}
-            badgeText={`Gesamt: ${totalLecturesCount} ${
+            badgeText={`Gesamt: ${totalLecturesCount || 0} ${
               totalLecturesCount === 1 ? 'Lektion' : 'Lektionen'
             }`}
             badgeState="success"

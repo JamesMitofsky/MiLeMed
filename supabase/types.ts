@@ -400,6 +400,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_chapter_completion_counts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          total_chapters: number
+          completed_chapters: number
+        }[]
+      }
       get_chapter_summary: {
         Args: Record<PropertyKey, never>
         Returns: {
