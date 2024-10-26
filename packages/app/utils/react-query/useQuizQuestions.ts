@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { QuizQuestionOptionsType, QuizQuestionsType } from '../supabase/databaseTypes'
 import { useSupabase } from '../supabase/useSupabase'
 
-const getQuizQuestions = async (supabase, lectureId: string) => {
+const getQuizQuestions = async (supabase, lectureId: number) => {
   const { data, error } = await supabase
     .from('quiz_questions')
     .select(
@@ -26,7 +26,7 @@ export type QuizQuestionsWithOptionsType = QuizQuestionsType & {
   quiz_question_options: Pick<QuizQuestionOptionsType, 'id' | 'is_correct' | 'option_text'>[]
 }
 
-function useQuizQuestionsQuery(lectureId: string) {
+function useQuizQuestionsQuery(lectureId: number) {
   const supabase = useSupabase()
 
   const queryFn = () => getQuizQuestions(supabase, lectureId)

@@ -2,6 +2,7 @@ import { XStack, ScrollView, YStack, Button } from '@my/ui'
 import { ArrowLeft } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
+import { useSupabase } from 'app/utils/supabase/useSupabase'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
@@ -19,7 +20,18 @@ export const Page: NextPageWithLayout = () => {
     isLoading: areQuestionsLoading,
     error,
     refetch,
-  } = useQuizQuestionsQuery(router.query.id as string)
+  } = useQuizQuestionsQuery(parseInt(router.query.id as string, 10))
+  const supabase = useSupabase()
+
+  const handleQuestionDelete = async (questionId: number) => {
+    const { error } = await supabase.from('quiz_questions').delete().eq('id', questionId)
+    refetch()
+
+    if (error) {
+      console.error('Error deleting quiz question:', error)
+      alert('An error occurred while deleting the quiz question. Please try again.')
+    }
+  }
 
   return (
     <>
@@ -44,6 +56,10 @@ export const Page: NextPageWithLayout = () => {
               quizQuestions={quizQuestions}
               areQuestionsLoading={areQuestionsLoading}
               error={error}
+              onDelete={(questionId) => {
+                handleQuestionDelete(questionId)
+                refetch()
+              }}
             />
             <QuizQuestionForm onSubmitSuccess={refetch} lectureId={lecture?.id} />
           </YStack>
