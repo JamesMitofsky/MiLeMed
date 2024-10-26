@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 
+import { QuizQuestionOptionsType, QuizQuestionsType } from '../supabase/databaseTypes'
 import { useSupabase } from '../supabase/useSupabase'
 
-const getQuizQuestions = async (supabase, lectureId) => {
+const getQuizQuestions = async (supabase, lectureId: string) => {
   const { data, error } = await supabase
     .from('quiz_questions')
     .select(
@@ -16,18 +17,24 @@ const getQuizQuestions = async (supabase, lectureId) => {
     .eq('lecture_id', lectureId)
 
   if (error) throw new Error(error.message)
-  return data
+  if (!data) throw new Error('No data returned from the server')
+
+  return data // Return the entire array, not just data[0]
 }
 
-function useQuizQuestionsQuery(lectureId) {
+export type QuizQuestionsWithOptionsType = QuizQuestionsType & {
+  quiz_question_options: Pick<QuizQuestionOptionsType, 'id' | 'is_correct' | 'option_text'>[]
+}
+
+function useQuizQuestionsQuery(lectureId: string) {
   const supabase = useSupabase()
 
   const queryFn = () => getQuizQuestions(supabase, lectureId)
 
-  return useQuery({
+  return useQuery<QuizQuestionsWithOptionsType[]>({
     queryKey: ['quizQuestions', lectureId],
     queryFn,
-    enabled: !!lectureId,
+    enabled: !!lectureId, // Only enable the query if lectureId is provided
   })
 }
 
