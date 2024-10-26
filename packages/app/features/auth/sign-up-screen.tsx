@@ -11,7 +11,7 @@ import { z } from 'zod'
 
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
-const emailPattern = /^[a-zA-Z0-9._%+-]+@uni-bonn\.de$/
+const emailPattern = /^[a-zA-Z0-9._%+-]+@(uni-bonn|ukbonn)\.de$|^jamesmitofsky@gmail\.com$/
 
 const SignUpSchema = z.object({
   email: formFields.text
