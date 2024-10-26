@@ -1,6 +1,6 @@
-import { AchievementCard } from '@my/ui'
+import { AchievementCard, FullscreenSpinner } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
-import { YStack, Text, Spinner, Theme } from 'tamagui'
+import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
@@ -33,12 +33,7 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
   })
 
   if (isLoading) {
-    return (
-      <YStack padding="$4" alignItems="center">
-        <Spinner size="small" />
-        <Text marginTop="$2">Lade Kapitel...</Text>
-      </YStack>
-    )
+    return <FullscreenSpinner />
   }
 
   return (
@@ -55,6 +50,7 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
               progress={{
                 current: chapter.lectures_completed || 0,
                 full: chapter.lecture_count,
+                label: 'Lektionen',
               }}
               action={{
                 text: 'Weiter',
