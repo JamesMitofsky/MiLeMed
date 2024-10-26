@@ -58,7 +58,7 @@ export const AchievementCard = ({
               boc="$color5"
               bw={1}
             >
-              <Progress.Indicator bc="$color7" animation="bouncy" />
+              <Progress.Indicator bc="$color7" />
             </Progress>
           )}
 
