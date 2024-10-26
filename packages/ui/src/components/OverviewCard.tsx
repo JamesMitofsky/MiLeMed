@@ -1,4 +1,4 @@
-import { type CardProps, Card, H6, H2, Paragraph, Button, XStack, Theme, YStack } from 'tamagui'
+import { type CardProps, Card, H6, H2, YStack, Button, Paragraph, Theme, XStack } from 'tamagui'
 
 export type OverviewCardTypes = {
   title: string
@@ -6,6 +6,10 @@ export type OverviewCardTypes = {
   badgeText?: string
   badgeAfter?: string
   badgeState?: 'success' | 'failure' | 'indifferent'
+  progress?: {
+    current: number
+    full: number
+  }
 } & CardProps
 
 export const OverviewCard = ({
@@ -14,6 +18,7 @@ export const OverviewCard = ({
   badgeText,
   badgeState,
   badgeAfter,
+  progress,
   ...props
 }: OverviewCardTypes) => {
   return (
@@ -37,6 +42,19 @@ export const OverviewCard = ({
             {title}
           </H6>
           <H2 mt="$2">{value}</H2>
+          {/* {progress && (
+            <Progress
+              w={50}
+              mt="$2"
+              theme="alt2"
+              value={(progress.current / progress.full) * 100}
+              bg="$color2"
+              boc="$color5"
+              bw={1}
+            >
+              <Progress.Indicator bc="$color7" />
+            </Progress>
+          )} */}
         </YStack>
         <XStack mt="$4">
           {!!badgeText && (

@@ -33,7 +33,7 @@ export const AchievementCard = ({
       <Card.Header my="auto" padded gap="$3">
         {Icon && <Icon size="$3" o={0.6} />}
         <YStack gap="$2">
-          <H4 size="$5" tt="capitalize" mt="$2">
+          <H4 size="$5" mt="$2">
             {title}
           </H4>
 
