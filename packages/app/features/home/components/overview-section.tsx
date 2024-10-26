@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { ScrollAdapt } from './scroll-adapt'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 
-export const OverviewSection = () => {
+export const StatisticsPreviewList = () => {
   const supabase = useSupabase()
   /**
    * Query 1: Count of Completed Lectures
