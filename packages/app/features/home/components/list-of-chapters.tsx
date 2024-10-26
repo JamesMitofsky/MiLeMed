@@ -1,36 +1,15 @@
 import { AchievementCard, FullscreenSpinner } from '@my/ui'
-import { useQuery } from '@tanstack/react-query'
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import { useSupabase } from '../../../utils/supabase/useSupabase'
+import useChapterSummary from '../../../utils/react-query/useChapterSummary'
 
 type ListOfChaptersProps = {
   limit?: number
 }
 
 const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
-  const supabase = useSupabase()
-  const { data: chapters, isLoading } = useQuery(['chapters'], {
-    queryFn: async () => {
-      let query = supabase.rpc('get_chapter_summary').select('*')
-
-      if (typeof limit === 'number') {
-        query = query.limit(limit)
-      }
-      const { data, error } = await query
-
-      if (error) {
-        // no rows - edge case of user being deleted
-        if (error.code === 'PGRST116') {
-          await supabase.auth.signOut()
-          return null
-        }
-        throw new Error(error.message)
-      }
-      return data
-    },
-  })
+  const { data: chapters, isLoading } = useChapterSummary(limit)
 
   if (isLoading) {
     return <FullscreenSpinner />

@@ -419,6 +419,15 @@ export type Database = {
           lectures_completed: number
         }[]
       }
+      get_lecture_completion_counts: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          total_lectures: number
+          completed_lectures: number
+        }[]
+      }
     }
     Enums: {
       gender: "MALE" | "FEMALE" | "OTHER"

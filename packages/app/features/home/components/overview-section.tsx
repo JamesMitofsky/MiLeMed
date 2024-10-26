@@ -3,82 +3,24 @@ import { ArrowRight } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 
 import { ScrollAdapt } from './scroll-adapt'
+import useLectureCompletionCounts from '../../../utils/react-query/useLectureCompletionCounts'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 
 export const StatisticsPreviewList = () => {
   const supabase = useSupabase()
-  /**
-   * Query 1: Count of Completed Lectures
-   * A lecture is considered completed if there exists at least one
-   * lecture_event with event_type 'QUIZ_PASSED' or 'LECTURE_SKIPPED'.
-   */
-  const { data: completedLecturesCount } = useQuery(
-    ['completedLecturesCount'],
+
+  const { data: lectureTotals } = useLectureCompletionCounts()
+
+  const { data: usersCount } = useQuery(
+    ['usersCount'],
     async () => {
-      // Using a raw SQL query via Supabase's rpc method
-      const { data, error } = await supabase
-        .from('lecture_events')
-        .select('lecture_id', { count: 'exact', head: true })
-        .in('event_type', ['QUIZ_PASSED', 'LECTURE_SKIPPED'])
-        .neq('lecture_id', null)
-      // .distinct('lecture_id')
+      const { count, error } = await supabase.from('profiles').select('id', { count: 'exact' })
 
       if (error) {
         throw new Error(error.message)
       }
 
-      // Supabase's 'distinct' with 'head: true' and 'count: exact' might not return 'count' as expected.
-      // Therefore, it's recommended to use an RPC function or a view for accurate counts.
-      // For demonstration, we'll assume 'count' is correctly returned.
-      return data?.length || 0 // Fallback to 0 if data is undefined
-    },
-    {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      cacheTime: 1000 * 60 * 10, // 10 minutes
-      enabled: true,
-    }
-  )
-
-  /**
-   * Query 2: Total Number of Lectures
-   */
-  const { data: totalLecturesCount } = useQuery(
-    ['totalLecturesCount'],
-    async () => {
-      const { count, error } = await supabase
-        .from('lectures')
-        .select('*', { count: 'exact', head: true })
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      return count
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 10,
-      enabled: true,
-    }
-  )
-
-  /**
-   * Query 3: Number of Users with Student Status
-   * Assuming 'role' column in 'profiles' table denotes user roles.
-   */
-  const { data: studentUsersCount } = useQuery(
-    ['studentUsersCount'],
-    async () => {
-      const { count, error } = await supabase
-        .from('profiles')
-        .select('*', { count: 'exact', head: true })
-        .eq('role', 'student')
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      return count
+      return count || 0
     },
     {
       staleTime: 1000 * 60 * 5,
@@ -97,7 +39,7 @@ export const StatisticsPreviewList = () => {
       }
 
       // Return the first item directly, assuming data[0] exists
-      return data ? data[0] : null
+      return data ? data[0] : { total_chapters: 0, completed_chapters: 0 }
     },
     {
       staleTime: 1000 * 60 * 5, // 5 minutes (optional: cache time)
@@ -127,7 +69,7 @@ export const StatisticsPreviewList = () => {
         <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
           <OverviewCard
             title="Kapitel abgeschlossen"
-            value={`${chapterCompletion?.completed_chapters} ${
+            value={`${chapterCompletion?.completed_chapters ?? '—'} ${
               chapterCompletion?.completed_chapters === 1 ? 'Kapitel' : 'Kapitel'
             }`}
             badgeText={`Gesamt: ${chapterCompletion?.total_chapters} ${
@@ -137,12 +79,12 @@ export const StatisticsPreviewList = () => {
           />
 
           <OverviewCard
-            title="Lektion abgeschlossen" // Lessons Completed
-            value={`${completedLecturesCount || 0} ${
-              completedLecturesCount === 1 ? 'Lektion' : 'Lektionen'
+            title="Lektion abgeschlossen" // Lectures Completed
+            value={`${lectureTotals?.completed_lectures ?? '—'} ${
+              lectureTotals?.completed_lectures === 1 ? 'Lektion' : 'Lektionen'
             }`}
-            badgeText={`Gesamt: ${totalLecturesCount || 0} ${
-              totalLecturesCount === 1 ? 'Lektion' : 'Lektionen'
+            badgeText={`Gesamt: ${lectureTotals?.total_lectures ?? '—'} ${
+              lectureTotals?.total_lectures === 1 ? 'Lektion' : 'Lektionen'
             }`}
             badgeState="success"
           />
@@ -155,8 +97,8 @@ export const StatisticsPreviewList = () => {
           /> */}
 
           <OverviewCard
-            title="Neue Studenten diesen Monat"
-            value={`${studentUsersCount || 0} Studenten`}
+            title="Neue Benutzer diesen Monat"
+            value={`${usersCount ?? '—'} Benutzer`}
             badgeState="success"
           />
 
