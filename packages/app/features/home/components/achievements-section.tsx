@@ -5,7 +5,7 @@ import { useRouter } from 'solito/router'
 import ListOfChapters from './list-of-chapters'
 import { ScrollAdapt } from './scroll-adapt'
 
-export const AchievementsSection = () => {
+export const ChaptersPreviewList = () => {
   const router = useRouter()
 
   return (
