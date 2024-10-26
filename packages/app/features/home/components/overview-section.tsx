@@ -122,8 +122,7 @@ export const OverviewSection = () => {
 
           <OverviewCard
             title="Neue Studenten diesen Monat"
-            value={`${studentUsersCount} Studenten`}
-            badgeText=""
+            value={`${studentUsersCount || 0} Studenten`}
             badgeState="success"
           />
 
