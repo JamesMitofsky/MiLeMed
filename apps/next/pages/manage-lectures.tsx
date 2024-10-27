@@ -15,14 +15,18 @@ import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
 
 import { NextPageWithLayout } from './_app'
-import useLecturesQuery, {
-  AllSortedLecturesRow,
-} from '../../../packages/app/utils/react-query/useLecturesQuery'
+import useLecturesQuery from '../../../packages/app/utils/react-query/useLecturesQuery'
+
+// Step 1: Define the type for the return value of useLecturesQuery
+type UseLecturesQueryReturnType = ReturnType<typeof useLecturesQuery>
+
+// Step 2: Define the type for the data property
+type SingleLectureDataType = NonNullable<UseLecturesQueryReturnType['data']>[number]
 
 const truncateContent = (content: string, sentenceCount: number = 2): string => {
   const sentences = content.match(/[^\.!\?]+[\.!\?]+/g)
@@ -65,7 +69,18 @@ export const Page: NextPageWithLayout = () => {
                 {filteredData ? (
                   filteredData.map((item, index) => {
                     const isLastItem = index === filteredData.length - 1
-                    return <Row isLastItem={isLastItem} key={index} lecture={item} />
+                    const isNotFirstItem = index > 0
+                    const isFirstOccurrence =
+                      index === 0 || filteredData[index - 1].chapter_title !== item.chapter_title
+
+                    return (
+                      <React.Fragment key={index}>
+                        {isFirstOccurrence && (
+                          <H2 mt={isNotFirstItem && '$12'}>{item.chapter_title}</H2>
+                        )}
+                        <Row isLastItem={isLastItem} lecture={item} />
+                      </React.Fragment>
+                    )
                   })
                 ) : (
                   <FullscreenSpinner />
@@ -97,12 +112,12 @@ const SizeableText = styled(Text, {
   },
 })
 
-const Row = ({ lecture, isLastItem }: { lecture: AllSortedLecturesRow; isLastItem: boolean }) => {
+const Row = ({ lecture, isLastItem }: { lecture: SingleLectureDataType; isLastItem: boolean }) => {
   const router = useRouter()
   return (
     <View
       justifyContent="space-between"
-      paddingVertical="$8"
+      paddingVertical="$4"
       alignItems="flex-start"
       flexDirection="column"
       borderTopWidth={3}

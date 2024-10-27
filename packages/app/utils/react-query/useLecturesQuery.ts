@@ -2,39 +2,24 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-export type AllSortedLecturesRow = {
-  chapter_id: number
-  chapter_sort_order: number
-  lecture_content: string
-  lecture_id: number
-  lecture_sort_order: number
-  lecture_title: string
-}
-
-// Query to get sorted lectures from the view
-const getLectures = async (supabase) => {
-  // TODO: come back and improve this
-  const { data, error }: { data: AllSortedLecturesRow[]; error: any } = await supabase
-    .from('all_sorted_lectures')
-    .select('*')
-
-  if (error) {
-    throw new Error(error.message)
-  }
-
-  return data
-}
-
-// Custom hook to fetch lectures with sorting
 function useLecturesQuery() {
   const supabase = useSupabase()
-  const queryKey = ['lectures']
+  const queryKey = ['sortedLectures']
 
   const queryFn = async () => {
-    return getLectures(supabase)
+    const { data, error } = await supabase.rpc('get_all_sorted_lectures').select('*')
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return data
   }
 
-  return useQuery({ queryKey, queryFn })
+  return useQuery({
+    queryKey,
+    queryFn,
+  })
 }
 
 export default useLecturesQuery

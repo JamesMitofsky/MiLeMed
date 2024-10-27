@@ -95,13 +95,6 @@ export type Database = {
             foreignKeyName: "images_lecture_id_fkey"
             columns: ["lecture_id"]
             isOneToOne: false
-            referencedRelation: "all_sorted_lectures"
-            referencedColumns: ["lecture_id"]
-          },
-          {
-            foreignKeyName: "images_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
             referencedRelation: "lectures"
             referencedColumns: ["id"]
           },
@@ -133,13 +126,6 @@ export type Database = {
           profile_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "lecture_events_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "all_sorted_lectures"
-            referencedColumns: ["lecture_id"]
-          },
           {
             foreignKeyName: "lecture_events_lecture_id_fkey"
             columns: ["lecture_id"]
@@ -333,13 +319,6 @@ export type Database = {
             foreignKeyName: "quiz_attempts_lecture_id_fkey"
             columns: ["lecture_id"]
             isOneToOne: false
-            referencedRelation: "all_sorted_lectures"
-            referencedColumns: ["lecture_id"]
-          },
-          {
-            foreignKeyName: "quiz_attempts_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
             referencedRelation: "lectures"
             referencedColumns: ["id"]
           },
@@ -411,13 +390,6 @@ export type Database = {
             foreignKeyName: "quiz_questions_lecture_id_fkey"
             columns: ["lecture_id"]
             isOneToOne: false
-            referencedRelation: "all_sorted_lectures"
-            referencedColumns: ["lecture_id"]
-          },
-          {
-            foreignKeyName: "quiz_questions_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
             referencedRelation: "lectures"
             referencedColumns: ["id"]
           },
@@ -425,27 +397,21 @@ export type Database = {
       }
     }
     Views: {
-      all_sorted_lectures: {
-        Row: {
-          chapter_id: number | null
-          chapter_sort_order: number | null
-          lecture_content: string | null
-          lecture_id: number | null
-          lecture_sort_order: number | null
-          lecture_title: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lectures_chapter_id_fkey"
-            columns: ["chapter_id"]
-            isOneToOne: false
-            referencedRelation: "chapters"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_all_sorted_lectures: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          lecture_id: number
+          lecture_title: string
+          lecture_content: string
+          lecture_sort_order: number
+          chapter_id: number
+          chapter_title: string
+          chapter_sort_order: number
+        }[]
+      }
       get_chapter_completion_counts: {
         Args: Record<PropertyKey, never>
         Returns: {
