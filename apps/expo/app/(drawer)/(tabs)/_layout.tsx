@@ -22,7 +22,7 @@ export default function Layout() {
     <>
       <Stack.Screen
         options={{
-          title: '',
+          title: '', // hidden this is home
           headerShown: pathname === '/' || pathname === '/create',
           headerTintColor: accentColor.val,
           headerLeft: () => (
@@ -76,7 +76,7 @@ export default function Layout() {
           key="index"
           options={{
             headerShown: false,
-            title: 'Home',
+            title: 'Startseite',
             tabBarIcon: ({ size, color, focused }) => (
               <Home color={focused ? '$color12' : '$color10'} size={size} strokeWidth={2} />
             ),

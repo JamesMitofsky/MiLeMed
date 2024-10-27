@@ -5,7 +5,7 @@ import { YStack, Text, Spinner, Separator, ScrollView } from 'tamagui'
 import { supabase } from '../../utils/supabase/client.native'
 import ListOfLectures from '../home/components/list-of-lectures'
 
-const IndividualModuleScreen = () => {
+const IndividualChapterScreen = () => {
   // const { id } = useSearchParams()
   const { id }: { id: string } = useLocalSearchParams()
 
@@ -53,10 +53,10 @@ const IndividualModuleScreen = () => {
           Lektion
         </Text>
 
-        <ListOfLectures moduleId={id || ''} limit={5} />
+        <ListOfLectures moduleId={id || ''} />
       </YStack>
     </ScrollView>
   )
 }
 
-export default IndividualModuleScreen
+export default IndividualChapterScreen

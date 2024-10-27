@@ -61,7 +61,7 @@ export default function HomeLayout() {
         <Provider initialSession={initialSession}>
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen
-              name="(drawer)"
+              name="(drawer)" // IMPORTANT: Hidden but this is home was originally drawer
               options={{
                 headerShown: false,
                 headerBackTitle: 'Home',
