@@ -11587,6 +11587,7 @@ __metadata:
     expo-linking: "npm:~6.3.1"
     expo-secure-store: "npm:~13.0.2"
     i18next: "npm:^23.16.4"
+    intl-pluralrules: "npm:^2.0.1"
     react-canvas-confetti: "npm:^2.0.7"
     react-dropzone: "npm:^14.2.3"
     react-hook-form: "npm:^7.46.1"
@@ -19200,6 +19201,13 @@ __metadata:
     hasown: "npm:^2.0.0"
     side-channel: "npm:^1.0.4"
   checksum: 10/3e66720508831153ecf37d13def9f6856f9f2960989ec8a0a0476c98f887fca9eff0163127466485cb825c900c2d6fc601aa9117b7783b90ffce23a71ea5d053
+  languageName: node
+  linkType: hard
+
+"intl-pluralrules@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "intl-pluralrules@npm:2.0.1"
+  checksum: 10/562964d81c4477ab0b66e051c31cdbb2ca599307ffdfdc88a1e16d2cf137e481082b90d5ad81f9d2d5f6767ec5528d764a44462f6752109ac035c04604973e23
   languageName: node
   linkType: hard
 
