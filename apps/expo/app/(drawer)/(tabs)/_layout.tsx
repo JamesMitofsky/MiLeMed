@@ -1,100 +1,12 @@
-import { useTheme, Button } from '@my/ui'
-import { DrawerActions } from '@react-navigation/native'
-import { Home, Menu, User } from '@tamagui/lucide-icons'
-import { useUser } from 'app/utils/useUser'
-// import { IconGearFill, IconGear, IconHouse, IconHouseFill } from '@tamagui-icons/icon-ph'
-import { Stack, Tabs, useNavigation, usePathname } from 'expo-router'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Stack } from 'expo-router'
 
 export default function Layout() {
-  const { accentColor } = useTheme()
-  const navigation = useNavigation()
-  const pathname = usePathname()
-  const insets = useSafeAreaInsets()
-  const { profile } = useUser()
-
-  // console.log('profile', profile)
-  // if (__DEV__) {
-  //   console.log('pathname', pathname)
-  // }
-  // Home
   return (
-    <>
-      <Stack.Screen
-        options={{
-          title: '', // hidden this is home
-          headerShown: pathname === '/' || pathname === '/create',
-          headerTintColor: accentColor.val,
-          headerLeft: () => (
-            <Button
-              borderStyle="unset"
-              borderWidth={0}
-              backgroundColor="transparent"
-              marginLeft="$-1"
-              paddingHorizontal="$4"
-              onPress={() => {
-                navigation.dispatch(DrawerActions.openDrawer())
-              }}
-            >
-              <Menu size={24} />
-            </Button>
-          ),
-          // headerRight: () =>
-          //   profile?.role === 'ADMIN' && (
-          //     <Button
-          //       borderStyle="unset"
-          //       borderWidth={0}
-          //       marginRight="$-1"
-          //       backgroundColor="transparent"
-          //       onPress={() => {
-          //         router.navigate('create')
-          //       }}
-          //     >
-          //       <Plus size={24} />
-          //     </Button>
-          //   ),
-        }}
-      />
-      <Tabs
-        screenOptions={{
-          tabBarShowLabel: false,
-          headerTintColor: accentColor.val,
-          tabBarStyle: {
-            paddingTop: 30,
-            paddingBottom: insets.bottom + 20, // edit this with safe area insets
-            height: 60,
-            alignContent: 'center',
-            justifyContent: 'center',
-          },
-          tabBarItemStyle: {
-            paddingBottom: 10,
-          },
-        }}
-      >
-        <Tabs.Screen
-          name="index"
-          key="index"
-          options={{
-            headerShown: false,
-            title: 'Startseite',
-            tabBarIcon: ({ size, color, focused }) => (
-              <Home color={focused ? '$color12' : '$color10'} size={size} strokeWidth={2} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="profile"
-          key="profile"
-          options={{
-            headerShown: false,
-            title: 'Profile',
-            tabBarLabel: 'Profile',
-            tabBarIcon: ({ size, color, focused }) => (
-              <User color={focused ? '$color12' : '$color10'} size={size} strokeWidth={2} />
-            ),
-          }}
-        />
-      </Tabs>
-    </>
+    <Stack
+      screenOptions={{
+        headerShown: false, // Hide the header for all screens in this folder
+        title: '', // Set an empty title if you still want to show the header but without text
+      }}
+    />
   )
 }

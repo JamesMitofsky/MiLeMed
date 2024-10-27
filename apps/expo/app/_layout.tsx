@@ -68,12 +68,12 @@ export default function HomeLayout() {
                 title: 'Starteseite',
               }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="create"
               options={{
                 headerShown: false,
               }}
-            />
+            /> */}
             <Stack.Screen
               name="settings/index"
               options={{
