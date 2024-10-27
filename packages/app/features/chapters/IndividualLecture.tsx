@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
+import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
 import { YStack, Text, Spinner, ScrollView, Button } from 'tamagui'
 
+import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { supabase } from '../../utils/supabase/client.native'
 
 const IndividualLecture = () => {
@@ -21,6 +23,7 @@ const IndividualLecture = () => {
     },
     enabled: !!id, // Only run the query if 'id' is available
   })
+  const context = useContext(ThemeContext)
 
   if (isLoading) {
     return (
@@ -45,8 +48,12 @@ const IndividualLecture = () => {
         <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
           {lecture.title}
         </Text>
-        <Text fontSize="$4" marginBottom="$2">
-          <Markdown>{lecture.content}</Markdown>
+        <Text fontSize="$4" marginBottom="$2" color="red">
+          <Markdown
+            style={{ text: { color: context?.systemTheme === 'dark' ? 'white' : 'black' } }}
+          >
+            {lecture.content}
+          </Markdown>
         </Text>
         <Button
           marginTop="$4"
