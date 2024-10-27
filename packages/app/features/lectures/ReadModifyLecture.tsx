@@ -80,13 +80,11 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
             </SizableText>
             <Button
               size="$3"
-              backgroundColor={isEditMode ? '$red12' : undefined} //TODO determine why these colors don't work
+              // backgroundColor={isEditMode ? '$red12' : undefined} //TODO determine why these colors don't work
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
             >
-              <Button.Text color={isEditMode ? '$red12' : undefined}>
-                {isEditMode ? 'Cancel' : 'Modify'}
-              </Button.Text>
+              <Button.Text>{isEditMode ? 'Cancel' : 'Modify'}</Button.Text>
             </Button>
           </XStack>
           {isEditMode ? (
