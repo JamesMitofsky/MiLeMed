@@ -7,12 +7,14 @@ import {
   Spinner,
   YStack,
   XStack,
+  H1,
 } from '@my/ui'
 import { Save, Pencil, Eye } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 import { useSupabase } from '../../utils/supabase/useSupabase'
+import { parseMarkdown } from '../general/markdownParser'
 
 const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: any }) => {
   const supabase = useSupabase()
@@ -78,59 +80,67 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
             </SizableText>
             <Button
               size="$3"
+              backgroundColor={isEditMode ? '$red12' : undefined} //TODO determine why these colors don't work
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
-              // theme={isEditMode ? 'primary' : 'neutral'}
             >
-              {isEditMode ? 'Cancel' : 'Modify'}
+              <Button.Text color={isEditMode ? '$red12' : undefined}>
+                {isEditMode ? 'Cancel' : 'Modify'}
+              </Button.Text>
             </Button>
           </XStack>
-
-          <Controller
-            name="title"
-            control={control}
-            rules={{ required: 'Title is required' }}
-            render={({ field, fieldState }) => (
-              <>
-                <Input
-                  size="$3"
-                  fontWeight="300"
-                  height={60}
-                  placeholder="Your title here"
-                  value={field.value}
-                  // @ts-ignore
-                  onChange={(e) => field.onChange(e.target.value)}
-                  disabled={!isEditMode}
-                />
-                {fieldState.error && (
-                  <SizableText color="red">{fieldState.error.message}</SizableText>
-                )}
-              </>
-            )}
-          />
+          {isEditMode ? (
+            <Controller
+              name="title"
+              control={control}
+              rules={{ required: 'Title is required' }}
+              render={({ field, fieldState }) => (
+                <>
+                  <Input
+                    size="$3"
+                    fontWeight="300"
+                    height={60}
+                    placeholder="Your title here"
+                    value={field.value}
+                    // @ts-ignore
+                    onChange={(e) => field.onChange(e.target.value)}
+                    disabled={!isEditMode}
+                  />
+                  {fieldState.error && (
+                    <SizableText color="red">{fieldState.error.message}</SizableText>
+                  )}
+                </>
+              )}
+            />
+          ) : (
+            <H1 size="$9">{lecture.title}</H1>
+          )}
           <Controller
             name="content"
             control={control}
             rules={{ required: 'Content is required' }}
             render={({ field, fieldState }) => (
               <>
-                <TextArea
-                  size="$3"
-                  fontWeight="300"
-                  height={580}
-                  placeholder="Your content here"
-                  value={field.value}
-                  // @ts-ignore
-                  onChange={(e) => field.onChange(e.target.value)}
-                  disabled={!isEditMode}
-                />
+                {isEditMode ? (
+                  <TextArea
+                    size="$3"
+                    fontWeight="300"
+                    height={400}
+                    placeholder="Your content here"
+                    value={field.value}
+                    // @ts-ignore
+                    onChange={(e) => field.onChange(e.target.value)}
+                    disabled={!isEditMode}
+                  />
+                ) : (
+                  <>{parseMarkdown(lecture.content)}</>
+                )}
                 {fieldState.error && (
                   <SizableText color="red">{fieldState.error.message}</SizableText>
                 )}
               </>
             )}
           />
-
           {isEditMode && (
             <Button
               themeInverse

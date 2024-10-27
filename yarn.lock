@@ -11592,6 +11592,7 @@ __metadata:
     react-hook-form: "npm:^7.46.1"
     react-native: "npm:0.74.5"
     react-native-safe-area-context: "npm:4.10.5"
+    rehype-react: "npm:^8.0.0"
     solito: "npm:^4.0.1"
     superjson: "npm:^1.13.1"
     typescript: "npm:^5.3.3"
@@ -25978,6 +25979,17 @@ __metadata:
   bin:
     regjsparser: bin/parser
   checksum: 10/be7757ef76e1db10bf6996001d1021048b5fb12f5cb470a99b8cf7f3ff943f0f0e2291c0dcdbb418b458ddc4ac10e48680a822b69ef487a0284c8b6b77beddc3
+  languageName: node
+  linkType: hard
+
+"rehype-react@npm:^8.0.0":
+  version: 8.0.0
+  resolution: "rehype-react@npm:8.0.0"
+  dependencies:
+    "@types/hast": "npm:^3.0.0"
+    hast-util-to-jsx-runtime: "npm:^2.0.0"
+    unified: "npm:^11.0.0"
+  checksum: 10/8669aa4d0d530c8d6f388b32b7ccb4814b1cb17c3847f1f8e7553b85acb7cd02569e451ea70ee33c5da8222ed3c05876fcef88e1eec05681ba71e31aa613b6b0
   languageName: node
   linkType: hard
 
