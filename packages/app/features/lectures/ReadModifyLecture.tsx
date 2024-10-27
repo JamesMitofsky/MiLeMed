@@ -8,8 +8,9 @@ import {
   YStack,
   XStack,
   H1,
+  useToast,
 } from '@my/ui'
-import { Save, Pencil, Eye } from '@tamagui/lucide-icons'
+import { Save, Pencil, Eye, Info } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -31,6 +32,8 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
 
   // Watch for changes in form values
   const watchedValues = watch(['title', 'content'])
+
+  const toast = useToast()
 
   useEffect(() => {
     if (lecture) {
@@ -59,8 +62,7 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
         .eq('id', lectureId)
 
       if (error) throw error
-
-      alert('Modification successful! :)')
+      toast.show('Lecture updated successfully!', { appearance: 'success' })
       setIsEditMode(false)
     } catch (error) {
       console.error('Error updating lecture:', error)
@@ -98,11 +100,11 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
                     size="$3"
                     fontWeight="300"
                     height={60}
+                    m="$1"
                     placeholder="Your title here"
                     value={field.value}
                     // @ts-ignore
                     onChange={(e) => field.onChange(e.target.value)}
-                    disabled={!isEditMode}
                   />
                   {fieldState.error && (
                     <SizableText color="red">{fieldState.error.message}</SizableText>
@@ -124,11 +126,11 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
                     size="$3"
                     fontWeight="300"
                     height={400}
+                    m="$1"
                     placeholder="Your content here"
                     value={field.value}
                     // @ts-ignore
                     onChange={(e) => field.onChange(e.target.value)}
-                    disabled={!isEditMode}
                   />
                 ) : (
                   <>{parseMarkdown(lecture.content)}</>
@@ -139,19 +141,25 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
               </>
             )}
           />
-          {isEditMode && (
-            <Button
-              themeInverse
-              f={0}
-              icon={Save}
-              onPress={handleSubmit(handleSaveChanges)}
-              size="$3"
-              width="auto"
-              disabled={!hasChanges || loading}
-            >
-              {loading ? <Spinner /> : 'Save'}
-            </Button>
-          )}
+          {isEditMode &&
+            (hasChanges ? (
+              <Button
+                themeInverse
+                f={0}
+                icon={Save}
+                onPress={handleSubmit(handleSaveChanges)}
+                size="$3"
+                width="auto"
+                disabled={loading}
+              >
+                {loading ? <Spinner /> : 'Save'}
+              </Button>
+            ) : (
+              <XStack gap="$2" ai="center">
+                <Info />
+                <SizableText>Editing, but no changes have been made yet.</SizableText>
+              </XStack>
+            ))}
         </>
       ) : (
         <FullscreenSpinner />
