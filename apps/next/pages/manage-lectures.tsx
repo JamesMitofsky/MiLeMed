@@ -12,12 +12,12 @@ import {
   Input,
 } from '@my/ui'
 import { Eye } from '@tamagui/lucide-icons'
+import { parseMarkdown } from 'app/features/general/markdownParser'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import ReactMarkdown from 'react-markdown'
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
 
 import { NextPageWithLayout } from './_app'
@@ -143,15 +143,8 @@ const Row = ({ lecture, isLastItem }: { lecture: SingleLectureDataType; isLastIt
           </Button.Icon>
         </Button>
       </XStack>
-      <SizeableText
-        size="$4"
-        color="$gray11"
-        $xs={{
-          color: '$color',
-        }}
-      >
-        <ReactMarkdown>{truncateContent(lecture.lecture_content ?? '')}</ReactMarkdown>
-      </SizeableText>
+
+      {parseMarkdown(truncateContent(lecture.lecture_content ?? ''), 14)}
     </View>
   )
 }
