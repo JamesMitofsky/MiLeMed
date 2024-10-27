@@ -31,7 +31,7 @@ const ShowExistingQuizQuestions: React.FC<ShowExistingQuizQuestionsProps> = ({
         quizQuestions.map((question) => (
           <YStack key={question.id} gap="$3" p="$4" borderWidth={1} borderColor="$gray3">
             <XStack justifyContent="space-between">
-              <SizableText fontWeight="bold" size="$4">
+              <SizableText fontWeight="bold" size="$7">
                 {question.question_text}
               </SizableText>
               <Button theme="red" size="$3" circular onPress={() => onDelete(question.id)}>
