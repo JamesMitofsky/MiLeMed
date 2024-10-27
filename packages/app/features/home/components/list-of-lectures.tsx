@@ -14,7 +14,11 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
   const supabase = useSupabase()
   const { data: lectures, isLoading } = useQuery(['lectures'], {
     queryFn: async () => {
-      let query = supabase.from('lectures').select('*').eq('chapter_id', moduleId)
+      let query = supabase
+        .from('lectures')
+        .select('*')
+        .eq('chapter_id', moduleId)
+        .order('sort_order', { ascending: true })
 
       if (typeof limit === 'number') {
         query = query.limit(limit)
