@@ -1,6 +1,6 @@
 import { AchievementCard } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
-import { YStack, Text, Spinner, Theme } from 'tamagui'
+import { YStack, Text, Spinner, Theme, useMedia } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
@@ -37,6 +37,8 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
     },
   })
 
+  const { md } = useMedia()
+
   if (isLoading) {
     return (
       <YStack padding="$4" alignItems="center">
@@ -55,8 +57,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
           {lectures?.map((lecture, index) => (
             <Theme key={lecture.id} name={colors[index]}>
               <AchievementCard
-                w={300}
-                // icon={Users}
+                w={md ? '100%' : 300}
                 title={lecture.title}
                 action={{
                   text: 'Weiter',
