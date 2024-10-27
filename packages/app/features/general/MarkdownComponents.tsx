@@ -38,35 +38,82 @@ export const MarkdownBlockquote: React.FC<{ children: React.ReactNode; size?: nu
 )
 
 // Unordered list component with size prop
-export const MarkdownUnorderedList: React.FC<{ children: React.ReactNode; size?: number }> = ({
+export const MarkdownUnorderedList: React.FC<{ children: React.ReactNode[]; size?: number }> = ({
   children,
   size = 16,
-}) => (
-  <View style={{ paddingVertical: 4 }}>
-    <Text style={{ fontSize: size }}>{children}</Text>
-  </View>
-)
+}) => {
+  return (
+    <View style={{ paddingVertical: 4, paddingLeft: 10 }}>
+      {children.map((child, index) => {
+        // @ts-ignore
+        if (!child.key) {
+          return null
+        }
 
-// Ordered list component with size prop
-export const MarkdownOrderedList: React.FC<{ children: React.ReactNode; size?: number }> = ({
-  children,
-  size = 16,
-}) => (
-  <View style={{ paddingVertical: 4 }}>
-    <Text style={{ fontSize: size }}>{children}</Text>
-  </View>
-)
+        return (
+          <View
+            key={index}
+            style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}
+          >
+            <Text style={{ fontSize: size, marginRight: 8 }}>•</Text>
+            <Text style={{ fontSize: size }}>{child}</Text>
+          </View>
+        )
+      })}
+    </View>
+  )
+}
 
-// List item component with size prop
-export const MarkdownListItem: React.FC<{ children: React.ReactNode; size?: number }> = ({
+export const MarkdownOrderedList: React.FC<{ children: React.ReactNode[]; size?: number }> = ({
   children,
   size = 16,
-}) => (
-  <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
-    <Text style={{ fontSize: size, marginRight: 8 }}>•</Text>
-    <Text style={{ fontSize: size }}>{children}</Text>
-  </View>
-)
+}) => {
+  return (
+    <View style={{ padding: 10 }}>
+      {children.map((child, index) => {
+        // @ts-ignore
+        if (!child.key) {
+          return null
+        }
+
+        // @ts-ignore
+        const keyNumber = parseInt(child.key.replace('li-', ''), 10) + 1
+
+        return (
+          <View
+            key={index}
+            style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}
+          >
+            <Text style={{ fontSize: size, marginRight: 8 }}>{keyNumber}.</Text>
+            <Text style={{ fontSize: size }}>{child}</Text>
+          </View>
+        )
+      })}
+    </View>
+  )
+}
+
+// interface MarkdownListItemProps {
+//   children: React.ReactNode
+//   size?: number
+// }
+
+// export const MarkdownListItem: React.FC<MarkdownListItemProps> = ({
+//   children,
+//   size = 16,
+//   ...props
+// }) => {
+//   console.log('Props:', { children, size, ...props })
+
+//   const isOrderedList = key.startsWith('ol-')
+
+//   return (
+//     <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+//       <Text style={{ fontSize: size, marginRight: 8 }}>{isOrderedList ? '1.' : '•'}</Text>
+//       <Text style={{ fontSize: size }}>{children}</Text>
+//     </View>
+//   )
+// }
 
 // Link component with size prop
 export const MarkdownLink: React.FC<{ href: string; children: React.ReactNode; size?: number }> = ({

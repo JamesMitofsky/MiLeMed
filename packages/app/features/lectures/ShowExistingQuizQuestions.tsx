@@ -3,6 +3,7 @@ import { Trash } from '@tamagui/lucide-icons'
 
 import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useQuizQuestions'
 import { Chip } from '../general/chipParts'
+import { parseMarkdown } from '../general/markdownParser'
 
 interface ShowExistingQuizQuestionsProps {
   quizQuestions?: QuizQuestionsWithOptionsType[]
@@ -57,7 +58,7 @@ const ShowExistingQuizQuestions: React.FC<ShowExistingQuizQuestionsProps> = ({
             )}
             {question.question_type === 'OPEN' && (
               <SizableText size="$3" fontStyle="italic">
-                {question.quiz_question_options[0]?.option_text}
+                {parseMarkdown(question.quiz_question_options[0]?.option_text)}
               </SizableText>
             )}
           </YStack>
