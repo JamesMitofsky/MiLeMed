@@ -6,9 +6,10 @@ import useChapterSummary from '../../../utils/react-query/useChapterSummary'
 
 type ListOfChaptersProps = {
   limit?: number
+  lockCardWidth?: boolean
 }
 
-const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
+const ListOfChapters = ({ limit, lockCardWidth }: ListOfChaptersProps) => {
   const { data: chapters, isLoading } = useChapterSummary(limit)
 
   if (isLoading) {
@@ -23,7 +24,7 @@ const ListOfChapters = ({ limit }: ListOfChaptersProps) => {
         chapters?.map((chapter, index) => (
           <Theme key={chapter.id} name={colors[index]}>
             <AchievementCard
-              w={300}
+              w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}
               progress={{
                 current: chapter.lectures_completed,

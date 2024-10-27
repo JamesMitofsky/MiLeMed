@@ -2,13 +2,14 @@ import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
 import { YStack, Text, Spinner, Separator, ScrollView } from 'tamagui'
 
-import { supabase } from '../../utils/supabase/client.native'
+import { useSupabase } from '../../utils/supabase/useSupabase'
 import ListOfLectures from '../home/components/list-of-lectures'
 
 const IndividualChapterScreen = () => {
   // const { id } = useSearchParams()
   const { id }: { id: string } = useLocalSearchParams()
 
+  const supabase = useSupabase()
   // Use the ID to query specific module data
   const { data: chapter, isLoading } = useQuery(['chapter', id], {
     queryFn: async () => {
