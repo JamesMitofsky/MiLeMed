@@ -11,6 +11,7 @@ import {
   Button,
   Input,
 } from '@my/ui'
+import { Eye } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -136,7 +137,11 @@ const Row = ({ lecture, isLastItem }: { lecture: SingleLectureDataType; isLastIt
         >
           {lecture.lecture_title}
         </SizeableText>
-        <Button onPress={() => router.push(`lecture/${lecture.lecture_id}`)}>View</Button>
+        <Button size="$3" circular onPress={() => router.push(`lecture/${lecture.lecture_id}`)}>
+          <Button.Icon>
+            <Eye />
+          </Button.Icon>
+        </Button>
       </XStack>
       <SizeableText
         size="$4"
