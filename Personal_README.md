@@ -53,3 +53,10 @@ Here is the supabase setup from scratch
 </p>
 
 Guided by [these](https://supabase.com/docs/guides/auth/server-side/nextjs) docs
+
+
+# App Builds
+Build local file to upload to test flight using
+```bash
+yarn eas:build:dev:device:ios:local
+```
