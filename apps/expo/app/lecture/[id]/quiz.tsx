@@ -34,11 +34,11 @@ const QuizForm: React.FC = () => {
                       </Checkbox>
                     ))
                   ) : (
-                    <Input placeholder="Your answer" />
+                    <Input placeholder="Ihre Antwort" />
                   )}
                 </YStack>
               ))
-            : 'There are no questions for this lecture.'}
+            : 'Es gibt keine Fragen zu dieser Vorlesung.'}
         </YStack>
       </SafeAreaView>
     </>
