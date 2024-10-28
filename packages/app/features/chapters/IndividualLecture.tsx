@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
 import { createParam } from 'solito'
+import { useRouter } from 'solito/router'
 import { YStack, Text, Spinner, ScrollView, Button } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
@@ -13,6 +14,10 @@ const IndividualLecture = () => {
   const {
     params: { id },
   } = useParams()
+  const router = useRouter()
+  const handlePress = () => {
+    router.push(`/lecture/${id}/quiz`)
+  }
 
   // Use the ID to query specific module data
   const { data: lecture, isLoading } = useQuery(['lecture', id], {
@@ -58,15 +63,7 @@ const IndividualLecture = () => {
             {lecture.content}
           </Markdown>
         </Text>
-        <Button
-          marginTop="$4"
-          themeInverse
-          onPress={() => {
-            /* Add your quiz navigation logic here */
-          }}
-        >
-          Bereit für das Quiz?!
-        </Button>
+        <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
       </YStack>
     </ScrollView>
   )
