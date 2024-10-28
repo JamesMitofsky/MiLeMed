@@ -1,15 +1,18 @@
 import { useQuery } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
 import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
+import { createParam } from 'solito'
 import { YStack, Text, Spinner, ScrollView, Button } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { supabase } from '../../utils/supabase/client.native'
 
+const { useParams } = createParam<{ id: string }>()
+
 const IndividualLecture = () => {
-  // const { id } = useSearchParams()
-  const { id }: { id: string } = useLocalSearchParams()
+  const {
+    params: { id },
+  } = useParams()
 
   // Use the ID to query specific module data
   const { data: lecture, isLoading } = useQuery(['lecture', id], {
