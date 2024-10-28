@@ -16,6 +16,7 @@ export type Database = {
           event_type: string
           id: number
           profile_id: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -23,6 +24,7 @@ export type Database = {
           event_type: string
           id?: number
           profile_id: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -30,6 +32,7 @@ export type Database = {
           event_type?: string
           id?: number
           profile_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -77,18 +80,21 @@ export type Database = {
           id: number
           image_url: string
           lecture_id: number | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           id?: number
           image_url: string
           lecture_id?: number | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           id?: number
           image_url?: string
           lecture_id?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -108,6 +114,7 @@ export type Database = {
           id: number
           lecture_id: number
           profile_id: string
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -116,6 +123,7 @@ export type Database = {
           id?: number
           lecture_id: number
           profile_id: string
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -124,6 +132,7 @@ export type Database = {
           id?: number
           lecture_id?: number
           profile_id?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -237,6 +246,7 @@ export type Database = {
           profile_id: string
           question_id: number
           quiz_attempt_id: number
+          updated_at: string | null
         }
         Insert: {
           answer_text?: string | null
@@ -247,6 +257,7 @@ export type Database = {
           profile_id: string
           question_id: number
           quiz_attempt_id: number
+          updated_at?: string | null
         }
         Update: {
           answer_text?: string | null
@@ -257,6 +268,7 @@ export type Database = {
           profile_id?: string
           question_id?: number
           quiz_attempt_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -291,28 +303,19 @@ export type Database = {
       }
       quiz_attempts: {
         Row: {
-          attempt_number: number
-          completed_at: string | null
           id: number
           lecture_id: number
           profile_id: string
-          started_at: string | null
         }
         Insert: {
-          attempt_number: number
-          completed_at?: string | null
           id?: number
           lecture_id: number
           profile_id: string
-          started_at?: string | null
         }
         Update: {
-          attempt_number?: number
-          completed_at?: string | null
           id?: number
           lecture_id?: number
           profile_id?: string
-          started_at?: string | null
         }
         Relationships: [
           {
@@ -331,24 +334,56 @@ export type Database = {
           },
         ]
       }
+      quiz_events: {
+        Row: {
+          event_timestamp: string | null
+          event_type: Database["public"]["Enums"]["quiz_event_type"]
+          id: number
+          quiz_attempt_id: number
+        }
+        Insert: {
+          event_timestamp?: string | null
+          event_type: Database["public"]["Enums"]["quiz_event_type"]
+          id?: number
+          quiz_attempt_id: number
+        }
+        Update: {
+          event_timestamp?: string | null
+          event_type?: Database["public"]["Enums"]["quiz_event_type"]
+          id?: number
+          quiz_attempt_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_events_quiz_attempt_id_fkey"
+            columns: ["quiz_attempt_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_attempts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       quiz_question_options: {
         Row: {
           id: number
           is_correct: boolean | null
           option_text: string
           question_id: number
+          updated_at: string | null
         }
         Insert: {
           id?: number
           is_correct?: boolean | null
           option_text: string
           question_id: number
+          updated_at?: string | null
         }
         Update: {
           id?: number
           is_correct?: boolean | null
           option_text?: string
           question_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -445,6 +480,7 @@ export type Database = {
       gender: "MALE" | "FEMALE" | "OTHER"
       mode: "THEORETICAL" | "PRACTICAL"
       question_type: "OPEN" | "MULTIPLE_CHOICE"
+      quiz_event_type: "QUIZ_STARTED" | "QUESTION_ANSWERED" | "QUIZ_COMPLETED"
       user_role: "ADMIN" | "MEDICAL_PROFESSIONAL" | "STUDENT" | "STUDENT_TESTER"
     }
     CompositeTypes: {
