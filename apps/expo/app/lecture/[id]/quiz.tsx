@@ -11,17 +11,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { createParam } from 'solito'
 import { Checkbox, YStack, SizableText, Button, XStack, TextArea } from 'tamagui'
 
-// type QuizAnswersType = {
-//     answer_text: string | null;
-//     answered_at: string | null;
-//     chosen_option_ids: number[] | null;
-//     id: number;
-//     is_correct: boolean | null;
-//     profile_id: string;
-//     question_id: number;
-//     updated_at: string | null;
-// }
-
 const { useParams } = createParam<{ id: number }>()
 const QuizForm: React.FC = () => {
   const {
