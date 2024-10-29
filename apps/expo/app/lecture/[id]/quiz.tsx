@@ -68,50 +68,63 @@ const QuizForm: React.FC = () => {
     <>
       <Stack.Screen options={{ headerShown: true, title: 'Quiz' }} />
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
-        <YStack p="$4" gap="$6">
+        <YStack p="$4" gap="$10" mt="$6">
           {questions?.map((q, index) => (
-            <YStack key={q.id} gap="$6">
-              <SizableText size="$4">{q.question_text}</SizableText>
+            <YStack key={q.id} gap="$3">
+              <YStack gap="$1">
+                <SizableText size="$6">{q.question_text}</SizableText>
+                <SizableText size="$3">
+                  {q.question_type === 'MULTIPLE_CHOICE' ? 'Mehrfachauswahl' : 'Offene Antwort'}
+                </SizableText>
+              </YStack>
               {q.question_type === 'MULTIPLE_CHOICE' ? (
-                q.quiz_question_options.map((o) => (
-                  <XStack ai="center" gap="$3">
-                    <Controller
-                      key={o.id}
-                      name={`answers.${index}.chosen_option_ids`}
-                      control={control}
-                      render={({ field: { onChange, value } }) => (
-                        <Checkbox
-                          size="$7"
-                          value={o.id.toString()}
-                          checked={value?.includes(o.id)}
-                          onCheckedChange={() => {
-                            const newValue = value?.includes(o.id)
-                              ? value.filter((id: number) => id !== o.id)
-                              : [...(value || []), o.id]
-                            onChange(newValue)
-                          }}
-                        >
-                          <Checkbox.Indicator>
-                            <Check />
-                          </Checkbox.Indicator>
-                        </Checkbox>
-                      )}
-                    />
-                    <SizableText size="$3">{o.option_text}</SizableText>
-                  </XStack>
-                ))
+                <YStack gap="$6">
+                  {q.quiz_question_options.map((o) => (
+                    <XStack ai="center" gap="$3">
+                      <Controller
+                        key={o.id}
+                        name={`answers.${index}.chosen_option_ids`}
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <Checkbox
+                            size="$7"
+                            value={o.id.toString()}
+                            checked={value?.includes(o.id)}
+                            onCheckedChange={() => {
+                              const newValue = value?.includes(o.id)
+                                ? value.filter((id: number) => id !== o.id)
+                                : [...(value || []), o.id]
+                              onChange(newValue)
+                            }}
+                          >
+                            <Checkbox.Indicator>
+                              <Check />
+                            </Checkbox.Indicator>
+                          </Checkbox>
+                        )}
+                      />
+                      <SizableText size="$3">{o.option_text}</SizableText>
+                    </XStack>
+                  ))}
+                </YStack>
               ) : (
-                <Controller
-                  name={`answers.${index}.answer_text`}
-                  control={control}
-                  render={({ field: { onChange, value } }) => (
-                    <Input placeholder="Your Answer" value={value || ''} onChangeText={onChange} />
-                  )}
-                />
+                <>
+                  <Controller
+                    name={`answers.${index}.answer_text`}
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Input
+                        placeholder="Ihre Antwort"
+                        value={value || ''}
+                        onChangeText={onChange}
+                      />
+                    )}
+                  />
+                </>
               )}
             </YStack>
           ))}
-          <Button onPress={handleSubmit(onSubmit)}>Submit Answers</Button>
+          <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
         </YStack>
       </SafeAreaView>
     </>
