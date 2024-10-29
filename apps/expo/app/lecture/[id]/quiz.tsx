@@ -60,7 +60,6 @@ const QuizForm: React.FC = () => {
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <KeyboardAwareScrollView
           enableOnAndroid
-          // extraScrollHeight={15} // Adjusts the extra scroll height above the keyboard
           keyboardOpeningTime={0} // Reduces keyboard opening delay
           resetScrollToCoords={{ x: 0, y: 0 }}
         >
@@ -116,8 +115,7 @@ const QuizForm: React.FC = () => {
                           m="$1"
                           placeholder="Ihr Inhalt hier"
                           value={value || ''}
-                          // @ts-ignore
-                          onChange={(e) => onChange(e.target.value)}
+                          onChangeText={onChange}
                         />
                       )}
                     />
