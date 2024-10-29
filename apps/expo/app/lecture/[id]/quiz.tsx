@@ -29,14 +29,18 @@ const QuizForm: React.FC = () => {
           const question = questions[index]
           if (!question) return null
 
-          return {
+          const singleResponse: Pick<
+            QuizAnswersType,
+            'question_id' | 'profile_id' | 'answer_text' | 'chosen_option_ids' | 'is_correct'
+          > = {
             question_id: question.id,
             profile_id: user.id,
-            quiz_attempt_id: 1, // Replace with actual attempt ID
             answer_text: answer.answer_text,
-            chosen_option_ids: answer.chosen_option_ids, // Support multiple chosen option IDs
+            chosen_option_ids: answer.chosen_option_ids,
             is_correct: answer.is_correct || false,
           }
+
+          return singleResponse
         })
       )
 
