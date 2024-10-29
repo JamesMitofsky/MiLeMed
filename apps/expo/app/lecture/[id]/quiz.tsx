@@ -1,3 +1,4 @@
+import { Check } from '@tamagui/lucide-icons'
 import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
 import { QuizAnswersType } from 'app/utils/supabase/databaseTypes'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
@@ -90,7 +91,9 @@ const QuizForm: React.FC = () => {
                             onChange(newValue)
                           }}
                         >
-                          <Checkbox.Indicator />
+                          <Checkbox.Indicator>
+                            <Check />
+                          </Checkbox.Indicator>
                         </Checkbox>
                       )}
                     />
