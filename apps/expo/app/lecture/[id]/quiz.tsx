@@ -7,63 +7,54 @@ import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { createParam } from 'solito'
-import { Label, Checkbox, YStack, Input, SizableText, Button } from 'tamagui'
+import { Checkbox, YStack, Input, SizableText, Button } from 'tamagui'
+
+// type QuizAnswersType = {
+//     answer_text: string | null;
+//     answered_at: string | null;
+//     chosen_option_ids: number[] | null;
+//     id: number;
+//     is_correct: boolean | null;
+//     profile_id: string;
+//     question_id: number;
+//     updated_at: string | null;
+// }
 
 const { useParams } = createParam<{ id: number }>()
-
 const QuizForm: React.FC = () => {
   const {
     params: { id: lectureId },
   } = useParams()
   const { user } = useUser()
-
-  const { data: questions, isLoading } = useQuizQuestionsQuery(lectureId)
-  const { control, handleSubmit } = useForm<QuizAnswersType>()
+  const { data: questions } = useQuizQuestionsQuery(lectureId)
+  const { control, handleSubmit } = useForm<{ answers: QuizAnswersType[] }>()
   const supabase = useSupabase()
-
-  const onSubmit = async (data: QuizAnswersType) => {
+  const onSubmit = async (answers: { answers: QuizAnswersType[] }) => {
     if (!questions || !user) return
+
     try {
       const responses = await Promise.all(
-        questions.map(async (q) => {
-          if (q.question_type === 'MULTIPLE_CHOICE') {
-            // For multiple-choice, check if the chosen option is correct
-            const chosenOptionId = parseInt(data[`answer_${q.id}`], 10)
-            const { data: option, error } = await supabase
-              .from('quiz_question_options')
-              .select('is_correct')
-              .eq('id', chosenOptionId)
-              .single()
+        answers.answers.map((answer, index) => {
+          const question = questions[index]
+          if (!question) return null
 
-            if (error) {
-              console.error('Error fetching option:', error)
-              throw error
-            }
-
-            return {
-              question_id: q.id,
-              profile_id: user.id, // Replace with actual authenticated user profile ID
-              quiz_attempt_id: 1, // Replace with actual attempt ID
-              answer_text: null,
-              chosen_option_id: chosenOptionId,
-              is_correct: option?.is_correct || false,
-            }
-          } else {
-            // For open-ended questions, mark as correct
-            return {
-              question_id: q.id,
-              profile_id: user.id, // Replace with actual authenticated user profile ID
-              quiz_attempt_id: 1, // Replace with actual attempt ID
-              answer_text: data[`answer_${q.id}`] || null,
-              chosen_option_id: null,
-              is_correct: true,
-            }
+          return {
+            question_id: question.id,
+            profile_id: user.id,
+            quiz_attempt_id: 1, // Replace with actual attempt ID
+            answer_text: answer.answer_text,
+            chosen_option_ids: answer.chosen_option_ids, // Support multiple chosen option IDs
+            is_correct: answer.is_correct || false,
           }
         })
       )
 
-      // Insert all responses in bulk
-      const { error } = await supabase.from('quiz_answers').insert(responses)
+      // Filter out null values
+      const validResponses = responses.filter(
+        (response): response is NonNullable<typeof response> => response !== null
+      )
+
+      const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
       if (error) throw error
       alert('Responses submitted successfully!')
     } catch (error) {
@@ -72,42 +63,44 @@ const QuizForm: React.FC = () => {
     }
   }
 
-  if (isLoading) return <Label>Loading...</Label>
-
   return (
     <>
       <Stack.Screen options={{ headerShown: true, title: 'Quiz' }} />
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <YStack p="$4" gap="$6">
-          {questions?.map((q) => (
+          {questions?.map((q, index) => (
             <YStack key={q.id} gap="$4">
               <SizableText size="$4">{q.question_text}</SizableText>
               {q.question_type === 'MULTIPLE_CHOICE' ? (
                 q.quiz_question_options.map((o) => (
-                  <Controller
-                    key={o.id}
-                    // @ts-ignore
-                    name={`answer_${q.id}`}
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Checkbox
-                        value={o.id.toString()}
-                        checked={value === o.id.toString()}
-                        // @ts-ignore
-                        onChange={() => onChange(o.id.toString())}
-                      >
-                        {o.option_text}
-                      </Checkbox>
-                    )}
-                  />
+                  <>
+                    <SizableText size="$3">{o.option_text}</SizableText>
+                    <Controller
+                      key={o.id}
+                      name={`answers.${index}.chosen_option_ids`}
+                      control={control}
+                      render={({ field: { onChange, value } }) => (
+                        <Checkbox
+                          value={o.id.toString()}
+                          checked={value?.includes(o.id)}
+                          onCheckedChange={() => {
+                            const newValue = value?.includes(o.id)
+                              ? value.filter((id: number) => id !== o.id)
+                              : [...(value || []), o.id]
+                            onChange(newValue)
+                          }}
+                        >
+                          <Checkbox.Indicator />
+                        </Checkbox>
+                      )}
+                    />
+                  </>
                 ))
               ) : (
                 <Controller
-                  // @ts-ignore
-                  name={`answer_${q.id}`}
+                  name={`answers.${index}.answer_text`}
                   control={control}
                   render={({ field: { onChange, value } }) => (
-                    // @ts-ignore
                     <Input placeholder="Your Answer" value={value || ''} onChangeText={onChange} />
                   )}
                 />
