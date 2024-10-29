@@ -236,133 +236,6 @@ export type Database = {
           },
         ]
       }
-      quiz_answers: {
-        Row: {
-          answer_text: string | null
-          answered_at: string | null
-          chosen_option_id: number | null
-          id: number
-          is_correct: boolean | null
-          profile_id: string
-          question_id: number
-          quiz_attempt_id: number
-          updated_at: string | null
-        }
-        Insert: {
-          answer_text?: string | null
-          answered_at?: string | null
-          chosen_option_id?: number | null
-          id?: number
-          is_correct?: boolean | null
-          profile_id: string
-          question_id: number
-          quiz_attempt_id: number
-          updated_at?: string | null
-        }
-        Update: {
-          answer_text?: string | null
-          answered_at?: string | null
-          chosen_option_id?: number | null
-          id?: number
-          is_correct?: boolean | null
-          profile_id?: string
-          question_id?: number
-          quiz_attempt_id?: number
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_answers_chosen_option_id_fkey"
-            columns: ["chosen_option_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_question_options"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_answers_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_answers_quiz_attempt_id_fkey"
-            columns: ["quiz_attempt_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_attempts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_attempts: {
-        Row: {
-          id: number
-          lecture_id: number
-          profile_id: string
-        }
-        Insert: {
-          id?: number
-          lecture_id: number
-          profile_id: string
-        }
-        Update: {
-          id?: number
-          lecture_id?: number
-          profile_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_attempts_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "lectures"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_attempts_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_events: {
-        Row: {
-          event_timestamp: string | null
-          event_type: Database["public"]["Enums"]["quiz_event_type"]
-          id: number
-          quiz_attempt_id: number
-        }
-        Insert: {
-          event_timestamp?: string | null
-          event_type: Database["public"]["Enums"]["quiz_event_type"]
-          id?: number
-          quiz_attempt_id: number
-        }
-        Update: {
-          event_timestamp?: string | null
-          event_type?: Database["public"]["Enums"]["quiz_event_type"]
-          id?: number
-          quiz_attempt_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_events_quiz_attempt_id_fkey"
-            columns: ["quiz_attempt_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_attempts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       quiz_question_options: {
         Row: {
           id: number
@@ -426,6 +299,54 @@ export type Database = {
             columns: ["lecture_id"]
             isOneToOne: false
             referencedRelation: "lectures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_quiz_answers: {
+        Row: {
+          answer_text: string | null
+          answered_at: string | null
+          chosen_option_ids: number[] | null
+          id: number
+          is_correct: boolean | null
+          profile_id: string
+          question_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          answer_text?: string | null
+          answered_at?: string | null
+          chosen_option_ids?: number[] | null
+          id?: number
+          is_correct?: boolean | null
+          profile_id: string
+          question_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          answer_text?: string | null
+          answered_at?: string | null
+          chosen_option_ids?: number[] | null
+          id?: number
+          is_correct?: boolean | null
+          profile_id?: string
+          question_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_answers_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
             referencedColumns: ["id"]
           },
         ]
