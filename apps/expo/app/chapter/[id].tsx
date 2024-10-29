@@ -1,14 +1,16 @@
 import IndividualModule from '@my/app/features/chapters/IndividualChapter'
+import { ScrollView, View } from '@my/ui'
 import { Stack } from 'expo-router'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Screen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true, title: 'Kapitel' }} />
-      <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
-        <IndividualModule />
-      </SafeAreaView>
+      <ScrollView f={1} fb={0}>
+        <View mb="$8">
+          <IndividualModule />
+        </View>
+      </ScrollView>
     </>
   )
 }

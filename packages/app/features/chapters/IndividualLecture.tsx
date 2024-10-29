@@ -3,7 +3,7 @@ import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
 import { createParam } from 'solito'
 import { useRouter } from 'solito/router'
-import { YStack, Text, Spinner, ScrollView, Button } from 'tamagui'
+import { YStack, Text, Spinner, ScrollView, Button, Theme } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { supabase } from '../../utils/supabase/client.native'
@@ -58,12 +58,16 @@ const IndividualLecture = () => {
         </Text>
         <Text fontSize="$4" marginBottom="$2" color="red">
           <Markdown
-            style={{ text: { color: context?.systemTheme === 'dark' ? 'white' : 'black' } }}
+            style={{
+              text: { fontSize: 17, color: context?.systemTheme === 'dark' ? 'white' : 'black' },
+            }}
           >
             {lecture.content}
           </Markdown>
         </Text>
-        <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
+        <Theme name="orange">
+          <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
+        </Theme>
       </YStack>
     </ScrollView>
   )

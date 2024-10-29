@@ -59,21 +59,14 @@ export default function HomeLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Provider initialSession={initialSession}>
-          {/* Important, adding the header back title here was a breakthrough. Others seem to do nothing. */}
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen
-              name="(drawer)" // IMPORTANT?
+              name="(drawer)"
               options={{
                 headerShown: false,
                 title: 'Starteseite',
               }}
             />
-            {/* <Stack.Screen
-              name="create"
-              options={{
-                headerShown: false,
-              }}
-            /> */}
             <Stack.Screen
               name="settings/index"
               options={{
