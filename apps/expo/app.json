@@ -3,8 +3,8 @@
     "name": "MiLeMed",
     "slug": "milemed",
     "jsEngine": "hermes",
-    "scheme": "myapp",
-    "version": "1.0.0",
+    "scheme": "milemed",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -30,7 +30,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "de.milemed.app",
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      // "permissions": ["android.permission.RECORD_AUDIO"],
       "versionCode": 3
     },
     "web": {
@@ -48,7 +48,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "Die App kann auf Fotos zugreifen, um die Auswahl eines Profilbildes zu ermöglichen."
         }
       ],
       "expo-apple-authentication",
