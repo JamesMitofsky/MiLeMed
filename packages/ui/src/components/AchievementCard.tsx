@@ -18,6 +18,7 @@ export type AchievementCardProps = {
     text: string
     href?: string
   }
+  dense?: boolean
 } & CardProps
 
 export const AchievementCard = ({
@@ -25,14 +26,15 @@ export const AchievementCard = ({
   icon: Icon,
   progress,
   action,
+  dense,
   ...props
 }: AchievementCardProps) => {
   const linkProps = useLink({ href: action?.href || '' })
   return (
     <Card br="$0" chromeless {...props}>
-      <Card.Header my="auto" padded gap="$3">
+      <Card.Header my="auto" padded gap={!dense && '$3'}>
         {Icon && <Icon size="$3" o={0.6} />}
-        <YStack gap="$2">
+        <YStack gap={!dense && '$2'}>
           <H4 size="$5" mt="$2">
             {title}
           </H4>

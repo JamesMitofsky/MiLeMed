@@ -53,7 +53,6 @@ const IndividualChapterScreen = () => {
         <Text fontSize="$5" marginBottom="$4" marginTop="$5">
           Lektion
         </Text>
-
         <ListOfLectures moduleId={id || ''} />
       </YStack>
     </ScrollView>

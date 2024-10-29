@@ -53,10 +53,11 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
       {lectures?.length === 0 ? (
         <Text>Keine Lektionen gefunden.</Text>
       ) : (
-        <YStack px="$4" fw="wrap" f={1} gap="$3">
+        <YStack fw="wrap" f={1} gap="$3">
           {lectures?.map((lecture, index) => (
             <Theme key={lecture.id} name={colors[index]}>
               <AchievementCard
+                dense
                 w={md ? '100%' : 300}
                 title={lecture.title}
                 action={{
