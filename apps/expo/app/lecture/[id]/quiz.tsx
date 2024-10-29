@@ -8,7 +8,7 @@ import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { createParam } from 'solito'
-import { Checkbox, YStack, Input, SizableText, Button } from 'tamagui'
+import { Checkbox, YStack, Input, SizableText, Button, XStack } from 'tamagui'
 
 // type QuizAnswersType = {
 //     answer_text: string | null;
@@ -70,18 +70,18 @@ const QuizForm: React.FC = () => {
       <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
         <YStack p="$4" gap="$6">
           {questions?.map((q, index) => (
-            <YStack key={q.id} gap="$4">
+            <YStack key={q.id} gap="$6">
               <SizableText size="$4">{q.question_text}</SizableText>
               {q.question_type === 'MULTIPLE_CHOICE' ? (
                 q.quiz_question_options.map((o) => (
-                  <>
-                    <SizableText size="$3">{o.option_text}</SizableText>
+                  <XStack ai="center" gap="$3">
                     <Controller
                       key={o.id}
                       name={`answers.${index}.chosen_option_ids`}
                       control={control}
                       render={({ field: { onChange, value } }) => (
                         <Checkbox
+                          size="$7"
                           value={o.id.toString()}
                           checked={value?.includes(o.id)}
                           onCheckedChange={() => {
@@ -97,7 +97,8 @@ const QuizForm: React.FC = () => {
                         </Checkbox>
                       )}
                     />
-                  </>
+                    <SizableText size="$3">{o.option_text}</SizableText>
+                  </XStack>
                 ))
               ) : (
                 <Controller
