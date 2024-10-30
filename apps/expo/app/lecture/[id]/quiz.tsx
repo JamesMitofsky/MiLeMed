@@ -1,57 +1,94 @@
-import { ScrollView, View } from '@my/ui'
-import { Check } from '@tamagui/lucide-icons'
+import { ScrollView, useToastController, View } from '@my/ui'
+import MultiChoicePickReveal from 'app/features/quiz/MultiChoicePickReveal'
+import OpenAnswerTypeReveal from 'app/features/quiz/OpenAnswerTypeReveal'
 import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
 import { QuizAnswersType } from 'app/utils/supabase/databaseTypes'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
-import { Stack } from 'expo-router'
-import React from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { Stack, useRouter } from 'expo-router'
+import React, { useState, useEffect } from 'react'
+import { useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { createParam } from 'solito'
-import { Checkbox, YStack, SizableText, Button, XStack, TextArea } from 'tamagui'
+import { YStack, SizableText, Button } from 'tamagui'
 
 const { useParams } = createParam<{ id: number }>()
 const QuizForm: React.FC = () => {
   const {
     params: { id: lectureId },
   } = useParams()
+  const router = useRouter()
   const { user } = useUser()
   const { data: questions } = useQuizQuestionsQuery(lectureId)
   const { control, handleSubmit } = useForm<{ answers: QuizAnswersType[] }>()
   const supabase = useSupabase()
+
+  const [answerIds, setAnswerIds] = useState<{ [key: number]: number[] }>({})
+  const [areAnswersVisible, setAreAnswersVisible] = useState(false)
+
+  const toast = useToastController()
+
+  // Fetch answer IDs on component mount or when questions data changes
+  useEffect(() => {
+    const fetchAnswerIds = async () => {
+      if (!questions) return
+
+      const answerIdMap: { [key: number]: number[] } = {}
+
+      await Promise.all(
+        questions.map(async (question) => {
+          const { data: correctOptions, error: optionsError } = await supabase
+            .from('quiz_question_options')
+            .select('id')
+            .eq('question_id', question.id)
+            .eq('is_correct', true)
+
+          if (optionsError) {
+            console.error('Error fetching answer options:', optionsError)
+            return
+          }
+
+          answerIdMap[question.id] = correctOptions?.map((option) => option.id) || []
+        })
+      )
+
+      setAnswerIds(answerIdMap)
+    }
+
+    fetchAnswerIds()
+  }, [questions, supabase])
+
   const onSubmit = async (answers: { answers: QuizAnswersType[] }) => {
     if (!questions || !user) return
 
     try {
-      const responses = await Promise.all(
-        answers.answers.map((answer, index) => {
-          const question = questions[index]
-          if (!question) return null
+      const responses = answers.answers.map((answer, index) => {
+        const question = questions[index]
+        if (!question) return null
 
-          const singleResponse: Pick<
-            QuizAnswersType,
-            'question_id' | 'profile_id' | 'answer_text' | 'chosen_option_ids' | 'is_correct'
-          > = {
-            question_id: question.id,
-            profile_id: user.id,
-            answer_text: answer.answer_text,
-            chosen_option_ids: answer.chosen_option_ids,
-            is_correct: answer.is_correct || false,
-          }
+        const singleResponse: Pick<
+          QuizAnswersType,
+          'question_id' | 'profile_id' | 'answer_text' | 'chosen_option_ids' | 'is_correct'
+        > = {
+          question_id: question.id,
+          profile_id: user.id,
+          answer_text: answer.answer_text,
+          chosen_option_ids: answerIds[question.id] || [],
+          is_correct: answer.is_correct || false,
+        }
 
-          return singleResponse
-        })
-      )
+        return singleResponse
+      })
 
-      // Filter out null values
       const validResponses = responses.filter(
         (response): response is NonNullable<typeof response> => response !== null
       )
 
+      setAreAnswersVisible(true)
+
       const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
       if (error) throw error
-      alert('Responses submitted successfully!')
+      toast.show('Antworten erfolgreich eingereicht!', { type: 'success' })
     } catch (error) {
       console.error('Submission error:', error)
       alert('There was an error submitting your responses.')
@@ -78,56 +115,28 @@ const QuizForm: React.FC = () => {
                     </SizableText>
                   </YStack>
                   {q.question_type === 'MULTIPLE_CHOICE' ? (
-                    <YStack gap="$6">
-                      {q.quiz_question_options.map((o) => (
-                        <XStack key={o.id} ai="center" gap="$3">
-                          <Controller
-                            name={`answers.${index}.chosen_option_ids`}
-                            control={control}
-                            render={({ field: { onChange, value } }) => (
-                              <Checkbox
-                                size="$7"
-                                value={o.id.toString()}
-                                checked={value?.includes(o.id)}
-                                onCheckedChange={() => {
-                                  const newValue = value?.includes(o.id)
-                                    ? value.filter((id: number) => id !== o.id)
-                                    : [...(value || []), o.id]
-                                  onChange(newValue)
-                                }}
-                              >
-                                <Checkbox.Indicator>
-                                  <Check />
-                                </Checkbox.Indicator>
-                              </Checkbox>
-                            )}
-                          />
-                          <SizableText size="$3">{o.option_text}</SizableText>
-                        </XStack>
-                      ))}
-                    </YStack>
+                    <MultiChoicePickReveal
+                      control={control}
+                      index={index}
+                      q={q}
+                      answerIds={answerIds[q.id] || []}
+                      areAnswersVisible={areAnswersVisible}
+                    />
                   ) : (
-                    <>
-                      <Controller
-                        name={`answers.${index}.answer_text`}
-                        control={control}
-                        render={({ field: { onChange, value } }) => (
-                          <TextArea
-                            size="$3"
-                            fontWeight="300"
-                            height={300}
-                            m="$1"
-                            placeholder="Ihr Inhalt hier"
-                            value={value || ''}
-                            onChangeText={onChange}
-                          />
-                        )}
-                      />
-                    </>
+                    <OpenAnswerTypeReveal
+                      areAnswersVisible={areAnswersVisible}
+                      control={control}
+                      index={index}
+                      q={q}
+                    />
                   )}
                 </YStack>
               ))}
-              <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
+              {areAnswersVisible ? (
+                <Button onPress={() => router.dismiss(2)}>Zurück zu den Kapiteln</Button>
+              ) : (
+                <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
+              )}
             </YStack>
           </KeyboardAwareScrollView>
         </View>
