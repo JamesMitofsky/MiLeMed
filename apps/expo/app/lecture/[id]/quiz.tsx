@@ -88,7 +88,7 @@ const QuizForm: React.FC = () => {
 
       const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
       if (error) throw error
-      toast.show('Antworten erfolgreich eingereicht!', { type: 'success' })
+      toast.show('Antworten erfolgreich eingereicht!')
     } catch (error) {
       console.error('Submission error:', error)
       alert('There was an error submitting your responses.')
