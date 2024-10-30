@@ -15,15 +15,15 @@ export const CustomToast = () => {
       viewportName={currentToast.viewportName}
       enterStyle={{ o: 0, scale: 0.5, y: -25 }}
       exitStyle={{ o: 0, scale: 1, y: -20 }}
-      y={0}
+      y={10}
       o={1}
       scale={1}
       animation="100ms"
-      themeInverse
+      backgroundColor="#F8F8F8"
     >
-      <YStack>
+      <YStack p="$2">
         <XStack gap="$3">
-          <Toast.Title>{currentToast.title}</Toast.Title>
+          <Toast.Title color="black">{currentToast.title}</Toast.Title>
 
           {/* <Toast.Close asChild>
             <Button
