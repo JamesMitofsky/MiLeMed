@@ -80,9 +80,8 @@ const QuizForm: React.FC = () => {
                   {q.question_type === 'MULTIPLE_CHOICE' ? (
                     <YStack gap="$6">
                       {q.quiz_question_options.map((o) => (
-                        <XStack ai="center" gap="$3">
+                        <XStack key={o.id} ai="center" gap="$3">
                           <Controller
-                            key={o.id}
                             name={`answers.${index}.chosen_option_ids`}
                             control={control}
                             render={({ field: { onChange, value } }) => (
