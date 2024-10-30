@@ -25,8 +25,6 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
     name: `answers.${index}.answer_text`,
   })
 
-  console.log(q)
-
   return !areAnswersVisible ? (
     <Controller
       name={`answers.${index}.answer_text`}
@@ -35,7 +33,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         <TextArea
           size="$3"
           fontWeight="300"
-          height={300}
+          height={200}
           m="$1"
           placeholder="Ihr Inhalt hier"
           value={value || ''}
