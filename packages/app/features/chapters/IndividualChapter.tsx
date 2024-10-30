@@ -46,13 +46,11 @@ const IndividualChapterScreen = () => {
         <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
           {chapter.title}
         </Text>
-        <Text fontSize="$4" marginBottom="$2">
+        <Text fontSize="$4" marginBottom="$6">
           {chapter.description}
         </Text>
         <Separator />
-        <Text fontSize="$5" marginBottom="$4" marginTop="$5">
-          Lektion
-        </Text>
+
         <ListOfLectures moduleId={id || ''} />
       </YStack>
     </ScrollView>
