@@ -43,7 +43,7 @@ export const SettingsScreen = () => {
               </Settings.Item>
             </Settings.Group> */}
             <Settings.Group>
-              <SettingsThemeAction />
+              {/* <SettingsThemeAction /> TODO: add back in the theme when this is fixed */}
               <SettingsItemLogoutAction />
             </Settings.Group>
           </Settings.Items>
