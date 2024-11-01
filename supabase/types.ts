@@ -368,13 +368,23 @@ export type Database = {
           chapter_sort_order: number
         }[]
       }
-      get_chapter_completion_counts: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          total_chapters: number
-          completed_chapters: number
-        }[]
-      }
+      get_chapter_completion_counts:
+        | {
+            Args: Record<PropertyKey, never>
+            Returns: {
+              total_chapters: number
+              completed_chapters: number
+            }[]
+          }
+        | {
+            Args: {
+              user_id: string
+            }
+            Returns: {
+              total_chapters: number
+              completed_chapters: number
+            }[]
+          }
       get_chapter_summary: {
         Args: Record<PropertyKey, never>
         Returns: {
