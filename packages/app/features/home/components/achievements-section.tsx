@@ -37,12 +37,10 @@ export const ChaptersPreviewList = () => {
         animation="medium"
         onPress={() => setIsTheoretical(!isTheoretical)}
       >
-        <Switch id="switch" checked={isTheoretical} onCheckedChange={setIsTheoretical} size="$2">
+        <Switch checked={isTheoretical} onCheckedChange={setIsTheoretical} size="$2">
           <Switch.Thumb borderColor="$color1" animation="200ms" />
         </Switch>
-        <Label size="$1.5" htmlFor="switch">
-          {isTheoretical ? 'Theoretisch' : 'Praktisch'}
-        </Label>
+        <Label size="$1.5">{isTheoretical ? 'Theoretisch' : 'Praktisch'}</Label>
       </Button>
 
       <ScrollAdapt>
