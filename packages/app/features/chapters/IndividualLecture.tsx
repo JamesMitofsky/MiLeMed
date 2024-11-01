@@ -17,10 +17,15 @@ const IndividualLecture = () => {
   } = useParams()
   const router = useRouter()
 
-  const { data: quizExistenceData } = useCheckQuizExistence(id)
+  const { data: quizExistenceData } = useCheckQuizExistence(parseInt(id, 10))
 
-  const handlePress = () => {
+  const handleNavigateToQuiz = () => {
     router.push(`/lecture/${id}/quiz`)
+  }
+
+  const handleMarkAsRead = () => {
+    // Mark the lecture as read
+    console.log('mark lecture as read')
   }
 
   // Use the ID to query specific module data
@@ -69,9 +74,13 @@ const IndividualLecture = () => {
             {lecture.content}
           </Markdown>
         </Text>
-        {quizExistenceData?.exists && (
+        {quizExistenceData?.exists ? (
           <Theme name="orange">
-            <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
+            <Button onPress={handleNavigateToQuiz}>Bereit für das Quiz?!</Button>
+          </Theme>
+        ) : (
+          <Theme name="green">
+            <Button onPress={handleMarkAsRead}>Als gelesen markieren</Button>
           </Theme>
         )}
       </YStack>

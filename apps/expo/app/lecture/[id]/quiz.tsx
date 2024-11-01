@@ -111,7 +111,7 @@ const QuizForm: React.FC = () => {
                   <YStack gap="$1">
                     <SizableText size="$6">{q.question_text}</SizableText>
                     <SizableText size="$3">
-                      {q.question_type === 'MULTIPLE_CHOICE' ? 'Mehrfachauswahl' : 'Offene Antwort'}
+                      {q.question_type === 'MULTIPLE_CHOICE' ? 'Einzelauswahl' : 'Offene Antwort'}
                     </SizableText>
                   </YStack>
                   {q.question_type === 'MULTIPLE_CHOICE' ? (
