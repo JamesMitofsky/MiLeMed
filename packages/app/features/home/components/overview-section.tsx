@@ -95,11 +95,11 @@ export const StatisticsPreviewList = () => {
             badgeState="success"
           /> */}
 
-          <OverviewCard
+          {/* <OverviewCard
             title="Neue Benutzer diesen Monat"
             value={`${usersCount ?? '—'} Benutzer`}
             badgeState="success"
-          />
+          /> */}
 
           {/* <OverviewCard
             title="Weekly Assignments Submitted"
