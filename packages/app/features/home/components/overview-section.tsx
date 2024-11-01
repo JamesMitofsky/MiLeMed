@@ -4,9 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { ScrollAdapt } from './scroll-adapt'
 import useLectureCompletionCounts from '../../../utils/react-query/useLectureCompletionCounts'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
+import { useUser } from '../../../utils/useUser'
 
 export const StatisticsPreviewList = () => {
   const supabase = useSupabase()
+  const { user } = useUser()
 
   const { data: lectureTotals } = useLectureCompletionCounts()
 
@@ -30,7 +32,10 @@ export const StatisticsPreviewList = () => {
   const { data: chapterCompletion } = useQuery(
     ['chapterCompletionCounts'],
     async () => {
-      const { data, error } = await supabase.rpc('get_chapter_completion_counts') // Call the Supabase function
+      if (!user?.id) throw new Error('User ID is not available')
+      const { data, error } = await supabase.rpc('get_chapter_completion_counts', {
+        user_id: user?.id,
+      })
 
       if (error) {
         console.error('Error fetching chapter completion counts:', error)

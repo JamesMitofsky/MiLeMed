@@ -7,6 +7,7 @@ import { YStack, Text, Spinner, ScrollView, Button, Theme } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useCheckQuizExistence } from '../../utils/react-query/useCheckQuizExistence'
+import useMarkLectureAsRead from '../../utils/react-query/useMarkLectureAsRead'
 import { supabase } from '../../utils/supabase/client.native'
 
 const { useParams } = createParam<{ id: string }>()
@@ -22,10 +23,11 @@ const IndividualLecture = () => {
   const handleNavigateToQuiz = () => {
     router.push(`/lecture/${id}/quiz`)
   }
+  const markLectureAsRead = useMarkLectureAsRead()
 
   const handleMarkAsRead = () => {
-    // Mark the lecture as read
-    console.log('mark lecture as read')
+    markLectureAsRead.mutate(parseInt(id, 10))
+    router.back()
   }
 
   // Use the ID to query specific module data
