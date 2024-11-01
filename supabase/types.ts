@@ -403,6 +403,21 @@ export type Database = {
         | {
             Args: {
               user_id: string
+              chapter_mode?: Database["public"]["Enums"]["mode"]
+            }
+            Returns: {
+              id: number
+              title: string
+              description: string
+              mode: Database["public"]["Enums"]["mode"]
+              sort_order: number
+              lecture_count: number
+              lectures_completed: number
+            }[]
+          }
+        | {
+            Args: {
+              user_id: string
               theoretical: boolean
             }
             Returns: {
