@@ -33,12 +33,12 @@ const questionTypes = [
 ]
 
 const quizQuestionSchema = z.object({
-  question_text: z.string().nonempty('Question text is required'),
+  question_text: z.string().min(1, 'Question text is required'),
   question_type: z.enum(['OPEN', 'MULTIPLE_CHOICE']),
   options: z
     .array(
       z.object({
-        option_text: z.string().nonempty('Option text is required'),
+        option_text: z.string().min(1, 'Option text is required'),
         is_correct: z.boolean(),
       })
     )
