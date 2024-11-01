@@ -17,6 +17,7 @@ type ModeType = Database['public']['Enums']['mode']
 type QuestionType = Database['public']['Enums']['question_type']
 type QuizEventType = Database['public']['Enums']['quiz_event_type']
 type UserRoleType = Database['public']['Enums']['user_role']
+type LectureEventEnumType = Database['public']['Enums']['lecture_event_type']
 
 export {
   AppEventsType,
@@ -33,4 +34,5 @@ export {
   QuestionType,
   QuizEventType,
   UserRoleType,
+  LectureEventEnumType,
 }
