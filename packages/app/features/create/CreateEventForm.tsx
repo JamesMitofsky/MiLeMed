@@ -1,4 +1,3 @@
-import { Database } from '@my/supabase/types'
 import {
   FullscreenSpinner,
   SubmitButton,
@@ -15,8 +14,6 @@ import { useUser } from 'app/utils/useUser'
 import { useRouter } from 'solito/router'
 
 import { z } from '../../utils/zod-de'
-
-type InsertEvent = Database['public']['Tables']['lecture_events']['Insert']
 
 const CreateEventFormSchema = z.object({
   name: formFields.text.min(5).describe('Name // Your event name').nullable().optional(),
