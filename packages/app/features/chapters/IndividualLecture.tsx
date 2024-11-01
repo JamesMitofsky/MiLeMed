@@ -6,6 +6,7 @@ import { useRouter } from 'solito/router'
 import { YStack, Text, Spinner, ScrollView, Button, Theme } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
+import { useCheckQuizExistence } from '../../utils/react-query/useCheckQuizExistence'
 import { supabase } from '../../utils/supabase/client.native'
 
 const { useParams } = createParam<{ id: string }>()
@@ -15,6 +16,9 @@ const IndividualLecture = () => {
     params: { id },
   } = useParams()
   const router = useRouter()
+
+  const { data: quizExistenceData } = useCheckQuizExistence(id)
+
   const handlePress = () => {
     router.push(`/lecture/${id}/quiz`)
   }
@@ -65,9 +69,11 @@ const IndividualLecture = () => {
             {lecture.content}
           </Markdown>
         </Text>
-        <Theme name="orange">
-          <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
-        </Theme>
+        {quizExistenceData?.exists && (
+          <Theme name="orange">
+            <Button onPress={handlePress}>Bereit für das Quiz?!</Button>
+          </Theme>
+        )}
       </YStack>
     </ScrollView>
   )
