@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 
+import { ModeType } from '../supabase/databaseTypes'
 import { useSupabase } from '../supabase/useSupabase'
 import { useUser } from '../useUser'
 
-const useChapterSummary = (limit?: number) => {
+const useChapterSummary = (limit?: number, mode?: ModeType) => {
   const supabase = useSupabase()
   const { user } = useUser()
 
@@ -15,7 +16,10 @@ const useChapterSummary = (limit?: number) => {
       }
 
       // Define the RPC call
-      let query = supabase.rpc('get_chapter_summary', { user_id: user.id })
+      let query = supabase.rpc('get_chapter_summary', {
+        user_id: user.id,
+        chapter_mode: mode,
+      })
 
       // Apply the limit directly on the query
       if (limit) {
@@ -37,9 +41,9 @@ const useChapterSummary = (limit?: number) => {
 
       return data
     }
-  }, [limit, supabase, user?.id]) // Add `user?.id` to dependencies
+  }, [limit, supabase, user?.id, mode]) // Add `user?.id` to dependencies
 
-  return useQuery(['chapters', user?.id, limit], queryFn) // Add `user?.id` to query key
+  return useQuery(['chapters', user?.id, limit, mode], queryFn) // Add `user?.id` to query key
 }
 
 export default useChapterSummary

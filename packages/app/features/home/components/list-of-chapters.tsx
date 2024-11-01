@@ -3,14 +3,16 @@ import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
 import useChapterSummary from '../../../utils/react-query/useChapterSummary'
+import { ModeType } from '../../../utils/supabase/databaseTypes'
 
 type ListOfChaptersProps = {
   limit?: number
   lockCardWidth?: boolean
+  mode?: ModeType
 }
 
-const ListOfChapters = ({ limit, lockCardWidth }: ListOfChaptersProps) => {
-  const { data: chapters, isLoading } = useChapterSummary(limit)
+const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => {
+  const { data: chapters, isLoading } = useChapterSummary(limit, mode)
 
   if (isLoading) {
     return <FullscreenSpinner />

@@ -1,5 +1,6 @@
-import { Button, H4, XStack, YStack } from '@my/ui'
+import { Button, H4, Label, Switch, XStack, YStack } from '@my/ui'
 import { ArrowRight } from '@tamagui/lucide-icons'
+import { useState } from 'react'
 import { useRouter } from 'solito/router'
 
 import ListOfChapters from './list-of-chapters'
@@ -7,6 +8,7 @@ import { ScrollAdapt } from './scroll-adapt'
 
 export const ChaptersPreviewList = () => {
   const router = useRouter()
+  const [isTheoretical, setIsTheoretical] = useState(true)
 
   return (
     <YStack>
@@ -27,9 +29,29 @@ export const ChaptersPreviewList = () => {
         </Button>
       </XStack>
 
+      <Button
+        flexDirection="row"
+        justifyContent="flex-start"
+        my="$2"
+        maxWidth={200}
+        animation="medium"
+        onPress={() => setIsTheoretical(!isTheoretical)}
+      >
+        <Switch id="switch" checked={isTheoretical} onCheckedChange={setIsTheoretical} size="$2">
+          <Switch.Thumb borderColor="$color1" animation="200ms" />
+        </Switch>
+        <Label size="$1.5" htmlFor="switch">
+          {isTheoretical ? 'Theoretisch' : 'Praktisch'}
+        </Label>
+      </Button>
+
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
-          <ListOfChapters lockCardWidth limit={4} />
+          <ListOfChapters
+            lockCardWidth
+            limit={4}
+            mode={isTheoretical ? 'THEORETICAL' : 'PRACTICAL'}
+          />
         </XStack>
       </ScrollAdapt>
     </YStack>
