@@ -3,17 +3,14 @@ import {
   ScrollView,
   YStack,
   useToastController,
-  FullscreenSpinner,
   XStack,
-  SizableText,
-  useMedia,
   Button,
   H1,
   Input,
   Progress,
   Text,
 } from '@my/ui'
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -45,7 +42,7 @@ const genderOptions: GenderOption[] = [
   { label: 'Divers', value: 'OTHER' },
 ]
 
-// Define Zod schema for validation
+// Definiere Zod-Schema zur Validierung
 const profileSchema = z.object({
   name: z.string().min(1, { message: 'Name ist erforderlich' }),
   age: z.number().min(1, { message: 'Alter ist erforderlich' }),
@@ -75,9 +72,6 @@ export function CompleteRegistration() {
   })
   const { profile, updateProfile } = useUser()
   const toast = useToastController()
-  // means medium or smaller
-  const { md } = useMedia()
-
   // const instance = useRef<TCanvasConfettiInstance>()
 
   // const onInitHandler = ({ confetti }: { confetti: TCanvasConfettiInstance }) =>
@@ -92,29 +86,28 @@ export function CompleteRegistration() {
   //   })
   // }, [md, instance])
 
-  console.log(md)
-
   const onSubmit = async (data) => {
-    if (!profile?.id) throw new Error('Profile not found while submitting update to profile')
+    if (!profile?.id)
+      throw new Error('There was no profile ID ready in advance to ultimately submit to a profile.')
 
     const { data: responseData, error } = await supabase
       .from('profiles')
       .update(data)
       .eq('id', profile?.id)
-    if (error) toast.show('Something went wrong with the update')
+    if (error) toast.show('Etwas ist schief gelaufen beim Update')
     else {
       // onShootHandler()
       updateProfile()
-      console.log('successfully updated user', responseData)
-      toast.show('Profile updated successfully')
+      console.log('Profile update done', responseData)
+      toast.show('Profil erfolgreich aktualisiert')
     }
   }
 
-  useEffect(() => {
-    if (profile?.role) {
-      onShootHandler()
-    }
-  }, [profile?.role])
+  // useEffect(() => {
+  //   if (profile?.role) {
+  //     onShootHandler()
+  //   }
+  // }, [profile?.role])
 
   const formValues = watch()
   const progress = useMemo(() => {
@@ -130,102 +123,91 @@ export function CompleteRegistration() {
       {/* <ReactCanvasConfetti onInit={onInitHandler} /> */}
       <ScrollView f={1} fb={0}>
         <YStack gap="$4" p="$10" f={1}>
-          {!profile?.id ? (
-            <FullscreenSpinner />
-          ) : profile?.role ? (
-            <YStack pb="$10" gap="$6" justifyContent="center" alignItems="center" pt="$0">
-              <SizableText size="$6" textAlign="center">
-                Ihr Profil ist vollständig eingerichtet, gute Arbeit!
-              </SizableText>
-              <SizableText>Weiter in der App 🙌</SizableText>
-            </YStack>
-          ) : (
-            <>
-              <H1 size="$9" fontWeight="bold">
-                Registrierung abschließen
-              </H1>
-              <Progress value={progress}>
-                <Progress.Indicator animation="bouncy" />
-              </Progress>
-              <Controller
-                name="name"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Name"
-                    value={value || ''}
-                    autoComplete="given-name"
-                    onChangeText={onChange}
-                    style={{ borderColor: errors.name ? 'red' : undefined }}
-                  />
-                )}
-              />
-              {errors.name && <Text color="red">{errors.name.message}</Text>}
+          <>
+            <H1 size="$9" fontWeight="bold">
+              Registrierung abschließen
+            </H1>
+            <Progress value={progress}>
+              <Progress.Indicator animation="bouncy" />
+            </Progress>
+            <Controller
+              name="name"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Name"
+                  value={value || ''}
+                  autoComplete="given-name"
+                  onChangeText={onChange}
+                  style={{ borderColor: errors.name ? 'red' : undefined }}
+                />
+              )}
+            />
+            {errors.name && <Text color="red">{errors.name.message}</Text>}
 
-              <Controller
-                name="age"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Alter"
-                    keyboardType="numeric"
-                    autoComplete="birthdate-year"
-                    value={value ? value.toString() : ''}
-                    onChangeText={(text) => onChange(Number(text))}
-                    style={{ borderColor: errors.age ? 'red' : undefined }}
-                  />
-                )}
-              />
-              {errors.age && <Text color="red">{errors.age.message}</Text>}
+            <Controller
+              name="age"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Alter"
+                  keyboardType="numeric"
+                  autoComplete="birthdate-year"
+                  value={value ? value.toString() : ''}
+                  onChangeText={(text) => onChange(Number(text))}
+                  style={{ borderColor: errors.age ? 'red' : undefined }}
+                />
+              )}
+            />
+            {errors.age && <Text color="red">{errors.age.message}</Text>}
 
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field: { value, ...field } }) => (
-                  <CustomSelect
-                    placeholder="Geschlecht"
-                    value={value || ''}
-                    {...field}
-                    items={genderOptions}
-                  />
-                )}
-              />
-              {errors.gender && <Text color="red">{errors.gender.message}</Text>}
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field: { value, ...field } }) => (
+                <CustomSelect
+                  placeholder="Geschlecht"
+                  value={value || ''}
+                  {...field}
+                  items={genderOptions}
+                />
+              )}
+            />
+            {errors.gender && <Text color="red">{errors.gender.message}</Text>}
 
-              <Controller
-                name="semester_number"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Semesterzahl"
-                    keyboardType="numeric"
-                    value={value ? value.toString() : ''}
-                    onChangeText={(text) => onChange(Number(text))}
-                    style={{ borderColor: errors.semester_number ? 'red' : undefined }}
-                  />
-                )}
-              />
-              {errors.semester_number && <Text color="red">{errors.semester_number.message}</Text>}
+            <Controller
+              name="semester_number"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <Input
+                  placeholder="Semesterzahl"
+                  keyboardType="numeric"
+                  value={value ? value.toString() : ''}
+                  onChangeText={(text) => onChange(Number(text))}
+                  style={{ borderColor: errors.semester_number ? 'red' : undefined }}
+                />
+              )}
+            />
+            {errors.semester_number && <Text color="red">{errors.semester_number.message}</Text>}
 
-              <Controller
-                name="role"
-                control={control}
-                render={({ field: { value, ...field } }) => (
-                  <CustomSelect
-                    placeholder="Wer bist du?"
-                    value={value || ''}
-                    {...field}
-                    items={roleOptions}
-                  />
-                )}
-              />
-              {errors.role && <Text color="red">{errors.role.message}</Text>}
+            <Controller
+              name="role"
+              control={control}
+              render={({ field: { value, ...field } }) => (
+                <CustomSelect
+                  placeholder="Wer bist du?"
+                  value={value || ''}
+                  {...field}
+                  items={roleOptions}
+                />
+              )}
+            />
+            {errors.role && <Text color="red">{errors.role.message}</Text>}
 
-              <Button onPress={handleSubmit(onSubmit)}>
-                <Text>Absenden</Text>
-              </Button>
-            </>
-          )}
+            <Button onPress={handleSubmit(onSubmit)}>
+              <Text>Absenden</Text>
+            </Button>
+          </>
         </YStack>
       </ScrollView>
     </XStack>
