@@ -1,11 +1,15 @@
 import { ScrollView } from '@my/ui'
-import { useState } from 'react'
 import { Button, Label, Switch, YStack } from 'tamagui'
 
+import { useMode } from '../../provider/modeProvider'
 import ListOfChapters from '../home/components/list-of-chapters'
 
 const ViewChaptersScreen = () => {
-  const [isTheoretical, setIsTheoretical] = useState(true)
+  const { mode, setMode } = useMode()
+
+  const toggleMode = () => {
+    setMode(mode === 'THEORETICAL' ? 'PRACTICAL' : 'THEORETICAL')
+  }
   return (
     <ScrollView snapToAlignment="start">
       <YStack padding="$4" gap="$3">
@@ -14,14 +18,14 @@ const ViewChaptersScreen = () => {
           justifyContent="flex-start"
           maxWidth={200}
           animation="medium"
-          onPress={() => setIsTheoretical(!isTheoretical)}
+          onPress={toggleMode}
         >
-          <Switch checked={isTheoretical} onCheckedChange={setIsTheoretical} size="$2">
+          <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
             <Switch.Thumb borderColor="$color1" animation="200ms" />
           </Switch>
-          <Label size="$1.5">{isTheoretical ? 'Theoretisch' : 'Praktisch'}</Label>
+          <Label size="$1.5">{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</Label>
         </Button>
-        <ListOfChapters mode={isTheoretical ? 'THEORETICAL' : 'PRACTICAL'} />
+        <ListOfChapters mode={mode === 'THEORETICAL' ? 'THEORETICAL' : 'PRACTICAL'} />
       </YStack>
     </ScrollView>
   )

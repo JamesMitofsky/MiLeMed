@@ -1,13 +1,14 @@
 import { Session } from '@supabase/supabase-js'
+import { GlobalStoreProvider } from 'app/utils/global-store'
 import React from 'react'
 
 import { AuthProvider } from './auth'
+import { ModeProvider } from './modeProvider'
 import { QueryClientProvider } from './react-query'
 import { SafeAreaProvider } from './safe-area'
 import { TamaguiProvider } from './tamagui'
 import { UniversalThemeProvider } from './theme'
 import { ToastProvider } from './toast'
-import { GlobalStoreProvider } from 'app/utils/global-store'
 
 export { loadThemePromise } from './theme/UniversalThemeProvider'
 
@@ -44,4 +45,5 @@ const Providers = compose([
   ToastProvider,
   QueryClientProvider,
   GlobalStoreProvider,
+  ModeProvider,
 ])
