@@ -64,7 +64,7 @@ export default function HomeLayout() {
               name="(drawer)"
               options={{
                 headerShown: false,
-                title: 'Starteseite',
+                title: 'Startseite',
               }}
             />
             <Stack.Screen
