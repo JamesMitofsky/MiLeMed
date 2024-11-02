@@ -71,7 +71,12 @@ export default function HomeLayout() {
               name="settings/index"
               options={{
                 headerShown: true,
-                headerBackTitle: 'Back',
+              }}
+            />
+            <Stack.Screen
+              name="profile"
+              options={{
+                headerShown: true,
               }}
             />
           </Stack>

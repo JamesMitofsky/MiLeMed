@@ -4,16 +4,14 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export default function Screen() {
   return (
-    <>
+    <SafeAreaView style={{ flex: 1 }} edges={['bottom', 'left', 'right']}>
       <Stack.Screen
         options={{
-          headerShown: false,
-          title: 'Edit Profile',
+          title: 'Profil',
+          headerBackTitle: 'Zurück',
         }}
       />
-      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom', 'left', 'right']}>
-        <EditProfileScreen />
-      </SafeAreaView>
-    </>
+      <EditProfileScreen />
+    </SafeAreaView>
   )
 }

@@ -26,7 +26,7 @@ export function DrawerMenu(props) {
         <Settings>
           <Settings.Items>
             <Settings.Group>
-              <Settings.Item icon={User} {...useLink({ href: '/profile/edit' })} accentTheme="pink">
+              <Settings.Item icon={User} {...useLink({ href: '/profile' })} accentTheme="pink">
                 Profil bearbeiten
               </Settings.Item>
               {/* <Settings.Item icon={Box} accentTheme="green">

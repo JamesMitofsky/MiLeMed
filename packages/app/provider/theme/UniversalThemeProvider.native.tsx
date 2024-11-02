@@ -41,7 +41,9 @@ export const UniversalThemeProvider = ({ children }: { children: React.ReactNode
       onChangeTheme: (next: string) => {
         setCurrent(next as ThemeName)
       },
-      current: current ?? 'system', // Default to 'system' if current is null
+      // TODO revert this to use the system
+      // current: current ?? 'system', // Default to 'system' if current is null
+      current: 'light',
       systemTheme,
     } satisfies ThemeContextValue
   }, [current, systemTheme])

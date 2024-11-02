@@ -6,7 +6,7 @@ import { useUser } from 'app/utils/useUser'
 import { SolitoImage } from 'solito/image'
 import { useLink } from 'solito/link'
 
-export function ProfileScreen(props) {
+export function SidebarDrawer(props) {
   const { profile, avatarUrl } = useUser()
   const name = profile?.name
   const insets = useSafeAreaInsets()
@@ -26,7 +26,7 @@ export function ProfileScreen(props) {
         <Settings>
           <Settings.Items>
             <Settings.Group>
-              <Settings.Item icon={User} {...useLink({ href: '/profile/edit' })} accentTheme="pink">
+              <Settings.Item icon={User} {...useLink({ href: '/profile' })} accentTheme="pink">
                 Profil bearbeiten
               </Settings.Item>
               {/* <Settings.Item icon={Box} accentTheme="green">

@@ -1,5 +1,5 @@
 import { HomeLayout } from 'app/features/home/layout.web'
-import { ProfileScreen } from 'app/features/profile/screen'
+import { SidebarDrawer } from 'app/features/profile/screen'
 import Head from 'next/head'
 
 import type { NextPageWithLayout } from '../_app'
@@ -10,7 +10,7 @@ const Page: NextPageWithLayout = () => {
       <Head>
         <title>Profile</title>
       </Head>
-      <ProfileScreen />
+      <SidebarDrawer />
     </>
   )
 }
