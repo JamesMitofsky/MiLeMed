@@ -1,48 +1,7 @@
-import { LinearGradient } from '@tamagui/linear-gradient'
-import { useEffect, useRef } from 'react'
-import { Animated } from 'react-native'
 import { Button, Card, Progress, SizableText, XStack, YStack } from 'tamagui'
+import { LinearGradient } from 'tamagui/linear-gradient'
 
-const PulsingGradientSkeleton = ({ width, height }: { width: any; height: any }) => {
-  const opacity = useRef(new Animated.Value(1)).current
-
-  useEffect(() => {
-    const pulseAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0.7,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-      ])
-    )
-    pulseAnimation.start()
-
-    return () => {
-      pulseAnimation.stop()
-    }
-  }, [opacity])
-
-  return (
-    <YStack width={width} height={height} borderRadius="$3">
-      <Animated.View style={{ opacity, width: '100%', height: '100%' }}>
-        <LinearGradient
-          br="$3"
-          w="100%"
-          h="100%"
-          colors={['grey', 'grey']}
-          start={[1, 1]}
-          end={[0.85, 0]}
-        />
-      </Animated.View>
-    </YStack>
-  )
-}
+import { Skeleton } from '../../../app/features/general/Skeleton'
 
 export const ChapterLectureCardSkeleton = ({
   lockCardWidth,
@@ -56,21 +15,20 @@ export const ChapterLectureCardSkeleton = ({
       <Card.Header my="auto" padded gap="$3">
         <YStack gap="$2">
           {isDense ? (
-            <PulsingGradientSkeleton width="70%" height={15} />
+            <Skeleton width="70%" height={15} />
           ) : (
             <>
-              <PulsingGradientSkeleton width="20%" height={15} />
-              <PulsingGradientSkeleton width="100%" height={15} />
+              <Skeleton width="20%" height={15} />
+              <Skeleton width="100%" height={15} />
             </>
           )}
           {!isDense && (
             <>
               <XStack o={0.5} ai="center" mb="$3">
-                <PulsingGradientSkeleton width={13} height={13} />
+                <Skeleton width={13} height={13} />
                 <SizableText size="$2">
                   {' '}
-                  / <PulsingGradientSkeleton width={13} height={13} />{' '}
-                  <PulsingGradientSkeleton width={30} height={13} />
+                  / <Skeleton width={13} height={13} /> <Skeleton width={30} height={13} />
                 </SizableText>
               </XStack>
 
