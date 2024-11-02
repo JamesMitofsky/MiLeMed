@@ -1,5 +1,5 @@
 import { ScrollView } from '@my/ui'
-import { Button, Label, Switch, YStack } from 'tamagui'
+import { SizableText, Switch, XStack, YStack } from 'tamagui'
 
 import { useMode } from '../../provider/modeProvider'
 import ListOfChapters from '../home/components/list-of-chapters'
@@ -13,18 +13,12 @@ const ViewChaptersScreen = () => {
   return (
     <ScrollView snapToAlignment="start">
       <YStack padding="$4" gap="$3">
-        <Button
-          flexDirection="row"
-          justifyContent="flex-start"
-          maxWidth={200}
-          animation="medium"
-          onPress={toggleMode}
-        >
+        <XStack mx="$5" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
           <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
             <Switch.Thumb borderColor="$color1" animation="200ms" />
           </Switch>
-          <Label size="$1.5">{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</Label>
-        </Button>
+          <SizableText>{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</SizableText>
+        </XStack>
         <ListOfChapters mode={mode === 'THEORETICAL' ? 'THEORETICAL' : 'PRACTICAL'} />
       </YStack>
     </ScrollView>

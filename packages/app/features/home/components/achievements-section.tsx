@@ -1,4 +1,4 @@
-import { Button, H4, Label, Switch, XStack, YStack } from '@my/ui'
+import { Button, H4, SizableText, Switch, XStack, YStack } from '@my/ui'
 import { ArrowRight } from '@tamagui/lucide-icons'
 import { useRouter } from 'solito/router'
 
@@ -33,18 +33,12 @@ export const ChaptersPreviewList = () => {
         </Button>
       </XStack>
 
-      <Button
-        flexDirection="row"
-        justifyContent="flex-start"
-        maxWidth={200}
-        animation="medium"
-        onPress={toggleMode}
-      >
+      <XStack mx="$5" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
         <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
           <Switch.Thumb borderColor="$color1" animation="200ms" />
         </Switch>
-        <Label size="$1.5">{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</Label>
-      </Button>
+        <SizableText>{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</SizableText>
+      </XStack>
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
           <ListOfChapters
