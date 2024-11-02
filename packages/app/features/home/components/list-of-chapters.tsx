@@ -1,4 +1,5 @@
-import { ChapterLectureCard, FullscreenSpinner } from '@my/ui'
+import { ChapterLectureCard } from '@my/ui'
+import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
@@ -15,7 +16,13 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
   const { data: chapters, isLoading } = useChapterSummary(limit, mode)
 
   if (isLoading) {
-    return <FullscreenSpinner />
+    return (
+      <>
+        <ChapterLectureCardSkeleton lockCardWidth />
+        <ChapterLectureCardSkeleton lockCardWidth />
+        <ChapterLectureCardSkeleton lockCardWidth />
+      </>
+    )
   }
 
   return (
