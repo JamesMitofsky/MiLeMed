@@ -48,6 +48,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
         <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
+        <ChapterLectureCardSkeleton isDense />
       </>
     )
   }
@@ -58,7 +59,6 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
         <Text>Keine Lektionen gefunden.</Text>
       ) : (
         <YStack fw="wrap" f={1} gap="$3">
-          <ChapterLectureCardSkeleton isDense />
           {lectures?.map((lecture, index) => (
             <Theme key={lecture.id} name={colors[index]}>
               <ChapterLectureCard
