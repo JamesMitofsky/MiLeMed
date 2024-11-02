@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { User } from '@tamagui/lucide-icons'
 
-import { ChapterLectureCard } from './AchievementCard'
+import { ChapterLectureCard } from './ChapterLectureCard'
 
 const meta: Meta<typeof ChapterLectureCard> = {
   title: 'ui/AchievementCard',

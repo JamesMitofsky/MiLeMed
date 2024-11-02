@@ -1,4 +1,4 @@
-export * from './AchievementCard'
+export * from './ChapterLectureCard'
 export * from './Banner'
 export * from './CustomToast'
 export * from './EventCard'
