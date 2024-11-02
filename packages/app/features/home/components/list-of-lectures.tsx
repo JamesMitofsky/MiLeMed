@@ -1,6 +1,7 @@
 import { ChapterLectureCard } from '@my/ui'
+import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
 import { useQuery } from '@tanstack/react-query'
-import { YStack, Text, Spinner, Theme, useMedia } from 'tamagui'
+import { YStack, Text, Theme, useMedia } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
@@ -41,10 +42,13 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
 
   if (isLoading) {
     return (
-      <YStack padding="$4" alignItems="center">
-        <Spinner size="small" />
-        <Text marginTop="$2">Lade Lektion...</Text>
-      </YStack>
+      <>
+        <ChapterLectureCardSkeleton isDense />
+        <ChapterLectureCardSkeleton isDense />
+        <ChapterLectureCardSkeleton isDense />
+        <ChapterLectureCardSkeleton isDense />
+        <ChapterLectureCardSkeleton isDense />
+      </>
     )
   }
 
@@ -54,6 +58,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
         <Text>Keine Lektionen gefunden.</Text>
       ) : (
         <YStack fw="wrap" f={1} gap="$3">
+          <ChapterLectureCardSkeleton isDense />
           {lectures?.map((lecture, index) => (
             <Theme key={lecture.id} name={colors[index]}>
               <ChapterLectureCard

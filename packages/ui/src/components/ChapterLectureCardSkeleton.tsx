@@ -44,30 +44,43 @@ const PulsingGradientSkeleton = ({ width, height }: { width: any; height: any })
   )
 }
 
-export default PulsingGradientSkeleton
-
-export const ChapterLectureCardSkeleton = ({ lockCardWidth }: { lockCardWidth?: boolean }) => {
+export const ChapterLectureCardSkeleton = ({
+  lockCardWidth,
+  isDense,
+}: {
+  lockCardWidth?: boolean
+  isDense?: boolean
+}) => {
   return (
-    <Card w={lockCardWidth ? 300 : undefined} br="$0" chromeless>
+    <Card w={lockCardWidth ? 300 : '100%'} br="$0" chromeless>
       <Card.Header my="auto" padded gap="$3">
         <YStack gap="$2">
-          <PulsingGradientSkeleton width="100%" height={15} />
-          <PulsingGradientSkeleton width="20%" height={15} />
+          {isDense ? (
+            <PulsingGradientSkeleton width="70%" height={15} />
+          ) : (
+            <>
+              <PulsingGradientSkeleton width="20%" height={15} />
+              <PulsingGradientSkeleton width="100%" height={15} />
+            </>
+          )}
+          {!isDense && (
+            <>
+              <XStack o={0.5} ai="center" mb="$3">
+                <PulsingGradientSkeleton width={13} height={13} />
+                <SizableText size="$2">
+                  {' '}
+                  / <PulsingGradientSkeleton width={13} height={13} />{' '}
+                  <PulsingGradientSkeleton width={30} height={13} />
+                </SizableText>
+              </XStack>
 
-          <XStack o={0.5} ai="center" mb="$3">
-            <PulsingGradientSkeleton width={13} height={13} />
-            <SizableText size="$2">
-              {' '}
-              / <PulsingGradientSkeleton width={13} height={13} />{' '}
-              <PulsingGradientSkeleton width={30} height={13} />
-            </SizableText>
-          </XStack>
-
-          <Progress mt="$2" theme="alt2" value={0} bg="$color2" boc="$color5" bw={1}>
-            <Progress.Indicator bc="$color7" />
-          </Progress>
+              <Progress mt="$2" theme="alt2" value={0} bg="$color2" boc="$color5" bw={1}>
+                <Progress.Indicator bc="$color7" />
+              </Progress>
+            </>
+          )}
           <Button mt="$3" als="flex-end" size="$2">
-            {'             '}
+            {'                '}
           </Button>
         </YStack>
       </Card.Header>
