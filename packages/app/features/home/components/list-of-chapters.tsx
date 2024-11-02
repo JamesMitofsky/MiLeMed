@@ -1,4 +1,4 @@
-import { AchievementCard, FullscreenSpinner } from '@my/ui'
+import { ChapterLectureCard, FullscreenSpinner } from '@my/ui'
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
@@ -25,7 +25,7 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
       ) : (
         chapters?.map((chapter, index) => (
           <Theme key={chapter.id} name={colors[index]}>
-            <AchievementCard
+            <ChapterLectureCard
               w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}
               progress={{

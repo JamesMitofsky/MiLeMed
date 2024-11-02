@@ -1,4 +1,4 @@
-import { AchievementCard } from '@my/ui'
+import { ChapterLectureCard } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, Spinner, Theme, useMedia } from 'tamagui'
 
@@ -56,7 +56,7 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
         <YStack fw="wrap" f={1} gap="$3">
           {lectures?.map((lecture, index) => (
             <Theme key={lecture.id} name={colors[index]}>
-              <AchievementCard
+              <ChapterLectureCard
                 dense
                 w={md ? '100%' : 300}
                 title={lecture.title}

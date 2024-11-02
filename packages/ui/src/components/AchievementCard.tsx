@@ -21,7 +21,7 @@ export type AchievementCardProps = {
   dense?: boolean
 } & CardProps
 
-export const AchievementCard = ({
+export const ChapterLectureCard = ({
   title,
   icon: Icon,
   progress,

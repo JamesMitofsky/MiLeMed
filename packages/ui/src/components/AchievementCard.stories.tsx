@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react'
 import { User } from '@tamagui/lucide-icons'
 
-import { AchievementCard } from './AchievementCard'
+import { ChapterLectureCard } from './AchievementCard'
 
-const meta: Meta<typeof AchievementCard> = {
+const meta: Meta<typeof ChapterLectureCard> = {
   title: 'ui/AchievementCard',
   parameters: { layout: 'centered' },
-  component: AchievementCard,
+  component: ChapterLectureCard,
 }
 
-type Story = StoryObj<typeof AchievementCard>
+type Story = StoryObj<typeof ChapterLectureCard>
 
 export const Basic: Story = {
   args: {
