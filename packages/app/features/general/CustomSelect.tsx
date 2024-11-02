@@ -1,7 +1,7 @@
 import { Check, ChevronDown, ChevronUp } from '@tamagui/lucide-icons'
 import React from 'react'
-import type { FontSizeTokens, SelectProps } from 'tamagui'
-import { Adapt, Select, Sheet, YStack, getFontSize } from 'tamagui'
+import type { SelectProps } from 'tamagui'
+import { Adapt, Select, Sheet, YStack } from 'tamagui'
 import { LinearGradient } from 'tamagui/linear-gradient'
 
 type CustomSelectProps = SelectProps & {
@@ -11,16 +11,15 @@ type CustomSelectProps = SelectProps & {
   onChange: (value: string) => void // Callback to pass selected value to parent
 }
 
-export function CustomSelect({ placeholder, items, value, onChange, ...props }: CustomSelectProps) {
+export function CustomSelect({ placeholder, items, value, onChange }: CustomSelectProps) {
   return (
-    <Select value={value} onValueChange={onChange} disablePreventBodyScroll {...props}>
+    <Select value={value} onValueChange={onChange} disablePreventBodyScroll>
       <Select.Trigger iconAfter={ChevronDown}>
         <Select.Value placeholder={placeholder} />
       </Select.Trigger>
 
       <Adapt when="sm" platform="touch">
         <Sheet
-          native={!!props.native}
           modal
           dismissOnSnapToBottom
           animationConfig={{
@@ -78,20 +77,18 @@ export function CustomSelect({ placeholder, items, value, onChange, ...props }: 
             )}
           </Select.Group>
 
-          {props.native && (
-            <YStack
-              position="absolute"
-              right={0}
-              top={0}
-              bottom={0}
-              alignItems="center"
-              justifyContent="center"
-              width="$4"
-              pointerEvents="none"
-            >
-              <ChevronDown size={getFontSize((props.size as FontSizeTokens) ?? '$true')} />
-            </YStack>
-          )}
+          {/* <YStack
+            position="absolute"
+            right={0}
+            top={0}
+            bottom={0}
+            alignItems="center"
+            justifyContent="center"
+            width="$4"
+            pointerEvents="none"
+          >
+            <ChevronDown />
+          </YStack> */}
         </Select.Viewport>
 
         <Select.ScrollDownButton

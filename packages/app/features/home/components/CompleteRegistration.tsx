@@ -164,11 +164,11 @@ export function CompleteRegistration() {
             <Controller
               name="gender"
               control={control}
-              render={({ field: { value, ...field } }) => (
+              render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   placeholder="Geschlecht"
                   value={value || ''}
-                  {...field}
+                  onChange={onChange}
                   items={genderOptions}
                 />
               )}
@@ -193,11 +193,11 @@ export function CompleteRegistration() {
             <Controller
               name="role"
               control={control}
-              render={({ field: { value, ...field } }) => (
+              render={({ field: { value, onChange } }) => (
                 <CustomSelect
                   placeholder="Wer bist du?"
                   value={value || ''}
-                  {...field}
+                  onChange={onChange}
                   items={roleOptions}
                 />
               )}

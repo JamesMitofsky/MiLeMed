@@ -1,4 +1,4 @@
-import { ScrollView, YStack, XStack } from '@my/ui'
+import { ScrollView, YStack, XStack, FullscreenSpinner } from '@my/ui'
 
 import { CompleteRegistration } from './components/CompleteRegistration'
 import { ChaptersPreviewList } from './components/achievements-section'
@@ -11,7 +11,9 @@ export function HomeScreen() {
     <XStack maw={1480} als="center" ai="flex-start" f={1}>
       <ScrollView f={1} fb={0}>
         <YStack gap="$7" pb="$10" pt="$5">
-          {!profile || !profile.role ? (
+          {!profile ? (
+            <FullscreenSpinner />
+          ) : !profile.role ? (
             <CompleteRegistration />
           ) : (
             <>
