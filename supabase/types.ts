@@ -368,68 +368,30 @@ export type Database = {
           chapter_sort_order: number
         }[]
       }
-      get_chapter_completion_counts:
-        | {
-            Args: Record<PropertyKey, never>
-            Returns: {
-              total_chapters: number
-              completed_chapters: number
-            }[]
-          }
-        | {
-            Args: {
-              user_id: string
-            }
-            Returns: {
-              total_chapters: number
-              completed_chapters: number
-            }[]
-          }
-      get_chapter_summary:
-        | {
-            Args: {
-              user_id: string
-            }
-            Returns: {
-              id: number
-              title: string
-              description: string
-              mode: Database["public"]["Enums"]["mode"]
-              sort_order: number
-              lecture_count: number
-              lectures_completed: number
-            }[]
-          }
-        | {
-            Args: {
-              user_id: string
-              chapter_mode?: Database["public"]["Enums"]["mode"]
-            }
-            Returns: {
-              id: number
-              title: string
-              description: string
-              mode: Database["public"]["Enums"]["mode"]
-              sort_order: number
-              lecture_count: number
-              lectures_completed: number
-            }[]
-          }
-        | {
-            Args: {
-              user_id: string
-              theoretical: boolean
-            }
-            Returns: {
-              id: number
-              title: string
-              description: string
-              mode: Database["public"]["Enums"]["mode"]
-              sort_order: number
-              lecture_count: number
-              lectures_completed: number
-            }[]
-          }
+      get_chapter_completion_counts: {
+        Args: {
+          user_id: string
+        }
+        Returns: {
+          total_chapters: number
+          completed_chapters: number
+        }[]
+      }
+      get_chapter_summary: {
+        Args: {
+          user_id: string
+          chapter_mode?: Database["public"]["Enums"]["mode"]
+        }
+        Returns: {
+          id: number
+          title: string
+          description: string
+          mode: Database["public"]["Enums"]["mode"]
+          sort_order: number
+          lecture_count: number
+          lectures_completed: number
+        }[]
+      }
       get_lecture_completion_counts: {
         Args: {
           user_id: string
