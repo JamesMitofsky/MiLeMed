@@ -56,7 +56,7 @@ const IndividualChapterScreen = () => {
         )}
         <Separator />
 
-        <ListOfLectures moduleId={id || ''} />
+        <ListOfLectures chapterId={id || ''} />
       </YStack>
     </ScrollView>
   )

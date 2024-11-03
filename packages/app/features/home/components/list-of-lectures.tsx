@@ -7,18 +7,18 @@ import { colors } from '../../../utils/constants/colors'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 
 type ListOfLecturesProps = {
-  moduleId: string
+  chapterId: string
   limit?: number
 }
 
-const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
+const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
   const supabase = useSupabase()
-  const { data: lectures, isLoading } = useQuery(['lectures'], {
+  const { data: lectures, isLoading } = useQuery(['lectures', chapterId], {
     queryFn: async () => {
       let query = supabase
         .from('lectures')
         .select('*')
-        .eq('chapter_id', moduleId)
+        .eq('chapter_id', chapterId)
         .order('sort_order', { ascending: true })
 
       if (typeof limit === 'number') {
@@ -43,10 +43,6 @@ const ListOfLectures = ({ moduleId, limit }: ListOfLecturesProps) => {
   if (isLoading) {
     return (
       <>
-        <ChapterLectureCardSkeleton isDense />
-        <ChapterLectureCardSkeleton isDense />
-        <ChapterLectureCardSkeleton isDense />
-        <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
       </>
