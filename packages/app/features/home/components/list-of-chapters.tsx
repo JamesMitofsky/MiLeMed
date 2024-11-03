@@ -18,9 +18,9 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
   if (isLoading) {
     return (
       <>
-        <ChapterLectureCardSkeleton lockCardWidth />
-        <ChapterLectureCardSkeleton lockCardWidth />
-        <ChapterLectureCardSkeleton lockCardWidth />
+        <ChapterLectureCardSkeleton lockCardWidth={lockCardWidth} />
+        <ChapterLectureCardSkeleton lockCardWidth={lockCardWidth} />
+        <ChapterLectureCardSkeleton lockCardWidth={lockCardWidth} />
       </>
     )
   }
@@ -30,23 +30,25 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
       {chapters?.length === 0 ? (
         <Text>Keine Kapitel gefunden.</Text>
       ) : (
-        chapters?.map((chapter, index) => (
-          <Theme key={chapter.id} name={colors[index]}>
-            <ChapterLectureCard
-              w={lockCardWidth ? 300 : '100%'}
-              title={chapter.title}
-              progress={{
-                current: chapter.lectures_completed,
-                full: chapter.lecture_count,
-                label: 'Lektionen',
-              }}
-              action={{
-                text: 'Weiter',
-                href: `/chapter/${chapter.id}`,
-              }}
-            />
-          </Theme>
-        ))
+        <>
+          {chapters?.map((chapter, index) => (
+            <Theme key={chapter.id} name={colors[index]}>
+              <ChapterLectureCard
+                w={lockCardWidth ? 300 : '100%'}
+                title={chapter.title}
+                progress={{
+                  current: chapter.lectures_completed,
+                  full: chapter.lecture_count,
+                  label: 'Lektionen',
+                }}
+                action={{
+                  text: 'Weiter',
+                  href: `/chapter/${chapter.id}`,
+                }}
+              />
+            </Theme>
+          ))}
+        </>
       )}
     </>
   )
