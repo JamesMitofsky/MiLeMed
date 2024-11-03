@@ -54,3 +54,5 @@ thumbs.db
 
 # Turborepo
 .turbo
+
+dumps
