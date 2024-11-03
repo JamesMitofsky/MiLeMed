@@ -13,7 +13,7 @@ const ViewChaptersScreen = () => {
   return (
     <ScrollView snapToAlignment="start">
       <YStack padding="$4" gap="$3">
-        <XStack mx="$5" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
+        <XStack mx="$2" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
           <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
             <Switch.Thumb borderColor="$color1" animation="200ms" />
           </Switch>
