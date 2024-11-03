@@ -21,7 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
-      "buildNumber": "12"
+      "buildNumber": "13"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
