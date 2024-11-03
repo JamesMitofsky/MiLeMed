@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  FullscreenSpinner,
-  SubmitButton,
-  Theme,
-  View,
-  YStack,
-  useToastController,
-} from '@my/ui'
+import { Avatar, FullscreenSpinner, SubmitButton, Theme, YStack, useToastController } from '@my/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
@@ -17,9 +9,8 @@ import { useRouter } from 'solito/router'
 
 import { api } from '../../utils/api'
 import { z } from '../../utils/zod-de'
-import { UploadAvatar } from '../settings/components/upload-avatar'
 
-const { useParams } = createParam<{ edit_name?: '1'; edit_about?: '1' }>()
+const { useParams } = createParam<{ edit_name?: ''; edit_about?: '' }>()
 export const EditProfileScreen = () => {
   const { profile, user } = useUser()
 
@@ -88,11 +79,7 @@ const EditProfileForm = ({
       {(fields) => (
         <>
           <YStack mb="$4" ai="center">
-            <View>
-              <UploadAvatar>
-                <UserAvatar />
-              </UploadAvatar>
-            </View>
+            <UserAvatar />
           </YStack>
           {Object.values(fields)}
         </>
