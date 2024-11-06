@@ -59,7 +59,13 @@ export default function HomeLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Provider initialSession={initialSession}>
-          <Stack screenOptions={{ headerShown: false }}>
+          <Stack
+            screenOptions={{
+              headerShown: false,
+              // TODO fix color
+              contentStyle: { backgroundColor: 'white' },
+            }}
+          >
             <Stack.Screen
               name="(drawer)"
               options={{

@@ -24,6 +24,8 @@ export default function Layout() {
             <Menu size={24} color="black" />
           </Button>
         ),
+        // TODO fix color
+        sceneContainerStyle: { backgroundColor: 'white' },
       }}
       drawerContent={SidebarDrawer}
     />
