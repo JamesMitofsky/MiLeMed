@@ -37,7 +37,7 @@ export const ChaptersPreviewList = () => {
         <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
           <Switch.Thumb borderColor="$color1" animation="200ms" />
         </Switch>
-        <SizableText>{mode === 'THEORETICAL' ? 'Theoretisch' : 'Praktisch'}</SizableText>
+        <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Praktisch'}</SizableText>
       </XStack>
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
