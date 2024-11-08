@@ -29,7 +29,7 @@ interface RoleOption {
 
 const roleOptions: RoleOption[] = [
   { label: 'Medizinischer Fachmann / Administrator', value: UserRoleEnum.MEDICAL_PROFESSIONAL },
-  { label: 'Student', value: UserRoleEnum.STUDENT_TESTER },
+  { label: 'Student', value: UserRoleEnum.STUDENT },
 ]
 
 interface GenderOption {
