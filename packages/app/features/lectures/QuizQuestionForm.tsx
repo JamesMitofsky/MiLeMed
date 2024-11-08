@@ -32,21 +32,31 @@ const questionTypes = [
   { label: 'Multiple Choice', value: 'MULTIPLE_CHOICE' },
 ]
 
-const quizQuestionSchema = z.object({
-  question_text: z.string().min(1, 'Question text is required'),
-  question_type: z.enum(['OPEN', 'MULTIPLE_CHOICE']),
-  options: z
-    .array(
-      z.object({
-        option_text: z.string().min(1, 'Option text is required'),
-        is_correct: z.boolean(),
-      })
-    )
-    .min(1, 'At least one option is required for multiple choice questions')
-    .refine((options) => options.every((option) => option.option_text.trim() !== ''), {
-      message: 'Each option must have text',
-    }),
-})
+const quizQuestionSchema = z
+  .object({
+    question_text: z.string().min(1, 'Question text is required'),
+    question_type: z.enum(['OPEN', 'MULTIPLE_CHOICE']),
+    options: z
+      .array(
+        z.object({
+          option_text: z.string().min(1, 'Option text is required'),
+          is_correct: z.boolean(),
+        })
+      )
+      .min(1, 'At least one option is required for multiple choice questions'),
+  })
+  .superRefine((data, ctx) => {
+    if (data.question_type === 'MULTIPLE_CHOICE') {
+      const hasCorrectOption = data.options.some((option) => option.is_correct)
+      if (!hasCorrectOption) {
+        ctx.addIssue({
+          code: 'custom', // Specify 'custom' as the code for custom validation errors
+          path: ['options'],
+          message: 'At least one option must be marked as correct',
+        })
+      }
+    }
+  })
 
 const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   onSubmitSuccess,
@@ -130,6 +140,13 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         {questionType === 'MULTIPLE_CHOICE' ? (
           <YStack gap="$3">
             <SizableText fontWeight="bold">Options:</SizableText>
+
+            {errors.options && (
+              <SizableText color="red">
+                {errors.options.message || 'At least one option must be marked as correct'}
+              </SizableText>
+            )}
+
             {options.map((option, index) => (
               <XStack key={option.id} gap="$6" alignItems="center">
                 <Controller
@@ -170,6 +187,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
                 />
               </XStack>
             ))}
+
             <Button themeShallow icon={Plus} onPress={handleAddOption}>
               Add Option
             </Button>
