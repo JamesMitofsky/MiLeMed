@@ -303,6 +303,42 @@ export type Database = {
           },
         ]
       }
+      quiz_sessions: {
+        Row: {
+          created_at: string | null
+          lecture_id: number | null
+          profile_id: string | null
+          session_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          lecture_id?: number | null
+          profile_id?: string | null
+          session_id: string
+        }
+        Update: {
+          created_at?: string | null
+          lecture_id?: number | null
+          profile_id?: string | null
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_sessions_lecture_id_fkey"
+            columns: ["lecture_id"]
+            isOneToOne: false
+            referencedRelation: "lectures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_sessions_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_quiz_answers: {
         Row: {
           answer_text: string | null
@@ -312,6 +348,7 @@ export type Database = {
           is_correct: boolean | null
           profile_id: string
           question_id: number
+          session_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -322,6 +359,7 @@ export type Database = {
           is_correct?: boolean | null
           profile_id: string
           question_id: number
+          session_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -332,6 +370,7 @@ export type Database = {
           is_correct?: boolean | null
           profile_id?: string
           question_id?: number
+          session_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -348,6 +387,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "quiz_questions"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_quiz_answers_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_sessions"
+            referencedColumns: ["session_id"]
           },
         ]
       }

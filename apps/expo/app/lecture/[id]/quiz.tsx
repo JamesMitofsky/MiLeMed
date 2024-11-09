@@ -5,8 +5,9 @@ import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
 import { QuizAnswersType } from 'app/utils/supabase/databaseTypes'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
+import { randomUUID } from 'expo-crypto'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { createParam } from 'solito'
@@ -30,27 +31,79 @@ const QuizForm: React.FC = () => {
 
   const toast = useToastController()
 
-  const updateAnswerCorrectness = async (questionId: number, isCorrect: boolean) => {
-    if (!user) return
+  // const sessionId = useId()
 
-    try {
-      const { error } = await supabase
-        .from('user_quiz_answers')
-        .update({ is_correct: isCorrect })
-        .eq('question_id', questionId)
-        .eq('profile_id', user.id)
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
-      if (error) {
-        console.error('Error updating answer correctness:', error)
-        toast.show('Es gab einen Fehler beim Aktualisieren Ihrer Antwort.')
-      } else {
-        toast.show('Ihre Antwort wurde aktualisiert!')
-        setHasEvaluatedMultipleChoice(true)
-      }
-    } catch (error) {
-      console.error('Error updating response:', error)
+  useEffect(() => {
+    if (!sessionId) {
+      const newId = randomUUID()
+      setSessionId(newId)
     }
-  }
+  }, [sessionId])
+
+  const updateAnswerCorrectness = useCallback(
+    async (questionId: number, isCorrect: boolean) => {
+      if (!user || !sessionId) return
+
+      try {
+        const { error } = await supabase
+          .from('user_quiz_answers')
+          .update({ is_correct: isCorrect })
+          .eq('question_id', questionId)
+          .eq('profile_id', user.id)
+          .eq('session_id', sessionId) // Ensure it applies only to this session
+
+        if (error) {
+          console.error('Error updating answer correctness:', error)
+          toast.show('Something is going wrong on submission')
+          // toast.show('Es gab einen Fehler beim Aktualisieren Ihrer Antwort.')
+        } else {
+          toast.show('Ihre Antwort wurde aktualisiert!')
+          setHasEvaluatedMultipleChoice(true)
+        }
+      } catch (error) {
+        console.error('Error updating response:', error)
+      }
+    },
+    [user, sessionId, supabase, toast]
+  )
+
+  const onSubmit = useCallback(
+    async (answers) => {
+      if (!questions || !user || !sessionId) return
+
+      try {
+        const responses = answers.answers.map((answer, index) => {
+          const question = questions[index]
+          if (!question) return null
+
+          return {
+            question_id: question.id,
+            profile_id: user.id,
+            answer_text: answer.answer_text,
+            chosen_option_ids: answerIds[question.id] || [],
+            is_correct: answer.is_correct || false,
+            session_id: sessionId, // Include the session ID here
+          }
+        })
+
+        const validResponses = responses.filter((response) => response !== null)
+        setAreAnswersVisible(true)
+
+        // Submit answers with session ID to the backend (trigger will handle session creation)
+        const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
+        if (error) throw error
+
+        // Show success feedback
+        // toast.show('Your answers have been successfully submitted!')
+      } catch (error) {
+        console.error('Submission error:', error)
+        alert('There was an error submitting your answers.')
+      }
+    },
+    [questions, user, sessionId, answerIds, supabase, toast]
+  )
 
   // Fetch answer IDs on component mount or when questions data changes
   useEffect(() => {
@@ -81,43 +134,6 @@ const QuizForm: React.FC = () => {
 
     fetchAnswerIds()
   }, [questions, supabase])
-
-  const onSubmit = async (answers: { answers: QuizAnswersType[] }) => {
-    if (!questions || !user) return
-
-    try {
-      const responses = answers.answers.map((answer, index) => {
-        const question = questions[index]
-        if (!question) return null
-
-        const singleResponse: Pick<
-          QuizAnswersType,
-          'question_id' | 'profile_id' | 'answer_text' | 'chosen_option_ids' | 'is_correct'
-        > = {
-          question_id: question.id,
-          profile_id: user.id,
-          answer_text: answer.answer_text,
-          chosen_option_ids: answerIds[question.id] || [],
-          is_correct: answer.is_correct || false,
-        }
-
-        return singleResponse
-      })
-
-      const validResponses = responses.filter(
-        (response): response is NonNullable<typeof response> => response !== null
-      )
-
-      setAreAnswersVisible(true)
-
-      const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
-      if (error) throw error
-      // toast.show('Antworten erfolgreich eingereicht!')
-    } catch (error) {
-      console.error('Submission error:', error)
-      alert('Es gab einen Fehler beim Einreichen Ihrer Antworten.')
-    }
-  }
 
   return (
     <>
