@@ -23,10 +23,34 @@ const QuizForm: React.FC = () => {
   const { control, handleSubmit } = useForm<{ answers: QuizAnswersType[] }>()
   const supabase = useSupabase()
 
+  const [hasEvaluatedMultipleChoice, setHasEvaluatedMultipleChoice] = useState(false)
+
   const [answerIds, setAnswerIds] = useState<{ [key: number]: number[] }>({})
   const [areAnswersVisible, setAreAnswersVisible] = useState(false)
 
   const toast = useToastController()
+
+  const updateAnswerCorrectness = async (questionId: number, isCorrect: boolean) => {
+    if (!user) return
+
+    try {
+      const { error } = await supabase
+        .from('user_quiz_answers')
+        .update({ is_correct: isCorrect })
+        .eq('question_id', questionId)
+        .eq('profile_id', user.id)
+
+      if (error) {
+        console.error('Error updating answer correctness:', error)
+        toast.show('Es gab einen Fehler beim Aktualisieren Ihrer Antwort.')
+      } else {
+        toast.show('Ihre Antwort wurde aktualisiert!')
+        setHasEvaluatedMultipleChoice(true)
+      }
+    } catch (error) {
+      console.error('Error updating response:', error)
+    }
+  }
 
   // Fetch answer IDs on component mount or when questions data changes
   useEffect(() => {
@@ -88,10 +112,10 @@ const QuizForm: React.FC = () => {
 
       const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
       if (error) throw error
-      toast.show('Antworten erfolgreich eingereicht!')
+      // toast.show('Antworten erfolgreich eingereicht!')
     } catch (error) {
       console.error('Submission error:', error)
-      alert('There was an error submitting your responses.')
+      alert('Es gab einen Fehler beim Einreichen Ihrer Antworten.')
     }
   }
 
@@ -128,14 +152,18 @@ const QuizForm: React.FC = () => {
                       control={control}
                       index={index}
                       q={q}
+                      hasEvaluatedMultipleChoice={hasEvaluatedMultipleChoice}
+                      onRightAnswerClick={() => updateAnswerCorrectness(q.id, true)}
+                      onWrongAnswerClick={() => updateAnswerCorrectness(q.id, false)}
                     />
                   )}
                 </YStack>
               ))}
-              {areAnswersVisible ? (
-                <Button onPress={() => router.dismiss(2)}>Zurück zu den Kapiteln</Button>
-              ) : (
+              {!areAnswersVisible && (
                 <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
+              )}
+              {areAnswersVisible && hasEvaluatedMultipleChoice && (
+                <Button onPress={() => router.dismiss(2)}>Zurück zu den Kapiteln</Button>
               )}
             </YStack>
           </KeyboardAwareScrollView>

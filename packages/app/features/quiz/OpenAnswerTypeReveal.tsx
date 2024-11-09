@@ -1,4 +1,4 @@
-import { SizableText, TextArea, YStack } from '@my/ui' // Adjust the import based on your UI library
+import { Button, Card, SizableText, TextArea, Theme, XStack, YStack } from '@my/ui' // Adjust the import based on your UI library
 import React from 'react'
 import { Control, Controller, useWatch } from 'react-hook-form'
 
@@ -12,6 +12,9 @@ interface OpenAnswerTypeRevealProps {
     answers: QuizAnswersType[]
   }>
   areAnswersVisible: boolean
+  onWrongAnswerClick: () => void
+  onRightAnswerClick: () => void
+  hasEvaluatedMultipleChoice: boolean
 }
 
 const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
@@ -19,6 +22,9 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   index,
   control,
   areAnswersVisible,
+  onWrongAnswerClick,
+  onRightAnswerClick,
+  hasEvaluatedMultipleChoice,
 }) => {
   const answerText = useWatch({
     control,
@@ -56,6 +62,19 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         <SizableText>
           {q.quiz_question_options[0].option_text || 'Keine richtige Antwort verfügbar'}
         </SizableText>
+        {!hasEvaluatedMultipleChoice && (
+          <Card gap="$4" backgroundColor="#fee8af" p="$3" mt="$7">
+            <SizableText size="$5">War Ihre Antwort richtig?</SizableText>
+            <XStack gap="$3" w="100%" jc="space-around">
+              <Theme name="red">
+                <Button onPress={onWrongAnswerClick}>Nicht ganz</Button>
+              </Theme>
+              <Theme name="green">
+                <Button onPress={onRightAnswerClick}>Richtig</Button>
+              </Theme>
+            </XStack>
+          </Card>
+        )}
       </YStack>
     </YStack>
   )
