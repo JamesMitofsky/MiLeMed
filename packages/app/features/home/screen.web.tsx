@@ -12,6 +12,7 @@ import {
   Input,
   Progress,
   Text,
+  Link,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
@@ -137,7 +138,19 @@ export function HomeScreen() {
               <SizableText size="$6" textAlign="center">
                 Ihr Profil ist vollständig eingerichtet, gute Arbeit!
               </SizableText>
-              <SizableText>Weiter in der App 🙌</SizableText>
+
+              <XStack>
+                <SizableText>Weiter in </SizableText>
+
+                <Link
+                  style={{ textDecoration: 'underline', color: '#408bab' }}
+                  href="de.milemed.app://"
+                >
+                  Gehe zu den Kapiteln
+                </Link>
+
+                <SizableText> 🙌</SizableText>
+              </XStack>
             </YStack>
           ) : (
             <>
