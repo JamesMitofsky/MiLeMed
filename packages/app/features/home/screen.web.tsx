@@ -144,7 +144,7 @@ export function HomeScreen() {
 
                 <Link
                   style={{ textDecoration: 'underline', color: '#408bab' }}
-                  href="de.milemed.app://"
+                  href="de.milemed.app://sign-in"
                 >
                   Gehe zu den Kapiteln
                 </Link>
