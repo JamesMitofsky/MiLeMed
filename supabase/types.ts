@@ -412,6 +412,7 @@ export type Database = {
           chapter_id: number
           chapter_title: string
           chapter_sort_order: number
+          chapter_mode: Database["public"]["Enums"]["mode"]
         }[]
       }
       get_chapter_completion_counts: {

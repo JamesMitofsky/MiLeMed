@@ -10,6 +10,8 @@ import {
   styled,
   Button,
   Input,
+  SizableText,
+  Switch,
 } from '@my/ui'
 import { Eye } from '@tamagui/lucide-icons'
 import { parseMarkdown } from 'app/features/general/markdownParser'
@@ -38,16 +40,23 @@ const truncateContent = (content: string, sentenceCount: number = 2): string => 
 }
 
 export const Page: NextPageWithLayout = () => {
-  const { data } = useLecturesQuery()
   const [searchQuery, setSearchQuery] = useState('')
+  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+  const { data } = useLecturesQuery()
+
+  const toggleMode = () => {
+    setMode(mode === 'THEORETICAL' ? 'PRACTICAL' : 'THEORETICAL')
+  }
 
   const handleSearchChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
     // @ts-ignore
     setSearchQuery(e.target.value)
   }
 
-  const filteredData = data?.filter((item) =>
-    item.lecture_title.toLowerCase().includes(searchQuery.toLowerCase())
+  const lecturesFilteredBySearchAndMode = data?.filter(
+    (item) =>
+      item.lecture_title.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      item.chapter_mode === mode
   )
 
   return (
@@ -66,13 +75,30 @@ export const Page: NextPageWithLayout = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
+              <XStack
+                hoverStyle={{
+                  cursor: 'pointer',
+                }}
+                mx="$2"
+                mt="$3"
+                mb="$5"
+                gap="$4"
+                onPress={toggleMode}
+              >
+                <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
+                  <Switch.Thumb borderColor="$color1" animation="200ms" />
+                </Switch>
+                <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}</SizableText>
+              </XStack>
               <YStack gap="$3">
-                {filteredData ? (
-                  filteredData.map((item, index) => {
-                    const isLastItem = index === filteredData.length - 1
+                {lecturesFilteredBySearchAndMode ? (
+                  lecturesFilteredBySearchAndMode.map((item, index) => {
+                    const isLastItem = index === lecturesFilteredBySearchAndMode.length - 1
                     const isNotFirstItem = index > 0
                     const isFirstOccurrence =
-                      index === 0 || filteredData[index - 1].chapter_title !== item.chapter_title
+                      index === 0 ||
+                      lecturesFilteredBySearchAndMode[index - 1].chapter_title !==
+                        item.chapter_title
 
                     return (
                       <React.Fragment key={index}>
