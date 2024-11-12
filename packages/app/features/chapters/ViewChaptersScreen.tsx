@@ -17,7 +17,7 @@ const ViewChaptersScreen = () => {
           <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
             <Switch.Thumb borderColor="$color1" animation="200ms" />
           </Switch>
-          <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Praktisch'}</SizableText>
+          <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}</SizableText>
         </XStack>
         <ListOfChapters mode={mode === 'THEORETICAL' ? 'THEORETICAL' : 'PRACTICAL'} />
       </YStack>
