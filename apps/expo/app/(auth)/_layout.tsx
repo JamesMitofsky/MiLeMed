@@ -4,7 +4,7 @@ export default function Layout() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <Stack />
+      <Stack screenOptions={{ contentStyle: { backgroundColor: 'white' } }} />
     </>
   )
 }
