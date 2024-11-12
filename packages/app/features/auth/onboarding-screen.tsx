@@ -27,9 +27,9 @@ const steps: OnboardingStepInfo[] = [
     theme: 'blue',
     Content: () => (
       <StepContent
-        title="Vorankommen"
+        title="Wachstum"
         icon={Rocket}
-        description="Verbessere deine medizinische Ausbildung mit fokussierten Mikrolektionen."
+        description="Wachse in deiner medizinischen Ausbildung durch gezielte Mikrolektionen."
       />
     ),
   },
