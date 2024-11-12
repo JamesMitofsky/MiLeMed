@@ -21,6 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
+      "associatedDomains": ["applinks:milemed.de"],
       "buildNumber": "14"
     },
     "android": {
@@ -30,7 +31,19 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "de.milemed.app",
-      // "permissions": ["android.permission.RECORD_AUDIO"],
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "milemed.de",
+              "pathPrefix": "/"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "versionCode": 3
     },
     "web": {
@@ -43,12 +56,6 @@
         {
           "icon": "./assets/icon.png",
           "color": "#ffffff"
-        }
-      ],
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "Die App kann auf Fotos zugreifen, um die Auswahl eines Profilbildes zu ermöglichen."
         }
       ],
       "expo-apple-authentication",
