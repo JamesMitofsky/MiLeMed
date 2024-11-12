@@ -25,4 +25,4 @@ const ViewChaptersScreen = () => {
   )
 }
 
-export default ViewChaptersScreen
+export { ViewChaptersScreen }

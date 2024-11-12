@@ -1,4 +1,4 @@
-import ViewChaptersScreen from '@my/app/features/chapters/ViewChaptersScreen'
+import { ViewChaptersScreen } from '@my/app/features/chapters/ViewChaptersScreen'
 import { ScrollView, View } from '@my/ui'
 import { Stack } from 'expo-router'
 

@@ -1,8 +1,16 @@
 import { LegalLayout } from 'app/features/legal/layout.web'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 
 import { NextPageWithLayout } from './_app'
-import ViewChaptersScreen from '../../../packages/app/features/chapters/ViewChaptersScreen'
+
+const ViewChaptersScreen = dynamic(
+  () =>
+    import('../../../packages/app/features/chapters/ViewChaptersScreen').then(
+      (mod) => mod.ViewChaptersScreen
+    ),
+  { ssr: false }
+)
 
 export const Page: NextPageWithLayout = () => {
   return (
