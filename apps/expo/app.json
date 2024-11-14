@@ -4,7 +4,7 @@
     "slug": "milemed",
     "jsEngine": "hermes",
     "scheme": "milemed",
-    "version": "0.0.1",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -22,7 +22,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
       "associatedDomains": ["applinks:milemed.de"],
-      "buildNumber": "15"
+      "buildNumber": "16"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
