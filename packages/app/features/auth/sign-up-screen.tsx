@@ -1,11 +1,22 @@
-import { Button, FormWrapper, H2, Paragraph, SubmitButton, Text, Theme, YStack } from '@my/ui'
+import {
+  Button,
+  FormWrapper,
+  H2,
+  Paragraph,
+  SizableText,
+  SubmitButton,
+  Text,
+  Theme,
+  XStack,
+  YStack,
+} from '@my/ui'
 import { LogIn } from '@tamagui/lucide-icons'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useEffect } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { createParam } from 'solito'
-import { Link } from 'solito/link'
+import { useLink, Link } from 'solito/link'
 import { useRouter } from 'solito/router'
 
 import { z } from '../../utils/zod-de'
@@ -20,7 +31,24 @@ const SignUpSchema = z.object({
     .regex(emailPattern, 'E-Mail muss die Domain "@unibonn.de" oder "@ukbonn.de" haben') // Validate domain
     .describe('E-Mail // jona@uni-bonn.de'),
   password: formFields.text.min(6).describe('Passwort // Wähle ein Passwort'),
+  hasAgreedToPrivacyPolicy: formFields.boolean_checkbox.describe(''),
 })
+
+const PrivacyPolicyDescription = () => (
+  <YStack theme="alt1" width="80%">
+    <XStack>
+      <SizableText size="$2">Ich willige in </SizableText>
+      <Link {...useLink({ href: '/(auth)/privacy-policy' })} target="_blank">
+        <SizableText size="$2" textDecorationLine="underline" color="$blue10Light">
+          die Nutzung meiner Daten
+        </SizableText>
+      </Link>
+    </XStack>
+    <SizableText size="$2">
+      durch diese App in dieser Studie und in zukünftigen Studien ein.
+    </SizableText>
+  </YStack>
+)
 
 export const SignUpScreen = () => {
   const supabase = useSupabase()
@@ -34,6 +62,11 @@ export const SignUpScreen = () => {
   }, [params?.email, updateParams])
 
   const form = useForm<z.infer<typeof SignUpSchema>>()
+
+  const hasAgreedToPrivacyPolicy = useWatch<z.infer<typeof SignUpSchema>>({
+    name: 'hasAgreedToPrivacyPolicy',
+    control: form.control,
+  }) as boolean
 
   async function signUpWithEmail({ email, password }: z.infer<typeof SignUpSchema>) {
     const { error } = await supabase.auth.signUp({
@@ -72,17 +105,27 @@ export const SignUpScreen = () => {
           defaultValues={{
             email: params?.email || '',
             password: '',
+            hasAgreedToPrivacyPolicy: false,
           }}
           props={{
             password: {
               secureTextEntry: true,
+            },
+            hasAgreedToPrivacyPolicy: {
+              size: '$5',
+              customLabel: <PrivacyPolicyDescription />,
             },
           }}
           onSubmit={signUpWithEmail}
           renderAfter={({ submit }) => (
             <>
               <Theme inverse>
-                <SubmitButton onPress={() => submit()} br="$10">
+                <SubmitButton
+                  disabled={!hasAgreedToPrivacyPolicy}
+                  disabledStyle={{ backgroundColor: '$gray10' }}
+                  onPress={() => submit()}
+                  br="$10"
+                >
                   Registrieren
                 </SubmitButton>
               </Theme>
@@ -92,8 +135,8 @@ export const SignUpScreen = () => {
         >
           {(fields) => (
             <>
-              <YStack gap="$3" mb="$4">
-                <H2 $sm={{ size: '$8' }}>Loslegen</H2>
+              <YStack gap="$3">
+                <H2 $sm={{ size: '$9' }}>Loslegen</H2>
                 <Paragraph theme="alt2">Neues Konto erstellen</Paragraph>
               </YStack>
               {Object.values(fields)}
@@ -106,7 +149,8 @@ export const SignUpScreen = () => {
 }
 
 const SignInLink = () => {
-  const email = useWatch<z.infer<typeof SignUpSchema>>({ name: 'email' })
+  type SignUpSchemaType = z.infer<typeof SignUpSchema>
+  const email = useWatch<SignUpSchemaType>({ name: 'email' }) as string | undefined
 
   return (
     <Link href={`/sign-in?${new URLSearchParams(email ? { email } : undefined).toString()}`}>

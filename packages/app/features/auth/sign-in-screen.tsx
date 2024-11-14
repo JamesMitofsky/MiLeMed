@@ -83,8 +83,8 @@ export const SignInScreen = () => {
       >
         {(fields) => (
           <>
-            <YStack gap="$3" mb="$4">
-              <H2 $sm={{ size: '$8' }}>Willkommen zurück</H2>
+            <YStack gap="$3">
+              <H2 $sm={{ size: '$9' }}>Willkommen zurück</H2>
               <Paragraph theme="alt1">Melde dich bei deinem Konto an</Paragraph>
             </YStack>
             {Object.values(fields)}

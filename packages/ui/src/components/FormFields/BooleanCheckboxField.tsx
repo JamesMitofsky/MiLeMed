@@ -5,7 +5,9 @@ import { Checkbox, CheckboxProps, CheckedState, Fieldset, Label, Theme, XStack }
 
 import { FieldError } from '../FieldError'
 
-export const BooleanCheckboxField = (props: Pick<CheckboxProps, 'size' | 'native'>) => {
+export const BooleanCheckboxField = (
+  props: Pick<CheckboxProps, 'size' | 'native'> & { customLabel?: JSX.Element }
+) => {
   const {
     field,
     error,
@@ -18,12 +20,13 @@ export const BooleanCheckboxField = (props: Pick<CheckboxProps, 'size' | 'native
   return (
     <Theme name={error ? 'red' : null} forceClassName>
       <Fieldset>
-        <XStack gap="$4">
+        <XStack width="100%" gap="$4" alignItems="center">
           {!!label && (
             <Label theme="alt1" size={props.size || '$3'} htmlFor={id}>
               {label} {isOptional && `(Optional)`}
             </Label>
           )}
+          {!!props.customLabel && props.customLabel}
           <Checkbox
             disabled={disabled}
             native

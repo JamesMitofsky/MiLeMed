@@ -97,7 +97,7 @@ export const SchemaForm: typeof _SchemaForm = ({ ...props }) => {
   return (
     <_SchemaForm {...props} renderAfter={renderAfter}>
       {(fields, context) => (
-        <FormWrapper.Body minWidth="100%" $platform-native={{ miw: '100%' }}>
+        <FormWrapper.Body gap="$6" minWidth="100%" $platform-native={{ miw: '100%' }}>
           {props.children ? props.children(fields, context) : Object.values(fields)}
         </FormWrapper.Body>
       )}
