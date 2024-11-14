@@ -4,7 +4,6 @@ import { useThemeSetting } from 'app/provider/theme'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { usePathname } from 'app/utils/usePathname'
 
-import rootPackageJson from '../../../../package.json'
 import packageJson from '../../package.json'
 
 export const SettingsScreen = () => {
@@ -54,7 +53,7 @@ export const SettingsScreen = () => {
       we just did a simple package.json read since we want to keep things simple for the starter
        */}
       <Paragraph py="$2" ta="center" theme="alt2">
-        {rootPackageJson.name} {packageJson.version}
+        version {packageJson.version}
       </Paragraph>
     </YStack>
   )
