@@ -47,7 +47,7 @@ export const OnboardingControls = ({
         onPress={() => handleGoNext()}
         iconAfter={ChevronRight}
       >
-        <Button.Text col="$color">Weiter ohne</Button.Text>
+        <Button.Text col="$color">Weiter</Button.Text>
       </Button>
     </XStack>
   )
