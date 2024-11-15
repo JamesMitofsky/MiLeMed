@@ -132,3 +132,5 @@ android
 credentials.json
 *jks
 *.pem
+
+*.aab

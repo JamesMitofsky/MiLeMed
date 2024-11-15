@@ -60,3 +60,9 @@ Build local file to upload to test flight using
 ```bash
 yarn eas:build:dev:device:ios:local
 ```
+
+# Supabase Functions
+1. Make sure that supabase is started locally.
+2. Run `supabase functions serve` or add a function name after this to serve only one function  (eg. `hello-world`). This will run it locally.
+3. Run a curl which matches the local info necessary using the anon_key ([docs](https://supabase.com/docs/guides/functions/quickstart))
+4. To deploy, run `supabase functions deploy`
