@@ -1,7 +1,7 @@
 import { ChapterLectureCard } from '@my/ui'
 import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
 import { useQuery } from '@tanstack/react-query'
-import { YStack, Text, Theme, useMedia } from 'tamagui'
+import { YStack, Text, useMedia, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
@@ -13,7 +13,7 @@ type ListOfLecturesProps = {
 
 const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
   const supabase = useSupabase()
-  const { data: lectures, isLoading } = useQuery(['lectures', chapterId], {
+  const { data: lectures } = useQuery(['lectures', chapterId], {
     queryFn: async () => {
       let query = supabase
         .from('lectures')
@@ -40,36 +40,36 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
 
   const { md } = useMedia()
 
-  if (isLoading) {
+  if (!lectures) {
     return (
-      <>
+      <YStack fw="wrap" f={1} gap="$3">
         <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
-      </>
+      </YStack>
     )
+  }
+
+  if (lectures.length === 0) {
+    return <Text>Keine Lektionen gefunden.</Text>
   }
 
   return (
     <>
-      {lectures?.length === 0 ? (
-        <Text>Keine Lektionen gefunden.</Text>
-      ) : (
-        <YStack fw="wrap" f={1} gap="$3">
-          {lectures?.map((lecture, index) => (
-            <Theme key={lecture.id} name={colors[index]}>
-              <ChapterLectureCard
-                dense
-                w={md ? '100%' : 300}
-                title={lecture.title}
-                action={{
-                  text: 'Weiter',
-                  href: `/lecture/${lecture.id}`,
-                }}
-              />
-            </Theme>
-          ))}
-        </YStack>
-      )}
+      <YStack fw="wrap" f={1} gap="$3">
+        {lectures.map((lecture, index) => (
+          <Theme key={lecture.id} name={colors[index]}>
+            <ChapterLectureCard
+              dense
+              w={md ? '100%' : 300}
+              title={lecture.title}
+              action={{
+                text: 'Weiter',
+                href: `/lecture/${lecture.id}`,
+              }}
+            />
+          </Theme>
+        ))}
+      </YStack>
     </>
   )
 }

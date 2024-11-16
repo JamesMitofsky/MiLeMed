@@ -32,9 +32,9 @@ export const ChapterLectureCard = ({
   const linkProps = useLink({ href: action?.href || '' })
   return (
     <Card br="$0" chromeless {...props}>
-      <Card.Header my="auto" padded gap={!dense && '$3'}>
+      <Card.Header my="auto" padded gap={!dense ? '$3' : undefined}>
         {Icon && <Icon size="$3" o={0.6} />}
-        <YStack gap={!dense && '$2'}>
+        <YStack gap={!dense ? '$2' : undefined}>
           <H4 size="$5" mt="$2">
             {title}
           </H4>
