@@ -8,7 +8,7 @@ export const Page: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Privacy Policy</title>
+        <title>Informationsblatt für Teilnehmende</title>
       </Head>
       <PrivacyPolicyScreen />
     </>

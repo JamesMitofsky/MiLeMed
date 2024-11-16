@@ -38,7 +38,7 @@ const PrivacyPolicyDescription = () => (
   <YStack theme="alt1" width="80%">
     <XStack>
       <SizableText size="$2">Ich willige in </SizableText>
-      <Link {...useLink({ href: '/(auth)/privacy-policy' })} target="_blank">
+      <Link {...useLink({ href: '/privacy-policy' })}>
         <SizableText size="$2" textDecorationLine="underline" color="$blue10Light">
           die Nutzung meiner Daten
         </SizableText>

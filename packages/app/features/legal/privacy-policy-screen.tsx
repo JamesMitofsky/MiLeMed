@@ -24,7 +24,7 @@ const Title = ({ children }) => (
 )
 
 const Subtitle = ({ children }) => (
-  <SizableText mb="$0" mt="$5" size="$6">
+  <SizableText mb="$-3" mt="$5" size="$6">
     {children}
   </SizableText>
 )
