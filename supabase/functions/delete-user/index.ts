@@ -1,49 +1,57 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
+import { serve } from 'https://deno.land/std@0.182.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.14.0'
 
-// Setup type definitions for built-in Supabase Runtime APIs
-import { createClient } from 'jsr:@supabase/supabase-js@2'
+// based on this: https://blog.mansueli.com/supabase-user-self-deletion-empower-users-with-edge-functions
 
-Deno.serve(async (req: Request) => {
-  const supabaseClient = createClient(
-    Deno.env.get('SUPABASE_URL') ?? '',
-    Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
-  )
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
-  // Decode the token to get the user
-  const { data: userData, error: userError } = await supabaseClient.auth.getUser()
+console.log(`Function "user-self-deletion" up and running!`)
 
-  if (userError || !userData) {
-    return new Response(JSON.stringify({ error: 'User not authenticated' }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 401,
-    })
+serve(async (req: Request) => {
+  // This is needed if you're planning to invoke your function from a browser.
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
   }
-
-  // Parse the request body
-  const { userId } = await req.json()
-
-  if (!userId) {
-    return new Response(JSON.stringify({ error: 'User ID is required' }), {
-      headers: { 'Content-Type': 'application/json' },
+  try {
+    // Create a Supabase client with the Auth context of the logged in user.
+    const supabaseClient = createClient(
+      // Supabase API URL - env var exported by default.
+      Deno.env.get('SUPABASE_URL') ?? '',
+      // Supabase API ANON KEY - env var exported by default.
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      // Create client with Auth context of the user that called the function.
+      // This way your row-level-security (RLS) policies are applied.
+      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+    )
+    // Now we can get the session or user object
+    const {
+      data: { user },
+    } = await supabaseClient.auth.getUser()
+    // And we can run queries in the context of our authenticated user
+    const { data: profiles, error: userError } = await supabaseClient
+      .from('profiles')
+      .select('id, avatar_url')
+    if (userError) throw userError
+    const user_id = profiles[0].id
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
+    const { data: deletion_data, error: deletion_error } =
+      await supabaseAdmin.auth.admin.deleteUser(user_id)
+    if (deletion_error) throw deletion_error
+    console.log('User & files deleted user_id: ' + user_id)
+    return new Response('User deleted: ' + JSON.stringify(deletion_data, null, 2), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 400,
     })
   }
-
-  // Delete the user profile
-  const { error: deleteError } = await supabaseClient.from('profiles').delete().eq('id', userId)
-
-  if (deleteError) {
-    return new Response(JSON.stringify({ error: deleteError.message }), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 400,
-    })
-  }
-
-  return new Response(JSON.stringify({ message: 'User profile deleted successfully' }), {
-    headers: { 'Content-Type': 'application/json' },
-    status: 200,
-  })
 })
