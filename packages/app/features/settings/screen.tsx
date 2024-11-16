@@ -88,45 +88,24 @@ function VerifyDeleteDialog() {
   const toast = useToastController()
 
   const handleDeleteAccount = async () => {
-    // Get the current user's session
-    const session = (await supabase.auth.getSession()).data.session
+    try {
+      const { data, error } = await supabase.functions.invoke('delete-user')
 
-    if (!session?.access_token) {
-      toast.show('User is not authenticated.')
-      return
+      console.log(typeof data, typeof error)
+
+      if (error) {
+        console.error('Error:', error || 'Unexpected status code')
+        toast.show('Failed to delete account.')
+      } else {
+        toast.show('Account deleted successfully.')
+        await supabase.auth.signOut()
+      }
+    } catch (error) {
+      console.error('Invocation Error:', error)
+      toast.show('An unexpected error occurred.')
     }
-
-    // Determine the Edge Function URL based on the environment
-    const EDGE_FUNCTION_URL =
-      process.env.NODE_ENV === 'production'
-        ? `https://${process.env.NEXT_PUBLIC_SUPABASE_PROJECT_ID}.functions.supabase.co/delete-user`
-        : 'http://localhost:54321/functions/v1/delete-user'
-
-    // Call the Edge Function
-    const response = await fetch(EDGE_FUNCTION_URL, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userId: session.user.id }),
-    })
-
-    const data = await response.json()
-    if (response.status !== 200) {
-      toast.show(
-        `${
-          data.error || 'Ein Fehler ist aufgetreten.'
-        } Bitte kontaktieren Sie hilfe@milemed.de, damit wir Ihr Problem umgehend lösen können.`
-      )
-      throw new Error('Error:', data.error || 'An error occurred while deleting the current user.')
-    }
-
-    console.log('User deleted successfully:', data)
-    toast.show('Erfolg: Ihr Konto wurde erfolgreich gelöscht.')
-    console.log('theoretically would navigate away here')
-    // await supabase.auth.signOut()
   }
+
   return (
     <AlertDialog native>
       <AlertDialog.Trigger asChild>
@@ -171,14 +150,10 @@ function VerifyDeleteDialog() {
 
             <XStack gap="$3" justifyContent="flex-end">
               <AlertDialog.Cancel asChild>
-                {/* Cancel */}
                 <Button>Abbrechen</Button>
               </AlertDialog.Cancel>
-              <AlertDialog.Action asChild>
-                {/* Delete account */}
-                <Button theme="red" onPress={() => handleDeleteAccount()}>
-                  Löschen
-                </Button>
+              <AlertDialog.Action onPress={handleDeleteAccount} asChild>
+                <Button theme="red">Löschen</Button>
               </AlertDialog.Action>
             </XStack>
           </YStack>
