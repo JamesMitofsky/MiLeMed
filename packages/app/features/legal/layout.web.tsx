@@ -1,13 +1,12 @@
 import { Button, Main, Theme, YStack, isWeb } from '@my/ui'
 import { ChevronLeft } from '@tamagui/lucide-icons'
-import { useRouter } from 'solito/router'
+import { useLink } from 'solito/link'
 
 export type LegalLayoutProps = {
   children?: React.ReactNode
 }
 
 export const LegalLayout = ({ children }: LegalLayoutProps) => {
-  const router = useRouter()
   return (
     <YStack f={1}>
       <YStack
@@ -32,11 +31,10 @@ export const LegalLayout = ({ children }: LegalLayoutProps) => {
                 als="flex-start"
                 // isWeb is a constant so this isn't really a conditional hook
                 // eslint-disable-next-line react-hooks/rules-of-hooks
-                // {...useLink({ href: '/' })}
+                {...useLink({ href: '/' })}
                 icon={ChevronLeft}
-                onPress={() => router.back()}
               >
-                Zurück
+                Zurück nach Hause
               </Button>
             </Theme>
           )}
