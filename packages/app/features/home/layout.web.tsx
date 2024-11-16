@@ -52,8 +52,8 @@ export const HomeLayout = ({ children, fullPage = false, padded = false }: HomeL
             <MobileNavbar>
               <YStack gap="$5" w="100%" ai="flex-end">
                 <NavTabs orientation="vertical" f={1} w="100%" size="$3" />
-                <Separator w="100%" />
-                <CtaButton w="100%" />
+                {/* <Separator w="100%" />
+                <CtaButton w="100%" /> */}
                 <Separator w="100%" />
                 <WithUserDetail ai="center" gap="$4">
                   <ProfileButton />
