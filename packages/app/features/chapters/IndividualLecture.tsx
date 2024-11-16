@@ -67,15 +67,17 @@ const IndividualLecture = () => {
         <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
           {lecture.title}
         </Text>
-        <Text fontSize="$4" marginBottom="$2" color="red">
-          <Markdown
-            style={{
-              text: { fontSize: 17, color: context?.systemTheme === 'dark' ? 'white' : 'black' },
-            }}
-          >
-            {lecture.content}
-          </Markdown>
-        </Text>
+        <Markdown
+          style={{
+            text: {
+              lineHeight: 24,
+              fontSize: 17,
+              color: context?.systemTheme === 'dark' ? 'white' : 'black',
+            },
+          }}
+        >
+          {lecture.content}
+        </Markdown>
         {quizExistenceData?.exists ? (
           <Theme name="orange">
             <Button onPress={handleNavigateToQuiz}>Bereit für das Quiz?!</Button>
