@@ -13,8 +13,10 @@ import {
   Text,
   Link,
   DatePickerForControl,
+  Checkbox,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
+import { Check } from '@tamagui/lucide-icons'
 import { useCallback, useEffect, useRef } from 'react'
 import ReactCanvasConfetti from 'react-canvas-confetti'
 import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
@@ -47,39 +49,59 @@ const genderOptions: GenderOption[] = [
   { label: 'Divers', value: 'OTHER' },
 ]
 
-// Define Zod schema for validation
-const profileSchema = z.object({
-  name: z.string().min(1, { message: 'Name ist erforderlich' }),
-  birthdate: z.date({ required_error: 'Alter ist erforderlich' }),
-  gender: z.enum(['FEMALE', 'MALE', 'OTHER'], {
-    errorMap: () => ({ message: 'Geschlecht ist erforderlich' }),
-  }),
-  overall_semester: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
-  clinical_semester: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
-})
+// Dynamic Zod Schema
+const profileSchema = (isStudent: boolean) =>
+  z.object({
+    name: z.string().min(1, { message: 'Name ist erforderlich' }),
+    birthdate: isStudent
+      ? z.date({ required_error: 'Alter ist erforderlich' })
+      : z.date().optional(),
+    gender: isStudent
+      ? z.enum(['FEMALE', 'MALE', 'OTHER'], {
+          errorMap: () => ({ message: 'Geschlecht ist erforderlich' }),
+        })
+      : z.enum(['FEMALE', 'MALE', 'OTHER']).optional(),
+    overall_semester: isStudent
+      ? z.number().min(1, { message: 'Semesterzahl ist erforderlich' })
+      : z.number().optional(),
+    hasDoneClinicalSemester: z.boolean().optional(),
+    clinical_semester: isStudent
+      ? z
+          .number()
+          .min(1, { message: 'Semesterzahl ist erforderlich' })
+          .max(6, {
+            message:
+              'Klinisches Semester muss zwischen 1 und 6 liegen. Wenn Sie denken, dass Sie eine Ausnahme sind, kontaktieren Sie uns bitte unter hilfe@milemed.de',
+          })
+          .optional()
+      : z.number().optional(),
+  })
 
-type ProfileInputType = z.infer<typeof profileSchema>
+type ProfileInputType = z.infer<ReturnType<typeof profileSchema>>
 
 export function HomeScreen() {
   const supabase = useSupabaseClient()
+  const { profile, updateProfile, user } = useUser()
+  const toast = useToastController()
+  const { md } = useMedia()
+  const isUserWithStudentEmail = user?.email?.endsWith('@uni-bonn.de')
+
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ProfileInputType>({
-    resolver: zodResolver(profileSchema),
+    resolver: zodResolver(profileSchema(isUserWithStudentEmail || false)),
     defaultValues: {
       name: '',
       birthdate: undefined,
       gender: undefined,
       clinical_semester: undefined,
       overall_semester: undefined,
+      hasDoneClinicalSemester: false,
     },
   })
-  const { profile, updateProfile, user } = useUser()
-  const toast = useToastController()
-  // means medium or smaller
-  const { md } = useMedia()
 
   const instance = useRef<TCanvasConfettiInstance>()
 
@@ -93,14 +115,16 @@ export function HomeScreen() {
       origin: { x: 0.5, y: md ? 0.64 : 0.4 },
       ticks: 250,
     })
-  }, [md, instance])
+  }, [md])
 
-  const onSubmit = async (data: ProfileInputType) => {
+  const onSubmit = async ({ hasDoneClinicalSemester, ...data }: ProfileInputType) => {
     const role = getRoleByEmailEnding(user?.email || '')
-
     const transformedData: ProfileFormType = {
       ...data,
-      birthdate: data.birthdate.toISOString(),
+      birthdate: data.birthdate ? data.birthdate.toISOString() : null,
+      gender: data.gender || null,
+      clinical_semester: data.clinical_semester || null,
+      overall_semester: data.overall_semester || null,
       role,
     }
 
@@ -108,12 +132,12 @@ export function HomeScreen() {
       .from('profiles')
       .update(transformedData)
       .eq('id', profile?.id)
-    if (error) toast.show('Something went wrong with the update')
-    else {
-      // onShootHandler()
+
+    if (error) {
+      toast.show('Beim Aktualisieren des Profils ist ein Fehler aufgetreten.', { type: 'error' })
+    } else {
       updateProfile()
-      console.log('successfully updated user', responseData)
-      // toast.show('Profile updated successfully')
+      toast.show('Profil erfolgreich aktualisiert.', { type: 'success' })
     }
   }
 
@@ -123,13 +147,13 @@ export function HomeScreen() {
     }
   }, [profile?.role])
 
-  const isUserWithStudentEmail = user?.email?.endsWith('@uni-bonn.de')
+  const hasDoneClinicalSemester = watch('hasDoneClinicalSemester')
 
   return (
     <XStack maw={1480} als="center" ai="center" f={1}>
       <ReactCanvasConfetti onInit={onInitHandler} />
       <ScrollView f={1} fb={0}>
-        <YStack gap="$4" p="$10" f={1}>
+        <YStack gap="$6" p="$10" f={1}>
           {!profile?.id ? (
             <FullscreenSpinner />
           ) : profile?.role ? (
@@ -137,17 +161,14 @@ export function HomeScreen() {
               <SizableText size="$6" textAlign="center">
                 Ihr Profil ist vollständig eingerichtet, gute Arbeit!
               </SizableText>
-
               <XStack>
                 <SizableText>Weiter in </SizableText>
-
                 <Link
                   style={{ textDecoration: 'underline', color: '#408bab' }}
                   href="de.milemed.app://sign-in"
                 >
                   Gehe zu den Kapiteln
                 </Link>
-
                 <SizableText> 🙌</SizableText>
               </XStack>
             </YStack>
@@ -200,23 +221,6 @@ export function HomeScreen() {
                   {errors.gender && <Text color="red">{errors.gender.message}</Text>}
 
                   <Controller
-                    name="clinical_semester"
-                    control={control}
-                    render={({ field: { onChange, value } }) => (
-                      <Input
-                        placeholder="Klinisches Semester"
-                        keyboardType="numeric"
-                        value={value ? value.toString() : ''}
-                        onChangeText={(text) => onChange(Number(text))}
-                        style={{ borderColor: errors.clinical_semester ? 'red' : undefined }}
-                      />
-                    )}
-                  />
-                  {errors.clinical_semester && (
-                    <Text color="red">{errors.clinical_semester.message}</Text>
-                  )}
-
-                  <Controller
                     name="overall_semester"
                     control={control}
                     render={({ field: { onChange, value } }) => (
@@ -232,9 +236,48 @@ export function HomeScreen() {
                   {errors.overall_semester && (
                     <Text color="red">{errors.overall_semester.message}</Text>
                   )}
+
+                  <XStack gap="$3">
+                    <SizableText>Hast du schon mal ein klinisches Semester gemacht?</SizableText>
+                    <Controller
+                      name="hasDoneClinicalSemester"
+                      control={control}
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onCheckedChange={(v) => field.onChange(v === true)}
+                          size="$4"
+                        >
+                          <Checkbox.Indicator>
+                            <Check />
+                          </Checkbox.Indicator>
+                        </Checkbox>
+                      )}
+                    />
+                  </XStack>
+
+                  {hasDoneClinicalSemester && (
+                    <>
+                      <Controller
+                        name="clinical_semester"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                          <Input
+                            placeholder="Klinisches Semester"
+                            keyboardType="numeric"
+                            value={value ? value.toString() : ''}
+                            onChangeText={(text) => onChange(Number(text))}
+                            style={{ borderColor: errors.clinical_semester ? 'red' : undefined }}
+                          />
+                        )}
+                      />
+                      {errors.clinical_semester && (
+                        <Text color="red">{errors.clinical_semester.message}</Text>
+                      )}
+                    </>
+                  )}
                 </>
               )}
-
               <Button onPress={handleSubmit(onSubmit)}>
                 <Text>Absenden</Text>
               </Button>
