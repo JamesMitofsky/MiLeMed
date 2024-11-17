@@ -39,8 +39,23 @@ export const { Provider: HeaderTypeProvider, useStyledContext: useHeaderType } =
 const DatePickerImpl = (props: DatePickerProps) => {
   const { children, config, ...rest } = props
 
+  const localizedConfig = {
+    ...config,
+    locale: {
+      locale: 'de-DE', // German locale for Germany
+      options: { timeZone: 'Europe/Berlin' }, // Set timezone to Germany
+      day: '2-digit', // Format for the day
+      year: 'numeric', // Format for the year
+      monthName: 'long', // Full month name
+      weekday: 'long', // Full weekday name
+      hour: '2-digit', // Two-digit hour
+      minute: '2-digit', // Two-digit minute
+      hour12: false, // Use 24-hour clock
+    } as const,
+  }
+
   return (
-    <DatePickerProvider config={config}>
+    <DatePickerProvider config={localizedConfig}>
       <Popover keepChildrenMounted size="$5" allowFlip {...rest}>
         <Adapt when="sm" platform="touch">
           <Popover.Sheet modal dismissOnSnapToBottom snapPointsMode="fit">

@@ -10,33 +10,32 @@ import {
   Button,
   H1,
   Input,
-  Progress,
   Text,
   Link,
+  DatePickerForControl,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import ReactCanvasConfetti from 'react-canvas-confetti'
 import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
 import { Controller, useForm } from 'react-hook-form'
 
-import { UserRoleEnum } from '../../types/userRoleEnum'
-import { GenderType, ProfilesType } from '../../utils/supabase/databaseTypes'
+import { GenderType, ProfilesType, UserRoleType } from '../../utils/supabase/databaseTypes'
 import { useUser } from '../../utils/useUser'
 import { z } from '../../utils/zod-de'
 import { CustomSelect } from '../general/CustomSelect'
 
-type ProfileFormType = Pick<ProfilesType, 'name' | 'gender' | 'age' | 'semester_number' | 'role'>
+type ProfileFormType = Pick<
+  ProfilesType,
+  'name' | 'gender' | 'clinical_semester' | 'overall_semester' | 'birthdate' | 'role'
+>
 
-interface RoleOption {
-  label: string
-  value: UserRoleEnum
+const getRoleByEmailEnding = (email: string): UserRoleType => {
+  if (email.endsWith('@uni-bonn.de')) {
+    return 'STUDENT'
+  }
+  return 'MEDICAL_PROFESSIONAL'
 }
-
-const roleOptions: RoleOption[] = [
-  { label: 'Medizinischer Fachmann / Administrator', value: UserRoleEnum.MEDICAL_PROFESSIONAL },
-  { label: 'Student', value: UserRoleEnum.STUDENT },
-]
 
 interface GenderOption {
   label: string
@@ -51,32 +50,33 @@ const genderOptions: GenderOption[] = [
 // Define Zod schema for validation
 const profileSchema = z.object({
   name: z.string().min(1, { message: 'Name ist erforderlich' }),
-  age: z.number().min(1, { message: 'Alter ist erforderlich' }),
+  birthdate: z.date({ required_error: 'Alter ist erforderlich' }),
   gender: z.enum(['FEMALE', 'MALE', 'OTHER'], {
     errorMap: () => ({ message: 'Geschlecht ist erforderlich' }),
   }),
-  semester_number: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
-  role: z.nativeEnum(UserRoleEnum, { errorMap: () => ({ message: 'Rolle ist erforderlich' }) }),
+  overall_semester: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
+  clinical_semester: z.number().min(1, { message: 'Semesterzahl ist erforderlich' }),
 })
+
+type ProfileInputType = z.infer<typeof profileSchema>
 
 export function HomeScreen() {
   const supabase = useSupabaseClient()
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<ProfileFormType>({
+  } = useForm<ProfileInputType>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: '',
-      age: undefined,
+      birthdate: undefined,
       gender: undefined,
-      semester_number: undefined,
-      role: undefined,
+      clinical_semester: undefined,
+      overall_semester: undefined,
     },
   })
-  const { profile, updateProfile } = useUser()
+  const { profile, updateProfile, user } = useUser()
   const toast = useToastController()
   // means medium or smaller
   const { md } = useMedia()
@@ -95,12 +95,18 @@ export function HomeScreen() {
     })
   }, [md, instance])
 
-  console.log(md)
+  const onSubmit = async (data: ProfileInputType) => {
+    const role = getRoleByEmailEnding(user?.email || '')
 
-  const onSubmit = async (data) => {
+    const transformedData: ProfileFormType = {
+      ...data,
+      birthdate: data.birthdate.toISOString(),
+      role,
+    }
+
     const { data: responseData, error } = await supabase
       .from('profiles')
-      .update(data)
+      .update(transformedData)
       .eq('id', profile?.id)
     if (error) toast.show('Something went wrong with the update')
     else {
@@ -117,14 +123,7 @@ export function HomeScreen() {
     }
   }, [profile?.role])
 
-  const formValues = watch()
-  const progress = useMemo(() => {
-    const totalFields = 5
-    const filledFields = Object.values(formValues).filter(
-      (value) => value !== undefined && value !== ''
-    ).length
-    return (filledFields / totalFields) * 100
-  }, [formValues])
+  const isUserWithStudentEmail = user?.email?.endsWith('@uni-bonn.de')
 
   return (
     <XStack maw={1480} als="center" ai="center" f={1}>
@@ -157,9 +156,6 @@ export function HomeScreen() {
               <H1 size="$9" fontWeight="bold">
                 Registrierung abschließen
               </H1>
-              <Progress value={progress}>
-                <Progress.Indicator animation="bouncy" />
-              </Progress>
               <Controller
                 name="name"
                 control={control}
@@ -175,64 +171,69 @@ export function HomeScreen() {
               />
               {errors.name && <Text color="red">{errors.name.message}</Text>}
 
-              <Controller
-                name="age"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Alter"
-                    keyboardType="numeric"
-                    autoComplete="birthdate-year"
-                    value={value ? value.toString() : ''}
-                    onChangeText={(text) => onChange(Number(text))}
-                    style={{ borderColor: errors.age ? 'red' : undefined }}
+              {isUserWithStudentEmail && (
+                <>
+                  <Controller
+                    name="birthdate"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <DatePickerForControl
+                        placeholder="Geburtsdatum"
+                        onChangeText={(dateAsString) => onChange(new Date(dateAsString))}
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.age && <Text color="red">{errors.age.message}</Text>}
+                  {errors.birthdate && <Text color="red">{errors.birthdate.message}</Text>}
 
-              <Controller
-                name="gender"
-                control={control}
-                render={({ field: { value, ...field } }) => (
-                  <CustomSelect
-                    placeholder="Geschlecht"
-                    value={value || ''}
-                    {...field}
-                    items={genderOptions}
+                  <Controller
+                    name="gender"
+                    control={control}
+                    render={({ field: { value, ...field } }) => (
+                      <CustomSelect
+                        placeholder="Geschlecht"
+                        value={value || ''}
+                        {...field}
+                        items={genderOptions}
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.gender && <Text color="red">{errors.gender.message}</Text>}
+                  {errors.gender && <Text color="red">{errors.gender.message}</Text>}
 
-              <Controller
-                name="semester_number"
-                control={control}
-                render={({ field: { onChange, value } }) => (
-                  <Input
-                    placeholder="Semesterzahl"
-                    keyboardType="numeric"
-                    value={value ? value.toString() : ''}
-                    onChangeText={(text) => onChange(Number(text))}
-                    style={{ borderColor: errors.semester_number ? 'red' : undefined }}
+                  <Controller
+                    name="clinical_semester"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Input
+                        placeholder="Klinisches Semester"
+                        keyboardType="numeric"
+                        value={value ? value.toString() : ''}
+                        onChangeText={(text) => onChange(Number(text))}
+                        style={{ borderColor: errors.clinical_semester ? 'red' : undefined }}
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.semester_number && <Text color="red">{errors.semester_number.message}</Text>}
+                  {errors.clinical_semester && (
+                    <Text color="red">{errors.clinical_semester.message}</Text>
+                  )}
 
-              <Controller
-                name="role"
-                control={control}
-                render={({ field: { value, ...field } }) => (
-                  <CustomSelect
-                    placeholder="Wer bist du?"
-                    value={value || ''}
-                    {...field}
-                    items={roleOptions}
+                  <Controller
+                    name="overall_semester"
+                    control={control}
+                    render={({ field: { onChange, value } }) => (
+                      <Input
+                        placeholder="Fachsemester"
+                        keyboardType="numeric"
+                        value={value ? value.toString() : ''}
+                        onChangeText={(text) => onChange(Number(text))}
+                        style={{ borderColor: errors.overall_semester ? 'red' : undefined }}
+                      />
+                    )}
                   />
-                )}
-              />
-              {errors.role && <Text color="red">{errors.role.message}</Text>}
+                  {errors.overall_semester && (
+                    <Text color="red">{errors.overall_semester.message}</Text>
+                  )}
+                </>
+              )}
 
               <Button onPress={handleSubmit(onSubmit)}>
                 <Text>Absenden</Text>

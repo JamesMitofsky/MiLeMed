@@ -1,6 +1,0 @@
-export enum UserRoleEnum {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  STUDENT = 'STUDENT',
-  MEDICAL_PROFESSIONAL = 'MEDICAL_PROFESSIONAL',
-}

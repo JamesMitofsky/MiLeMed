@@ -239,3 +239,65 @@ export function DatePickerExample({
 }
 
 DatePickerExample.fileName = 'DatePicker'
+
+export function DatePickerForControl({
+  disabled,
+  placeholderTextColor,
+  value,
+  onChangeText,
+  onBlur,
+  ref,
+  placeholder,
+  id,
+  ...props
+}: {
+  onChangeText: (dateValue: string) => void
+  placeholder: string
+  ref?: React.RefObject<HTMLInputElement>
+  id?: string
+  onBlur?: () => void
+  value?: string | undefined
+  disabled?: boolean
+  placeholderTextColor?: string
+  [key: string]: any
+}) {
+  const [selectedDates, onDatesChange] = useState<Date[]>([])
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    setOpen(false)
+  }, [selectedDates])
+
+  const datePickerConfig: {
+    selectedDates: Date[]
+    onDatesChange: (dates: Date[]) => void
+    calendar: {
+      startDay: DPDayInteger
+    }
+  } = {
+    selectedDates,
+    onDatesChange: (dates) => {
+      onDatesChange(dates)
+      onChangeText(dates[0]?.toISOString().split('T')[0] || '')
+    },
+    calendar: {
+      startDay: 1,
+    },
+  }
+  return (
+    <DatePicker keepChildrenMounted open={open} onOpenChange={setOpen} config={datePickerConfig}>
+      <DatePicker.Trigger>
+        <DatePickerInput
+          placeholder={placeholder}
+          value={selectedDates[0]?.toDateString() || ''}
+          onReset={() => onDatesChange([])}
+          onButtonPress={() => setOpen(true)}
+        />
+      </DatePicker.Trigger>
+      <DatePicker.Content>
+        <DatePicker.Content.Arrow />
+        <DatePickerBody />
+      </DatePicker.Content>
+    </DatePicker>
+  )
+}

@@ -13,7 +13,6 @@ import { useRouter as useNextRouter } from 'next/router'
 import { useState } from 'react'
 import { useRouter } from 'solito/router'
 
-import { UserRoleEnum } from '../../../types/userRoleEnum'
 import { useUser } from '../../../utils/useUser'
 
 /**
@@ -100,7 +99,7 @@ export const NavTabs = (props: TabsProps) => {
         <Tab value="/" onInteraction={handleOnInteraction}>
           Startseite
         </Tab>
-        {user.profile?.role === UserRoleEnum.ADMIN && (
+        {user.profile?.role === 'ADMIN' && (
           <>
             {/*TODO unhide this from Nina <Tab value="/dashboard" onInteraction={handleOnInteraction}>
               Dashboard

@@ -192,38 +192,38 @@ export type Database = {
       profiles: {
         Row: {
           about: string | null
-          age: number | null
-          avatar_url: string | null
+          birthdate: string | null
+          clinical_semester: number | null
           created_at: string | null
           gender: Database["public"]["Enums"]["gender"] | null
           id: string
           name: string | null
+          overall_semester: number | null
           role: Database["public"]["Enums"]["user_role"] | null
-          semester_number: number | null
           updated_at: string | null
         }
         Insert: {
           about?: string | null
-          age?: number | null
-          avatar_url?: string | null
+          birthdate?: string | null
+          clinical_semester?: number | null
           created_at?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           id: string
           name?: string | null
+          overall_semester?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          semester_number?: number | null
           updated_at?: string | null
         }
         Update: {
           about?: string | null
-          age?: number | null
-          avatar_url?: string | null
+          birthdate?: string | null
+          clinical_semester?: number | null
           created_at?: string | null
           gender?: Database["public"]["Enums"]["gender"] | null
           id?: string
           name?: string | null
+          overall_semester?: number | null
           role?: Database["public"]["Enums"]["user_role"] | null
-          semester_number?: number | null
           updated_at?: string | null
         }
         Relationships: [
