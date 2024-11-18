@@ -1,3 +1,5 @@
 .vercel
 
 certificates
+
+.well-known/
