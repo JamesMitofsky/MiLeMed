@@ -31,19 +31,6 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "de.milemed.app",
-      "intentFilters": [
-        {
-          "action": "VIEW",
-          "data": [
-            {
-              "scheme": "https",
-              "host": "milemed.de",
-              "pathPrefix": "/"
-            }
-          ],
-          "category": ["BROWSABLE", "DEFAULT"]
-        }
-      ],
       "versionCode": 4
     },
     "web": {
