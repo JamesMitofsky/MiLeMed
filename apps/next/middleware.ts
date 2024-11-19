@@ -11,6 +11,8 @@ const publicRoutes = [
   '/reset-password',
   '/hilfe',
   '/delete-account',
+  '/app',
+  '/android',
 ]
 // put the authentication routes here - these will only be accessed by guests
 const authRoutes = ['/sign-in', '/sign-up', '/request-password-reset']
