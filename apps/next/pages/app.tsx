@@ -1,3 +1,5 @@
+'use client'
+
 import { NextPage } from 'next'
 import NextImage from 'next/image'
 import { YStack, Text, useMedia, XStack } from 'tamagui'
@@ -13,17 +15,34 @@ const AppAnnouncement: NextPage = () => {
         width={0}
         height={0}
         sizes="100vw"
-        style={{ width: '100%', maxWidth: '10rem', height: 'auto' }}
+        style={{
+          width: '100%',
+          maxWidth: '5rem',
+          height: 'auto',
+          position: 'absolute',
+          top: 18,
+          left: 18,
+        }}
       />
 
-      <NextImage
-        src="/milemed-trifold.webp"
-        alt="MiLeMed Preview"
-        width={0}
-        height={0}
-        sizes="100vw"
-        style={{ width: '100%', maxWidth: '40rem', height: 'auto' }}
-      />
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        style={{
+          width: '100%',
+          maxHeight: sm ? '20rem' : '60vh',
+          display: 'block',
+          margin: '0 auto',
+        }}
+      >
+        <source src="/animated-preview.mp4" type="video/mp4" />
+        {/* <source src="your-animation.webm" type="video/webm" /> */}
+        {/* Fallback for unsupported browsers */}
+        Your browser does not support the video tag.
+      </video>
 
       <Text fontSize="$6" textAlign="center">
         Ändere deine Lernweise. Kleine Lektionen für große Ergebnisse.
