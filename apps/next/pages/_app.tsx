@@ -2,7 +2,7 @@ import '../public/web.css'
 import '@tamagui/core/reset.css'
 import '@tamagui/font-inter/css/400.css'
 import '@tamagui/font-inter/css/700.css'
-import { ColorScheme, NextThemeProvider, useRootTheme } from '@tamagui/next-theme'
+import { NextThemeProvider, useRootTheme } from '@tamagui/next-theme'
 import { Provider } from 'app/provider'
 import { AuthProviderProps } from 'app/provider/auth'
 import { api } from 'app/utils/api'
@@ -41,7 +41,9 @@ function MyApp({
       </Head>
       <NextThemeProvider
         onChangeTheme={(next) => {
-          setTheme(next as ColorScheme)
+          localStorage.setItem('theme', 'light')
+          // TODO figure out why the setTheme is not working on Safari
+          // setTheme(next as ColorScheme)
         }}
       >
         <Provider initialSession={pageProps.initialSession}>
