@@ -53,7 +53,7 @@ const AndroidAnnouncement: NextPage = () => {
 export default AndroidAnnouncement
 function Contact() {
   const [formSubmissionStatus, setFormSubmissionStatus] = useState<
-    'sending' | 'success' | 'failure'
+    'sending' | 'success' | 'failure' | 'spam'
   >()
   const [email, setEmail] = useState('')
 
@@ -75,7 +75,11 @@ function Contact() {
       setFormSubmissionStatus('success')
     } else {
       console.log('Error', data)
-      setFormSubmissionStatus('failure')
+      if (data.message.includes('spam')) {
+        setFormSubmissionStatus('spam')
+      } else {
+        setFormSubmissionStatus('failure')
+      }
     }
   }
 
@@ -103,8 +107,10 @@ function Contact() {
       {formSubmissionStatus !== undefined && (
         <View mt="$5">
           <SizableText>
-            {formSubmissionStatus === 'success' && 'Form Submitted Successfully 🎉'}
-            {formSubmissionStatus === 'failure' && 'Something went wrong 😢'}
+            {formSubmissionStatus === 'success' && 'Formular erfolgreich eingereicht 🎉'}
+            {formSubmissionStatus === 'failure' && 'Etwas ist schief gelaufen 😢'}
+            {formSubmissionStatus === 'spam' &&
+              'Unser Server denkt, dass dies Spam ist (aber wir Menschen wissen, dass es das nicht ist 😉). Bitte versuche die Seite zu aktualisieren und erneut einzureichen.'}
           </SizableText>
           {formSubmissionStatus === 'sending' && <FullscreenSpinner />}
         </View>
