@@ -32,7 +32,7 @@ const AppAnnouncement: NextPage = () => {
       />
 
       <Text fontSize="$6" textAlign="center">
-        Ändere deine Lernweise. Mikro-Lernen für makro Lernen.
+        Ändere deine Lernweise. Kleine Lektionen für große Ergebnisse.
       </Text>
 
       {sm ? (
