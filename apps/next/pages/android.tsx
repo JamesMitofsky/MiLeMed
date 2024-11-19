@@ -1,6 +1,8 @@
+import { FullscreenSpinner } from '@my/ui'
 import { NextPage } from 'next'
 import NextImage from 'next/image'
-import { YStack, Text, Input, Button } from 'tamagui'
+import { useState } from 'react'
+import { YStack, Text, Button, Input, SizableText, View } from 'tamagui'
 
 const AndroidAnnouncement: NextPage = () => {
   return (
@@ -33,25 +35,7 @@ const AndroidAnnouncement: NextPage = () => {
         benachrichtigt zu werden, und sei einer der Ersten, die MiLeMed für Android ausprobieren!
       </Text>
 
-      {/* Notification Input */}
-      <YStack
-        width="100%"
-        alignItems="center"
-        padding="$4"
-        borderWidth="$2"
-        borderColor="$borderColor"
-        borderRadius="$4"
-      >
-        <Input
-          placeholder="Deine E-Mail-Adresse eingeben"
-          width="100%"
-          borderColor="transparent"
-          fontSize="$5"
-        />
-        <Button theme="green" marginTop="$4">
-          Benachrichtigt werden!
-        </Button>
-      </YStack>
+      <Contact />
 
       {/* Image Preview */}
       <NextImage
@@ -67,3 +51,64 @@ const AndroidAnnouncement: NextPage = () => {
 }
 
 export default AndroidAnnouncement
+function Contact() {
+  const [formSubmissionStatus, setFormSubmissionStatus] = useState<
+    'sending' | 'success' | 'failure'
+  >()
+  const [email, setEmail] = useState('')
+
+  const onSubmit = async () => {
+    setFormSubmissionStatus('sending')
+
+    const formData = new FormData()
+    formData.append('access_key', process.env.NEXT_PUBLIC_WEB_3_FORMS_KEY!)
+    formData.append('email', email) // Append email to formData
+
+    const response = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      body: formData,
+    })
+
+    const data = await response.json()
+
+    if (data.success) {
+      setFormSubmissionStatus('success')
+    } else {
+      console.log('Error', data)
+      setFormSubmissionStatus('failure')
+    }
+  }
+
+  return (
+    <YStack
+      width="100%"
+      alignItems="center"
+      padding="$4"
+      borderWidth="$2"
+      borderColor="$borderColor"
+      borderRadius="$4"
+    >
+      <Input
+        placeholder="Deine E-Mail-Adresse eingeben"
+        width="100%"
+        borderColor="transparent"
+        value={email}
+        onChangeText={(v) => setEmail(v)}
+      />
+      {formSubmissionStatus === undefined && (
+        <Button theme="green" marginTop="$4" onPress={onSubmit}>
+          Benachrichtigt werden!
+        </Button>
+      )}
+      {formSubmissionStatus !== undefined && (
+        <View mt="$5">
+          <SizableText>
+            {formSubmissionStatus === 'success' && 'Form Submitted Successfully 🎉'}
+            {formSubmissionStatus === 'failure' && 'Something went wrong 😢'}
+          </SizableText>
+          {formSubmissionStatus === 'sending' && <FullscreenSpinner />}
+        </View>
+      )}
+    </YStack>
+  )
+}
