@@ -6,13 +6,7 @@ const AppAnnouncement: NextPage = () => {
   const { sm } = useMedia()
 
   return (
-    <YStack
-      flex={1}
-      justifyContent="center"
-      alignItems="center"
-      padding="$4"
-      gap={sm ? '$9' : '$6'}
-    >
+    <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" gap="$6">
       <NextImage
         src="/logo.png"
         alt="Logo"
@@ -36,7 +30,7 @@ const AppAnnouncement: NextPage = () => {
       </Text>
 
       {sm ? (
-        <YStack gap="$6" alignItems="center">
+        <YStack gap="$5" alignItems="center">
           <DownloadButtons sm={sm} />
         </YStack>
       ) : (
