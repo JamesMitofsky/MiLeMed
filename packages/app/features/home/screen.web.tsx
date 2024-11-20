@@ -51,31 +51,43 @@ const genderOptions: GenderOption[] = [
 
 // Dynamic Zod Schema
 const profileSchema = (isStudent: boolean) =>
-  z.object({
-    name: z.string().min(1, { message: 'Name ist erforderlich' }),
-    birthdate: isStudent
-      ? z.date({ required_error: 'Alter ist erforderlich' })
-      : z.date().optional(),
-    gender: isStudent
-      ? z.enum(['FEMALE', 'MALE', 'OTHER'], {
-          errorMap: () => ({ message: 'Geschlecht ist erforderlich' }),
-        })
-      : z.enum(['FEMALE', 'MALE', 'OTHER']).optional(),
-    overall_semester: isStudent
-      ? z.number().min(1, { message: 'Semesterzahl ist erforderlich' })
-      : z.number().optional(),
-    hasDoneClinicalSemester: z.boolean().optional(),
-    clinical_semester: isStudent
-      ? z
-          .number()
-          .min(1, { message: 'Semesterzahl ist erforderlich' })
-          .max(6, {
-            message:
-              'Klinisches Semester muss zwischen 1 und 6 liegen. Wenn Sie denken, dass Sie eine Ausnahme sind, kontaktieren Sie uns bitte unter hilfe@milemed.de',
+  z
+    .object({
+      name: z.string().min(1, { message: 'Dein Name ist erforderlich' }),
+      birthdate: isStudent
+        ? z.date({ required_error: 'Dein Alter ist erforderlich' })
+        : z.date().optional(),
+      gender: isStudent
+        ? z.enum(['FEMALE', 'MALE', 'OTHER'], {
+            errorMap: () => ({ message: 'Dein Geschlecht ist erforderlich' }),
           })
-          .optional()
-      : z.number().optional(),
-  })
+        : z.enum(['FEMALE', 'MALE', 'OTHER']).optional(),
+      overall_semester: isStudent
+        ? z.number().min(1, { message: 'Deine Semesterzahl ist erforderlich' })
+        : z.number().optional(),
+      hasDoneClinicalSemester: z.boolean().optional(),
+      clinical_semester: z
+        .number()
+        .min(1, { message: 'Deine Semesterzahl ist erforderlich' })
+        .max(6, {
+          message:
+            'Das klinische Semester muss zwischen 1 und 6 liegen. Wenn du denkst, dass du eine Ausnahme bist, kontaktiere uns bitte unter hilfe@milemed.de.',
+        })
+        .optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (
+        data.hasDoneClinicalSemester &&
+        (data.clinical_semester == null || data.clinical_semester === undefined)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom, // Required to specify the type of issue
+          path: ['clinical_semester'], // Path to the problematic field
+          message:
+            'Wenn du ein klinisches Semester absolviert hast, gib bitte an, in welchem Semester du dich befindest. Falls nicht, aktiviere das Kästchen nicht.',
+        })
+      }
+    })
 
 type ProfileInputType = z.infer<ReturnType<typeof profileSchema>>
 
