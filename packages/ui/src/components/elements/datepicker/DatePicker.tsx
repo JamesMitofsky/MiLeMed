@@ -239,25 +239,25 @@ export function DatePickerExample({
 
 DatePickerExample.fileName = 'DatePicker'
 
-export function DatePickerForControl({
+export function BirthdayDatePicker({
   disabled,
   placeholderTextColor,
   value,
   onChangeText,
+  autoComplete,
   onBlur,
   ref,
-  placeholder,
   id,
   ...props
 }: {
   onChangeText: (dateValue: string) => void
-  placeholder: string
   ref?: React.RefObject<HTMLInputElement>
   id?: string
   onBlur?: () => void
   value?: string | undefined
   disabled?: boolean
   placeholderTextColor?: string
+  autoComplete?: string
   [key: string]: any
 }) {
   const [selectedDates, onDatesChange] = useState<Date[]>([])
@@ -287,7 +287,9 @@ export function DatePickerForControl({
     <DatePicker keepChildrenMounted open={open} onOpenChange={setOpen} config={datePickerConfig}>
       <DatePicker.Trigger>
         <DatePickerInput
-          placeholder={placeholder}
+          placeholder="Geburtsdatum"
+          autoComplete="birthdate-full"
+          textContentType="birthdate"
           value={
             selectedDates[0]?.toLocaleDateString('de-DE', {
               year: 'numeric',

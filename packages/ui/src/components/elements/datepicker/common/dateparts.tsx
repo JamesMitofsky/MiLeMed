@@ -116,15 +116,33 @@ export const DatePicker = withStaticProperties(DatePickerImpl, {
 type DatePickerInputProps = {
   onReset: () => void
   onButtonPress?: (e: GestureReponderEvent) => void
+  autoComplete?: string
+  textContentType?: string
 }
 export const DatePickerInput = Input.Area.styleable<DatePickerInputProps>((props, ref) => {
-  const { value, onButtonPress, size = '$3', onReset, ...rest } = props
+  const {
+    value,
+    onButtonPress,
+    size = '$3',
+    onReset,
+    autoComplete,
+    textContentType,
+    ...rest
+  } = props
   return (
     <View $platform-native={{ minWidth: '100%' }}>
       <Input size={size}>
         <Input.Box>
           <Input.Section>
-            <Input.Area value={value} ref={ref} {...rest} />
+            <Input.Area
+              //@ts-ignore
+              autoComplete={autoComplete}
+              //@ts-ignore
+              textContentType={textContentType}
+              value={value}
+              ref={ref}
+              {...rest}
+            />
           </Input.Section>
           <Input.Section>
             <Input.Button

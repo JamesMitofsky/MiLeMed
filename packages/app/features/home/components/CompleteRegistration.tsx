@@ -13,7 +13,7 @@ import {
   Input,
   Text,
   Link,
-  DatePickerForControl,
+  BirthdayDatePicker,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -152,7 +152,7 @@ export function CompleteRegistration() {
                     name="birthdate"
                     control={control}
                     render={({ field: { value, onChange } }) => (
-                      <DatePickerForControl
+                      <BirthdayDatePicker
                         placeholder="Geburtsdatum"
                         onChangeText={(dateAsString) => onChange(new Date(dateAsString))}
                       />

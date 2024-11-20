@@ -12,7 +12,7 @@ import {
   Input,
   Text,
   Link,
-  DatePickerForControl,
+  BirthdayDatePicker,
   Checkbox,
 } from '@my/ui'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
@@ -210,8 +210,7 @@ export function HomeScreen() {
                     name="birthdate"
                     control={control}
                     render={({ field: { value, onChange } }) => (
-                      <DatePickerForControl
-                        placeholder="Geburtsdatum"
+                      <BirthdayDatePicker
                         onChangeText={(dateAsString) => onChange(new Date(dateAsString))}
                       />
                     )}
