@@ -32,7 +32,7 @@ function CalendarHeader() {
   if (header === 'month') {
     return (
       <SizableText width="100%" ta="center" userSelect="auto" tabIndex={0} size="$8">
-        Select a month
+        Wähle einen Monat
       </SizableText>
     )
   }
@@ -288,7 +288,13 @@ export function DatePickerForControl({
       <DatePicker.Trigger>
         <DatePickerInput
           placeholder={placeholder}
-          value={selectedDates[0]?.toDateString() || ''}
+          value={
+            selectedDates[0]?.toLocaleDateString('de-DE', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            }) || ''
+          }
           onReset={() => onDatesChange([])}
           onButtonPress={() => setOpen(true)}
         />
