@@ -76,7 +76,6 @@ function CalendarHeader() {
           size="$6"
           color="$gray12"
           fontWeight="600"
-          lineHeight="$1"
           hoverStyle={{
             color: '$gray10',
           }}
