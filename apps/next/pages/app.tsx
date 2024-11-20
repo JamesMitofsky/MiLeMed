@@ -1,15 +1,55 @@
-'use client'
-
+import { motion } from 'framer-motion'
 import { NextPage } from 'next'
+import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
 import { YStack, Text, useMedia, XStack } from 'tamagui'
+const DynamicVideo = dynamic(() => Promise.resolve(VideoComponent), { ssr: false })
+
+const MotionYStack = motion(YStack)
+const MotionXStack = motion(XStack)
+const MotionText = motion(Text)
+const MotionImage = motion(NextImage)
 
 const AppAnnouncement: NextPage = () => {
   const { sm } = useMedia()
 
+  // Define a sequential animation for child elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delay: 0.1,
+        staggerChildren: 0.4, // Delay between animations of child elements
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 1.5 } },
+  }
+
+  const logoVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } },
+  }
+
   return (
-    <YStack flex={1} justifyContent="center" alignItems="center" padding="$4" gap="$6">
-      <NextImage
+    <MotionYStack
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+      flex={1}
+      justifyContent="center"
+      alignItems="center"
+      padding="$4"
+      gap="$6"
+    >
+      <MotionImage
+        initial="hidden"
+        animate="visible"
+        variants={logoVariants}
         src="/logo.png"
         alt="Logo"
         width={0}
@@ -25,43 +65,47 @@ const AppAnnouncement: NextPage = () => {
         }}
       />
 
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        style={{
-          width: '100%',
-          maxHeight: sm ? '20rem' : '60vh',
-          display: 'block',
-          margin: '0 auto',
-        }}
-      >
-        <source src="/animated-preview.mp4" type="video/mp4" />
-        {/* <source src="your-animation.webm" type="video/webm" /> */}
-        {/* Fallback for unsupported browsers */}
-        Your browser does not support the video tag.
-      </video>
+      <motion.div variants={itemVariants}>
+        <DynamicVideo sm={sm} />
+      </motion.div>
 
-      <Text fontSize="$6" textAlign="center">
+      <MotionText variants={itemVariants} fontSize="$6" textAlign="center">
         Ändere deine Lernweise. Kleine Lektionen für große Ergebnisse.
-      </Text>
+      </MotionText>
 
       {sm ? (
-        <YStack gap="$5" alignItems="center">
+        <MotionYStack variants={itemVariants} gap="$5" alignItems="center">
           <DownloadButtons sm={sm} />
-        </YStack>
+        </MotionYStack>
       ) : (
-        <XStack gap="$6" alignItems="center">
+        <MotionXStack variants={itemVariants} gap="$6" alignItems="center">
           <DownloadButtons sm={sm} />
-        </XStack>
+        </MotionXStack>
       )}
-    </YStack>
+    </MotionYStack>
   )
 }
 
 export default AppAnnouncement
+
+const VideoComponent = ({ sm }: { sm: boolean }) => (
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    preload="auto"
+    style={{
+      width: '100%',
+      maxHeight: sm ? '20rem' : '60vh',
+      display: 'block',
+      margin: '0 auto',
+    }}
+  >
+    <source src="/animated-preview.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+)
 
 const DownloadButtons = ({ sm }: { sm: boolean }) => (
   <>
