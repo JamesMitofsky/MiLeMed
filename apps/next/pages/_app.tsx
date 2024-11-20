@@ -38,6 +38,15 @@ function MyApp({
           content="MiLeMed ist eine Mikro-Lernplattform für die medizinische Ausbildung. Sie bietet kurze Vorlesungen und Quizze, die Studierenden und Fachleuten helfen, ihr Wissen in verschiedenen medizinischen Fachgebieten zu vertiefen. Mit einem Fokus auf interaktives Lernen macht MiLeMed komplexe Themen zugänglicher und bietet flexible, mobile Bildung für vielbeschäftigte Lernende."
         />
         <link rel="icon" href="/favicon.png" />
+        <meta property="og:image" content="/milemed-trifold.webp" />
+        <meta
+          property="og:title"
+          content="MiLeMed - Mikro-Lernplattform für medizinische Ausbildung"
+        />
+        <meta
+          property="og:description"
+          content="Vertiefen Sie Ihr Wissen in der medizinischen Ausbildung mit kurzen Vorlesungen und interaktiven Quizzen."
+        />
       </Head>
       <NextThemeProvider
         onChangeTheme={(next) => {
