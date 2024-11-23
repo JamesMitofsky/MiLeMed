@@ -22,7 +22,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
       "associatedDomains": ["applinks:milemed.de"],
-      "buildNumber": "19"
+      "buildNumber": "20"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
