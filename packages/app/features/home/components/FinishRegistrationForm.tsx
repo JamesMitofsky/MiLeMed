@@ -141,7 +141,6 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
       toast.show('Beim Aktualisieren des Profils ist ein Fehler aufgetreten.', { type: 'error' })
     } else {
       updateProfile()
-      toast.show('Profil erfolgreich aktualisiert.', { type: 'success' })
       if (onSuccess) onSuccess()
     }
   }
