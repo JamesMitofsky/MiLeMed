@@ -5,7 +5,7 @@ import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useEffect } from 'react'
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { createParam } from 'solito'
-import { Link } from 'solito/link'
+import { Link, useLink } from 'solito/link'
 
 import { z } from '../../utils/zod-de'
 
@@ -99,8 +99,8 @@ const CheckYourEmail = () => {
         </YStack>
       </FormWrapper.Body>
       <FormWrapper.Footer>
-        <Button themeInverse icon={ChevronLeft} br="$10" onPress={() => reset()}>
-          Zurück
+        <Button themeInverse icon={ChevronLeft} br="$10" {...useLink({ href: '/sign-in' })}>
+          Anmelden
         </Button>
       </FormWrapper.Footer>
     </FormWrapper>
@@ -113,7 +113,7 @@ const SignInLink = () => {
   return (
     <Link href={`/sign-in?${new URLSearchParams(email ? { email } : undefined)}`}>
       <Paragraph ta="center" theme="alt1">
-        Passwort zurückgesetzt? <Text textDecorationLine="underline">Einloggen</Text>
+        Passwort zurückgesetzt? <Text textDecorationLine="underline">Anmelden</Text>
       </Paragraph>
     </Link>
   )
