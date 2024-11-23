@@ -23,12 +23,12 @@ import { z } from '../../utils/zod-de'
 
 const { useParams, useUpdateParams } = createParam<{ email?: string }>()
 
-const emailPattern = /^[a-zA-Z0-9._%+-]+@(uni-bonn|ukbonn)\.de$|^jamesmitofsky@gmail\.com$/
+const emailPattern = /^[a-zA-Z0-9._%+-]+@uni-bonn\.de$|^jamesmitofsky@gmail\.com$/
 
 const SignUpSchema = z.object({
   email: formFields.text
     .email()
-    .regex(emailPattern, 'E-Mail muss die Domain "@uni-bonn.de" oder "@ukbonn.de" haben') // Validate domain
+    .regex(emailPattern, 'E-Mail muss die Domain "@uni-bonn.de" haben') // Validate domain
     .describe('E-Mail // jona@uni-bonn.de'),
   password: formFields.text.min(6).describe('Passwort // Wähle ein Passwort'),
   hasAgreedToPrivacyPolicy: formFields.boolean_checkbox.describe(''),
