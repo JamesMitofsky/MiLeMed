@@ -1,4 +1,13 @@
-import { ScrollView, YStack, FullscreenSpinner, XStack, SizableText, useMedia, Link } from '@my/ui'
+import {
+  ScrollView,
+  YStack,
+  FullscreenSpinner,
+  XStack,
+  SizableText,
+  useMedia,
+  Link,
+  useToastController,
+} from '@my/ui'
 import { useCallback, useRef } from 'react'
 import ReactCanvasConfetti from 'react-canvas-confetti'
 import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
@@ -9,6 +18,7 @@ import { useUser } from '../../utils/useUser'
 export function HomeScreen() {
   const { profile } = useUser()
   const { md } = useMedia()
+  const toast = useToastController()
 
   const confettiRef = useRef<TCanvasConfettiInstance>()
 
@@ -27,6 +37,7 @@ export function HomeScreen() {
 
   const handleRegistrationSuccess = useCallback(() => {
     shootConfetti()
+    toast.show('Profil erfolgreich eingerichtet.')
   }, [shootConfetti])
 
   return (

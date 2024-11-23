@@ -15,7 +15,7 @@ export function HomeScreen() {
 
   const handleRegistrationSuccess = useCallback(() => {
     confettiRef.current?.restart()
-    toast.show('Profil erfolgreich aktualisiert.', { type: 'success' })
+    toast.show('Profil erfolgreich eingerichtet.')
     setIsMainPageVisible(true)
   }, [confettiRef])
 
