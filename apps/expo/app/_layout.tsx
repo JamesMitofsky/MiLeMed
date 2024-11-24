@@ -1,5 +1,6 @@
 import type { Session } from '@supabase/supabase-js'
 import { Provider, loadThemePromise } from 'app/provider'
+import { ExpoBugsnagProvider } from 'app/provider/ExpoBugsnagProvider'
 import { supabase } from 'app/utils/supabase/client.native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
@@ -59,33 +60,35 @@ export default function HomeLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Provider initialSession={initialSession}>
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              // TODO fix color
-              contentStyle: { backgroundColor: 'white' },
-            }}
-          >
-            <Stack.Screen
-              name="(drawer)"
-              options={{
+          <ExpoBugsnagProvider>
+            <Stack
+              screenOptions={{
                 headerShown: false,
-                title: 'Startseite',
+                // TODO fix color
+                contentStyle: { backgroundColor: 'white' },
               }}
-            />
-            <Stack.Screen
-              name="settings/index"
-              options={{
-                headerShown: true,
-              }}
-            />
-            <Stack.Screen
-              name="profile"
-              options={{
-                headerShown: true,
-              }}
-            />
-          </Stack>
+            >
+              <Stack.Screen
+                name="(drawer)"
+                options={{
+                  headerShown: false,
+                  title: 'Startseite',
+                }}
+              />
+              <Stack.Screen
+                name="settings/index"
+                options={{
+                  headerShown: true,
+                }}
+              />
+              <Stack.Screen
+                name="profile"
+                options={{
+                  headerShown: true,
+                }}
+              />
+            </Stack>
+          </ExpoBugsnagProvider>
         </Provider>
       </View>
     </GestureHandlerRootView>
