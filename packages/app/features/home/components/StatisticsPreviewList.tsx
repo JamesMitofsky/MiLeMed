@@ -12,23 +12,6 @@ export const StatisticsPreviewList = () => {
 
   const { data: lectureTotals } = useLectureCompletionCounts()
 
-  const { data: usersCount } = useQuery(
-    ['usersCount'],
-    async () => {
-      const { count, error } = await supabase.from('profiles').select('id', { count: 'exact' })
-
-      if (error) {
-        throw new Error(error.message)
-      }
-
-      return count || 0
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 10,
-      enabled: true,
-    }
-  )
   const { data: chapterCompletion } = useQuery(
     ['chapterCompletionCounts'],
     async () => {
@@ -53,6 +36,24 @@ export const StatisticsPreviewList = () => {
       },
     }
   )
+
+  // const { data: usersCount } = useQuery(
+  //   ['usersCount'],
+  //   async () => {
+  //     const { count, error } = await supabase.from('profiles').select('id', { count: 'exact' })
+
+  //     if (error) {
+  //       throw new Error(error.message)
+  //     }
+
+  //     return count || 0
+  //   },
+  //   {
+  //     staleTime: 1000 * 60 * 5,
+  //     cacheTime: 1000 * 60 * 10,
+  //     enabled: true,
+  //   }
+  // )
 
   // TODO eventually make it so there are loaders when the data is still coming. THere should only be 0 if there is REALLY no chapters done yet
 

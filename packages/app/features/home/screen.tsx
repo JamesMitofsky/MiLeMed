@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 
 import { FinishRegistrationForm } from './components/FinishRegistrationForm'
+import { StatisticsPreviewList } from './components/StatisticsPreviewList'
 import { ChaptersPreviewList } from './components/achievements-section'
-import { StatisticsPreviewList } from './components/overview-section'
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
