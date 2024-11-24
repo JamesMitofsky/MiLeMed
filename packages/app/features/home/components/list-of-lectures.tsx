@@ -55,7 +55,7 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
 
   return (
     <>
-      <YStack fw="wrap" f={1} gap="$3">
+      <YStack fw="wrap" gap="$3">
         {lectures.map((lecture, index) => (
           <Theme key={lecture.id} name={colors[index]}>
             <ChapterLectureCard
