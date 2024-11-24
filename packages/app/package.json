@@ -14,6 +14,7 @@
     "check:type:watch": "yarn check:type -w"
   },
   "dependencies": {
+    "@bugsnag/expo": "^51.0.1",
     "@my/api": "*",
     "@my/supabase": "*",
     "@my/ui": "*",
