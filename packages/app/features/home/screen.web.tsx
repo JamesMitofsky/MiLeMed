@@ -1,26 +1,16 @@
-import {
-  ScrollView,
-  YStack,
-  FullscreenSpinner,
-  XStack,
-  SizableText,
-  useMedia,
-  Link,
-  useToastController,
-} from '@my/ui'
-import { useCallback, useRef } from 'react'
+import { ScrollView, YStack, FullscreenSpinner, XStack, SizableText, useMedia, Link } from '@my/ui'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import ReactCanvasConfetti from 'react-canvas-confetti'
 import { TCanvasConfettiInstance } from 'react-canvas-confetti/dist/types'
 
-import { FinishRegistrationForm } from './components/FinishRegistrationForm'
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
   const { profile } = useUser()
   const { md } = useMedia()
-  const toast = useToastController()
 
   const confettiRef = useRef<TCanvasConfettiInstance>()
+  const [confettiTriggered, setConfettiTriggered] = useState(false)
 
   const onInitConfetti = useCallback(({ confetti }: { confetti: TCanvasConfettiInstance }) => {
     confettiRef.current = confetti
@@ -37,8 +27,14 @@ export function HomeScreen() {
 
   const handleRegistrationSuccess = useCallback(() => {
     shootConfetti()
-    toast.show('Profil erfolgreich eingerichtet.')
   }, [shootConfetti])
+
+  useEffect(() => {
+    if (profile?.id && !confettiTriggered) {
+      handleRegistrationSuccess()
+      setConfettiTriggered(true)
+    }
+  }, [profile?.id, confettiTriggered, handleRegistrationSuccess])
 
   return (
     <XStack maw={1480} als="center" ai="center" f={1}>
@@ -48,10 +44,10 @@ export function HomeScreen() {
         <YStack gap="$6" p="$10" f={1}>
           {!profile?.id ? (
             <FullscreenSpinner />
-          ) : profile?.role ? (
+          ) : (
             <YStack pb="$10" gap="$6" justifyContent="center" alignItems="center" pt="$0">
               <SizableText size="$6" textAlign="center">
-                Ihr Profil ist vollständig eingerichtet, gute Arbeit!
+                Deine E-Mail-Adresse wurde bestätigt!
               </SizableText>
               <XStack>
                 <SizableText>Weiter in </SizableText>
@@ -64,8 +60,6 @@ export function HomeScreen() {
                 <SizableText> 🙌</SizableText>
               </XStack>
             </YStack>
-          ) : (
-            <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />
           )}
         </YStack>
       </ScrollView>
