@@ -1,13 +1,4 @@
-// read this: https://snaplet-seed.netlify.app/seed/integrations/supabase
-
 import { createSeedClient } from '@snaplet/seed'
-
-// Fetch a random photo for demonstration purposes (e.g., hero image URLs for lectures/chapters).
-// async function fetchRandomPhoto(): Promise<string> {
-//   const response = await fetch('https://picsum.photos/200/300')
-//   const data = await response.json()
-//   return data.urls.small // Adjust this to the photo size you prefer
-// }
 
 type LecturesType = {
   chapter_id: number
@@ -26,6 +17,23 @@ type ChaptersType = {
   mode: 'THEORETICAL' | 'PRACTICAL'
   sort_order: number
   title: string
+  updated_at: string | null
+}
+
+type QuizQuestionsType = {
+  created_at: string | null
+  id: number
+  lecture_id: number
+  question_text: string
+  question_type: 'OPEN' | 'MULTIPLE_CHOICE'
+  updated_at: string | null
+}
+
+type QuizQuestionOptionsType = {
+  id: number
+  is_correct: boolean | null
+  option_text: string
+  question_id: number
   updated_at: string | null
 }
 
@@ -50,14 +58,31 @@ async function generateFakeLectures(
   lecturesPerChapter: number
 ): Promise<LecturesType[]> {
   const lectures: LecturesType[] = []
+
   for (const chapter of chapters) {
     for (let i = 1; i <= lecturesPerChapter; i++) {
-      // const randomPhotoUrl = await fetchRandomPhoto()
+      const imageUrl = 'https://picsum.photos/200/300'
+      const markdownContent = `
+**Lecture ${i} of ${chapter.title}**
+
+This is the markdown content for Lecture ${i} in ${chapter.title}.
+
+- **Key Point 1**: Introduction to the topic
+- **Key Point 2**: Deep dive into the subject
+- **Key Point 3**: Practical examples and case studies
+
+**Lecture Image**
+![Lecture Image]( ${imageUrl} )
+
+**Conclusion**
+This lecture concludes with a summary of the key points and actionable insights.
+      `
+
       lectures.push({
         id: lectures.length + 1,
         chapter_id: chapter.id,
         title: `Lecture ${i} of ${chapter.title}`,
-        content: `Content for Lecture ${i} in ${chapter.title}.`,
+        content: markdownContent.trim(),
         sort_order: i,
         created_at: new Date().toISOString(),
         updated_at: null,
@@ -65,6 +90,58 @@ async function generateFakeLectures(
     }
   }
   return lectures
+}
+
+async function generateFakeQuizQuestions(
+  lectures: LecturesType[],
+  questionsPerLecture: number
+): Promise<QuizQuestionsType[]> {
+  const quizQuestions: QuizQuestionsType[] = []
+  for (const lecture of lectures) {
+    for (let i = 1; i <= questionsPerLecture; i++) {
+      const isMultipleChoice = i % 2 !== 0 // Alternate between MULTIPLE_CHOICE and OPEN
+      quizQuestions.push({
+        id: quizQuestions.length + 1,
+        lecture_id: lecture.id,
+        question_text: `Question ${i} for ${lecture.title}`,
+        question_type: isMultipleChoice ? 'MULTIPLE_CHOICE' : 'OPEN',
+        created_at: new Date().toISOString(),
+        updated_at: null,
+      })
+    }
+  }
+  return quizQuestions
+}
+
+async function generateFakeQuizQuestionOptions(
+  quizQuestions: QuizQuestionsType[],
+  optionsPerQuestion: number
+): Promise<QuizQuestionOptionsType[]> {
+  const quizQuestionOptions: QuizQuestionOptionsType[] = []
+  for (const question of quizQuestions) {
+    if (question.question_type === 'MULTIPLE_CHOICE') {
+      const correctAnswerIndex = Math.floor(Math.random() * optionsPerQuestion) // Ensure one correct answer
+      for (let i = 1; i <= optionsPerQuestion; i++) {
+        quizQuestionOptions.push({
+          id: quizQuestionOptions.length + 1,
+          question_id: question.id,
+          option_text: `Option ${i} for ${question.question_text}`,
+          is_correct: i === correctAnswerIndex + 1, // Mark the correct answer
+          updated_at: null,
+        })
+      }
+    } else {
+      // For OPEN questions, add a single correct answer as a text-based option
+      quizQuestionOptions.push({
+        id: quizQuestionOptions.length + 1,
+        question_id: question.id,
+        option_text: `The correct long answer for ${question.question_text}`, // Provide a detailed answer
+        is_correct: true, // OPEN questions have one correct answer by default
+        updated_at: null,
+      })
+    }
+  }
+  return quizQuestionOptions
 }
 
 async function run() {
@@ -78,6 +155,8 @@ async function run() {
   // Generate fake data
   const chapters = await generateFakeChapters(5) // Adjust the number of chapters
   const lectures = await generateFakeLectures(chapters, 3) // Adjust the number of lectures per chapter
+  const quizQuestions = await generateFakeQuizQuestions(lectures, 2) // Adjust the number of questions per lecture
+  const quizQuestionOptions = await generateFakeQuizQuestionOptions(quizQuestions, 4) // Adjust the number of options per question
 
   // Seed chapters
   await seed.chapters((x) =>
@@ -94,6 +173,23 @@ async function run() {
       ...lecture,
       created_at: lecture.created_at || new Date().toISOString(),
       updated_at: lecture.updated_at || null,
+    }))
+  )
+
+  // Seed quiz questions
+  await seed.quiz_questions((x) =>
+    quizQuestions.map((question) => ({
+      ...question,
+      created_at: question.created_at || new Date().toISOString(),
+      updated_at: question.updated_at || null,
+    }))
+  )
+
+  // Seed quiz question options
+  await seed.quiz_question_options((x) =>
+    quizQuestionOptions.map((option) => ({
+      ...option,
+      updated_at: option.updated_at || null,
     }))
   )
 
