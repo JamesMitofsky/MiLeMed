@@ -11,7 +11,7 @@
     "_generate:remote": "npx supabase gen types typescript --project-id $NEXT_PUBLIC_SUPABASE_PROJECT_ID --schema public > ./types.ts",
     "generate:remote": "yarn _with-env yarn _generate:remote",
     "generate": "npx supabase gen types typescript --local --schema public > ./types.ts",
-    "g": "yarn generate",
+    "g": "yarn generate && npx @snaplet/seed init",
     "migration:diff": "npx supabase db diff -f ",
     "migration:up": "npx supabase migration up",
     "migration:new": "supabase migration new",
