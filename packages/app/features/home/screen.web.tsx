@@ -45,7 +45,7 @@ export function HomeScreen() {
       <ReactCanvasConfetti onInit={onInitConfetti} />
 
       <ScrollView f={1} fb={0}>
-        <YStack gap="$6" p="$10" f={1}>
+        <YStack gap="$6" p="$2" f={1}>
           {!profile?.id ? (
             <FullscreenSpinner />
           ) : profile?.role ? (
