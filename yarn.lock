@@ -1815,7 +1815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bugsnag/expo@npm:^51.0.0":
+"@bugsnag/expo@npm:^51.0.1":
   version: 51.0.1
   resolution: "@bugsnag/expo@npm:51.0.1"
   dependencies:
@@ -1902,18 +1902,6 @@ __metadata:
     expo-device: ~6.0.2
     expo-secure-store: ~13.0.1
   checksum: 10/912af41464fb7fb3208477a0c20f1bb6b22017a35dbcac021011dc526b857491ed2281969a2ce8d1563b874974e94cf88712506df3a3e17fbe1a0aa10309ea12
-  languageName: node
-  linkType: hard
-
-"@bugsnag/plugin-expo-eas-sourcemaps@npm:^51.0.0":
-  version: 51.0.0
-  resolution: "@bugsnag/plugin-expo-eas-sourcemaps@npm:51.0.0"
-  peerDependencies:
-    "@bugsnag/source-maps": ^2.3.3
-    "@expo/config": ^9.0.1
-  bin:
-    bugsnag-eas-build-on-success: lib/eas-build-on-success.js
-  checksum: 10/372765fbfb010246d254d57a25ea4917946a73d96f70fa7fb681002b3f4dfde7dfef2cbb9a23fb0e37fb2c608aa1c311628777d726d70147c220632508fec297
   languageName: node
   linkType: hard
 
@@ -11842,7 +11830,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "app@workspace:packages/app"
   dependencies:
-    "@bugsnag/expo": "npm:^51.0.0"
+    "@bugsnag/expo": "npm:^51.0.1"
     "@my/api": "npm:*"
     "@my/supabase": "npm:*"
     "@my/ui": "npm:*"
@@ -16882,9 +16870,6 @@ __metadata:
   dependencies:
     "@babel/core": "npm:^7.24"
     "@babel/runtime": "npm:^7.18.9"
-    "@bugsnag/expo": "npm:^51.0.0"
-    "@bugsnag/plugin-expo-eas-sourcemaps": "npm:^51.0.0"
-    "@bugsnag/source-maps": "npm:^2.3.3"
     "@expo/metro-config": "npm:~0.18.11"
     "@my/ui": "npm:*"
     "@react-native-async-storage/async-storage": "npm:1.23.1"
@@ -16900,14 +16885,12 @@ __metadata:
     eslint-plugin-import: "npm:^2.28.0"
     expo: "npm:~51.0.38"
     expo-apple-authentication: "npm:~6.4.2"
-    expo-application: "npm:~5.9.1"
     expo-build-properties: "npm:~0.12.5"
-    expo-constants: "npm:~16.0.2"
+    expo-constants: "npm:~16.0.1"
     expo-crypto: "npm:~13.0.2"
     expo-dev-client: "npm:~4.0.28"
     expo-device: "npm:~6.0.2"
     expo-document-picker: "npm:^12.0.2"
-    expo-file-system: "npm:~17.0.1"
     expo-font: "npm:~12.0.10"
     expo-image: "npm:~1.13.0"
     expo-image-picker: "npm:~15.0.7"
@@ -16950,7 +16933,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-application@npm:~5.9.0, expo-application@npm:~5.9.1":
+"expo-application@npm:~5.9.0":
   version: 5.9.1
   resolution: "expo-application@npm:5.9.1"
   peerDependencies:
@@ -16984,7 +16967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-constants@npm:~16.0.0, expo-constants@npm:~16.0.1, expo-constants@npm:~16.0.2":
+"expo-constants@npm:~16.0.0, expo-constants@npm:~16.0.1":
   version: 16.0.2
   resolution: "expo-constants@npm:16.0.2"
   dependencies:
