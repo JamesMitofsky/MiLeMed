@@ -13,7 +13,7 @@
     "generate": "npx supabase gen types typescript --local --schema public > ./types.ts",
     "g": "yarn generate",
     "migration:diff": "npx supabase db diff -f ",
-    "migration:up": "npx supabase migration up",
+    "migration:up": "npx supabase migration up && yarn generate",
     "migration:new": "supabase migration new",
     "start": "npx supabase start",
     "stop": "npx supabase stop",
