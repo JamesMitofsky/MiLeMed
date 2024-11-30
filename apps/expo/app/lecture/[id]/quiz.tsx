@@ -1,7 +1,7 @@
 import { ScrollView, useToastController, View } from '@my/ui'
 import MultiChoicePickReveal from 'app/features/quiz/MultiChoicePickReveal'
 import OpenAnswerTypeReveal from 'app/features/quiz/OpenAnswerTypeReveal'
-import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
+import useFetchQuizQuestions from 'app/utils/react-query/useFetchQuizQuestions'
 import { QuizAnswersType } from 'app/utils/supabase/databaseTypes'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
@@ -20,7 +20,7 @@ const QuizForm: React.FC = () => {
   } = useParams()
   const router = useRouter()
   const { user } = useUser()
-  const { data: questions } = useQuizQuestionsQuery(lectureId)
+  const { data: questions } = useFetchQuizQuestions(lectureId)
   const { control, handleSubmit } = useForm<{ answers: QuizAnswersType[] }>()
   const supabase = useSupabase()
 

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-function useLecturesQuery() {
+function useFetchAllLecturesWithExtraData() {
   const supabase = useSupabase()
   const queryKey = ['sortedLectures']
 
@@ -22,4 +22,4 @@ function useLecturesQuery() {
   })
 }
 
-export default useLecturesQuery
+export default useFetchAllLecturesWithExtraData

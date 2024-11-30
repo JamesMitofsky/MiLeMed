@@ -2,7 +2,7 @@ import { H4, OverviewCard, XStack, YStack } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 
 import { ScrollAdapt } from './scroll-adapt'
-import useLectureCompletionCounts from '../../../utils/react-query/useLectureCompletionCounts'
+import useFetchCountOfLecturesCompleted from '../../../utils/react-query/useFetchCountOfLecturesCompleted'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 import { useUser } from '../../../utils/useUser'
 
@@ -10,7 +10,7 @@ export const StatisticsPreviewList = () => {
   const supabase = useSupabase()
   const { user } = useUser()
 
-  const { data: lectureTotals } = useLectureCompletionCounts()
+  const { data: lectureTotals } = useFetchCountOfLecturesCompleted()
 
   const { data: chapterCompletion } = useQuery(
     ['chapterCompletionCounts'],

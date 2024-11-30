@@ -2,7 +2,7 @@ import { YStack, XStack, Label, RadioGroup } from '@my/ui' // Adjust the import 
 import React from 'react'
 import { Control, Controller } from 'react-hook-form'
 
-import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useQuizQuestions'
+import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useFetchQuizQuestions'
 import { QuizAnswersType } from '../../utils/supabase/databaseTypes'
 import { Chip } from '../general/chipParts'
 

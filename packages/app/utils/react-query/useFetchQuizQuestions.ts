@@ -26,7 +26,7 @@ export type QuizQuestionsWithOptionsType = QuizQuestionsType & {
   quiz_question_options: Pick<QuizQuestionOptionsType, 'id' | 'is_correct' | 'option_text'>[]
 }
 
-function useQuizQuestionsQuery(lectureId: number) {
+function useFetchQuizQuestions(lectureId: number) {
   const supabase = useSupabase()
 
   const queryFn = () => getQuizQuestions(supabase, lectureId)
@@ -38,4 +38,4 @@ function useQuizQuestionsQuery(lectureId: number) {
   })
 }
 
-export default useQuizQuestionsQuery
+export default useFetchQuizQuestions

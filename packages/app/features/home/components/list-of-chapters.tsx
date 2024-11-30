@@ -3,7 +3,7 @@ import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLecture
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import useChapterSummary from '../../../utils/react-query/useChapterSummary'
+import useFetchChapterWithLectureCount from '../../../utils/react-query/useFetchChapterWithLectureCount'
 import { ModeType } from '../../../utils/supabase/databaseTypes'
 
 type ListOfChaptersProps = {
@@ -13,7 +13,7 @@ type ListOfChaptersProps = {
 }
 
 const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => {
-  const { data: chapters, isLoading } = useChapterSummary(limit, mode)
+  const { data: chapters, isLoading } = useFetchChapterWithLectureCount(limit, mode)
 
   if (isLoading) {
     return (

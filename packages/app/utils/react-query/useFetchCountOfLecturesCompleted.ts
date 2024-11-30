@@ -4,7 +4,7 @@ import { useSupabase } from '../supabase/useSupabase'
 import { useUser } from '../useUser'
 
 // Custom hook for fetching lecture completion counts
-const useLectureCompletionCounts = () => {
+const useFetchCountOfLecturesCompleted = () => {
   const supabase = useSupabase()
   const { profile } = useUser()
 
@@ -39,4 +39,4 @@ const useLectureCompletionCounts = () => {
   })
 }
 
-export default useLectureCompletionCounts
+export default useFetchCountOfLecturesCompleted

@@ -6,7 +6,7 @@ import { ModeType } from '../supabase/databaseTypes'
 import { useSupabase } from '../supabase/useSupabase'
 import { useUser } from '../useUser'
 
-const useChapterSummary = (limit?: number, mode?: ModeType) => {
+const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
   const supabase = useSupabase()
   const { user } = useUser()
   const queryClient = useQueryClient()
@@ -55,4 +55,4 @@ const useChapterSummary = (limit?: number, mode?: ModeType) => {
   return useQuery(['chapters', user?.id, limit, mode], queryFn)
 }
 
-export default useChapterSummary
+export default useFetchChapterWithLectureCount

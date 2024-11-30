@@ -2,7 +2,7 @@ import { Button, Card, SizableText, TextArea, Theme, XStack, YStack } from '@my/
 import React from 'react'
 import { Control, Controller, useWatch } from 'react-hook-form'
 
-import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useQuizQuestions'
+import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useFetchQuizQuestions'
 import { QuizAnswersType } from '../../utils/supabase/databaseTypes'
 
 interface OpenAnswerTypeRevealProps {

@@ -1,7 +1,7 @@
 import { YStack, SizableText, Spinner, Button, XStack } from '@my/ui'
 import { Trash } from '@tamagui/lucide-icons'
 
-import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useQuizQuestions'
+import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useFetchQuizQuestions'
 import { Chip } from '../general/chipParts'
 import { parseMarkdown } from '../general/markdownParser'
 
