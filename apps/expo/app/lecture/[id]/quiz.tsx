@@ -1,6 +1,8 @@
 import { ScrollView, useToastController, View } from '@my/ui'
+import { useQueryClient } from '@tanstack/react-query'
 import MultiChoicePickReveal from 'app/features/quiz/MultiChoicePickReveal'
 import OpenAnswerTypeReveal from 'app/features/quiz/OpenAnswerTypeReveal'
+import { useFetchChapterIdByLectureId } from 'app/utils/react-query/useFetchChapterIdByLectureId'
 import useFetchQuizQuestions from 'app/utils/react-query/useFetchQuizQuestions'
 import { QuizAnswersType } from 'app/utils/supabase/databaseTypes'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
@@ -11,18 +13,22 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { createParam } from 'solito'
-import { YStack, SizableText, Button } from 'tamagui'
+import { YStack, SizableText, Button, Theme } from 'tamagui'
 
 const { useParams } = createParam<{ id: number }>()
 const QuizForm: React.FC = () => {
   const {
     params: { id: lectureId },
   } = useParams()
+  const queryClient = useQueryClient()
+
   const router = useRouter()
   const { user } = useUser()
   const { data: questions } = useFetchQuizQuestions(lectureId)
   const { control, handleSubmit } = useForm<{ answers: QuizAnswersType[] }>()
   const supabase = useSupabase()
+
+  const { data: chapterId } = useFetchChapterIdByLectureId(lectureId)
 
   const [hasEvaluatedMultipleChoice, setHasEvaluatedMultipleChoice] = useState(false)
 
@@ -30,8 +36,6 @@ const QuizForm: React.FC = () => {
   const [areAnswersVisible, setAreAnswersVisible] = useState(false)
 
   const toast = useToastController()
-
-  // const sessionId = useId()
 
   const [sessionId, setSessionId] = useState<string | null>(null)
 
@@ -70,11 +74,11 @@ const QuizForm: React.FC = () => {
   )
 
   const onSubmit = useCallback(
-    async (answers) => {
+    async ({ answers }) => {
       if (!questions || !user || !sessionId) return
 
       try {
-        const responses = answers.answers.map((answer, index) => {
+        const responses = answers.map((answer, index) => {
           const question = questions[index]
           if (!question) return null
 
@@ -84,25 +88,24 @@ const QuizForm: React.FC = () => {
             answer_text: answer.answer_text,
             chosen_option_ids: answerIds[question.id] || [],
             is_correct: answer.is_correct || false,
-            session_id: sessionId, // Include the session ID here
+            session_id: sessionId,
           }
         })
 
         const validResponses = responses.filter((response) => response !== null)
-        setAreAnswersVisible(true)
 
         // Submit answers with session ID to the backend (trigger will handle session creation)
         const { error } = await supabase.from('user_quiz_answers').insert(validResponses)
-        if (error) throw error
+        setAreAnswersVisible(true)
 
-        // Show success feedback
-        // toast.show('Your answers have been successfully submitted!')
+        await queryClient.invalidateQueries(['lectures_with_completion', chapterId])
+        if (error) throw error
       } catch (error) {
         console.error('Submission error:', error)
         alert('There was an error submitting your answers.')
       }
     },
-    [questions, user, sessionId, answerIds, supabase, toast]
+    [questions, user, sessionId, answerIds, supabase, toast, queryClient]
   )
 
   // Fetch answer IDs on component mount or when questions data changes
@@ -175,12 +178,15 @@ const QuizForm: React.FC = () => {
                   )}
                 </YStack>
               ))}
-              {!areAnswersVisible && (
-                <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
-              )}
-              {areAnswersVisible && hasEvaluatedMultipleChoice && (
-                <Button onPress={() => router.dismiss(2)}>Zurück zu den Kapiteln</Button>
-              )}
+
+              <Theme name="green">
+                {!areAnswersVisible && (
+                  <Button onPress={handleSubmit(onSubmit)}>Antworten einreichen</Button>
+                )}
+                {areAnswersVisible && hasEvaluatedMultipleChoice && (
+                  <Button onPress={() => router.dismiss(2)}>Zurück zu den Kapiteln</Button>
+                )}
+              </Theme>
             </YStack>
           </KeyboardAwareScrollView>
         </View>

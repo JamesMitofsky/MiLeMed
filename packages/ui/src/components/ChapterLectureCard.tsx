@@ -1,6 +1,6 @@
 import { IconProps } from '@tamagui/helpers-icon'
 import { LinearGradient } from '@tamagui/linear-gradient'
-import { ChevronRight } from '@tamagui/lucide-icons'
+import { Check, ChevronRight } from '@tamagui/lucide-icons'
 import React from 'react'
 import { useLink } from 'solito/link'
 import { Button, Card, CardProps, H4, Progress, SizableText, XStack, YStack } from 'tamagui'
@@ -19,6 +19,8 @@ export type AchievementCardProps = {
     href?: string
   }
   dense?: boolean
+  isDone?: boolean
+  index?: number
 } & CardProps
 
 export const ChapterLectureCard = ({
@@ -27,6 +29,8 @@ export const ChapterLectureCard = ({
   progress,
   action,
   dense,
+  isDone,
+  index,
   ...props
 }: AchievementCardProps) => {
   const linkProps = useLink({ href: action?.href || '' })
@@ -69,7 +73,7 @@ export const ChapterLectureCard = ({
               mt="$3"
               als="flex-end"
               size="$2"
-              iconAfter={<ChevronRight />}
+              iconAfter={isDone ? <Check /> : <ChevronRight />}
               {...action.props}
               {...linkProps}
             >

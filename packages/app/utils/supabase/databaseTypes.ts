@@ -11,6 +11,10 @@ type QuizAnswersType = Database['public']['Tables']['user_quiz_answers']['Row']
 type QuizQuestionOptionsType = Database['public']['Tables']['quiz_question_options']['Row']
 type QuizQuestionsType = Database['public']['Tables']['quiz_questions']['Row']
 
+// Functions
+type GetLecturesWithCompletionType =
+  Database['public']['Functions']['get_lectures_with_completion']['Returns']
+
 // Enums
 type GenderType = Database['public']['Enums']['gender']
 type ModeType = Database['public']['Enums']['mode']
@@ -35,4 +39,5 @@ export {
   QuizEventType,
   UserRoleType,
   LectureEventEnumType,
+  GetLecturesWithCompletionType,
 }

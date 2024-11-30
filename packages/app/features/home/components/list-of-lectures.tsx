@@ -1,10 +1,9 @@
 import { ChapterLectureCard } from '@my/ui'
 import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
-import { useQuery } from '@tanstack/react-query'
 import { YStack, Text, useMedia, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import { useSupabase } from '../../../utils/supabase/useSupabase'
+import useFetchListOfLecturesWithCompletionData from '../../../utils/react-query/useFetchListOfLecturesWithCompletionData'
 
 type ListOfLecturesProps = {
   chapterId: string
@@ -12,33 +11,21 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
-  const supabase = useSupabase()
-  const { data: lectures } = useQuery(['lectures', chapterId], {
-    queryFn: async () => {
-      let query = supabase
-        .from('lectures')
-        .select('*')
-        .eq('chapter_id', chapterId)
-        .order('sort_order', { ascending: true })
-
-      if (typeof limit === 'number') {
-        query = query.limit(limit)
-      }
-      const { data, error } = await query
-
-      if (error) {
-        // no rows - edge case of user being deleted
-        if (error.code === 'PGRST116') {
-          await supabase.auth.signOut()
-          return null
-        }
-        throw new Error(error.message)
-      }
-      return data
-    },
+  const {
+    data: lectures,
+    // isLoading,
+    // error,
+  } = useFetchListOfLecturesWithCompletionData({
+    chapterId: parseInt(chapterId, 10),
+    limit,
   })
 
   const { md } = useMedia()
+
+  // const lecturesCompleted = useMemo(() => {
+  //   if (!lectures) return 0
+  //   return lectures.filter((lecture) => lecture.is_completed).length
+  // }, [lectures])
 
   if (!lectures) {
     return (
@@ -55,6 +42,9 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
 
   return (
     <YStack my="$4" fw="wrap" gap="$3">
+      {/* <SizableText size="$3">
+        {lecturesCompleted} / {lectures.length}
+      </SizableText> */}
       {lectures.map((lecture, index) => (
         <Theme key={lecture.id} name={colors[index]}>
           <ChapterLectureCard
@@ -62,9 +52,11 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
             w={md ? '100%' : 300}
             title={lecture.title}
             action={{
-              text: 'Weiter',
+              text: lecture.is_completed ? 'Erneut ansehen' : 'Loslegen',
               href: `/lecture/${lecture.id}`,
             }}
+            isDone={lecture.is_completed}
+            index={index}
           />
         </Theme>
       ))}

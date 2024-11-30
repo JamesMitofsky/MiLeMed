@@ -409,6 +409,10 @@ export type Database = {
           lectures_completed: number
         }[]
       }
+      get_current_user_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_lecture_completion_counts: {
         Args: {
           user_id: string
@@ -416,6 +420,18 @@ export type Database = {
         Returns: {
           total_lectures: number
           completed_lectures: number
+        }[]
+      }
+      get_lectures_with_completion: {
+        Args: {
+          p_chapter_id: number
+        }
+        Returns: {
+          id: number
+          title: string
+          chapter_id: number
+          sort_order: number
+          is_completed: boolean
         }[]
       }
     }

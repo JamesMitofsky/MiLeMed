@@ -78,15 +78,13 @@ const IndividualLecture = () => {
         >
           {lecture.content}
         </Markdown>
-        {quizExistenceData?.exists ? (
-          <Theme name="orange">
+        <Theme name="green">
+          {quizExistenceData?.exists ? (
             <Button onPress={handleNavigateToQuiz}>Bereit für das Quiz?!</Button>
-          </Theme>
-        ) : (
-          <Theme name="green">
+          ) : (
             <Button onPress={handleMarkAsRead}>Als gelesen markieren</Button>
-          </Theme>
-        )}
+          )}
+        </Theme>
       </YStack>
     </ScrollView>
   )
