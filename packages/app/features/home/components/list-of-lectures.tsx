@@ -54,23 +54,21 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
   }
 
   return (
-    <>
-      <YStack fw="wrap" gap="$3">
-        {lectures.map((lecture, index) => (
-          <Theme key={lecture.id} name={colors[index]}>
-            <ChapterLectureCard
-              dense
-              w={md ? '100%' : 300}
-              title={lecture.title}
-              action={{
-                text: 'Weiter',
-                href: `/lecture/${lecture.id}`,
-              }}
-            />
-          </Theme>
-        ))}
-      </YStack>
-    </>
+    <YStack my="$4" fw="wrap" gap="$3">
+      {lectures.map((lecture, index) => (
+        <Theme key={lecture.id} name={colors[index]}>
+          <ChapterLectureCard
+            dense
+            w={md ? '100%' : 300}
+            title={lecture.title}
+            action={{
+              text: 'Weiter',
+              href: `/lecture/${lecture.id}`,
+            }}
+          />
+        </Theme>
+      ))}
+    </YStack>
   )
 }
 

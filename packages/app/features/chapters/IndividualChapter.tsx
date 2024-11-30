@@ -53,7 +53,7 @@ export const IndividualChapter = () => {
           </Text>
         </View>
       )}
-      <Separator mb="$4" />
+      <Separator />
 
       <ScrollView>
         <ListOfLectures chapterId={id || ''} />
