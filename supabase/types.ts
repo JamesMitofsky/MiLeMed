@@ -409,10 +409,6 @@ export type Database = {
           lectures_completed: number
         }[]
       }
-      get_current_user_id: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
       get_lecture_completion_counts: {
         Args: {
           user_id: string
