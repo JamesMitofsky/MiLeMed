@@ -133,4 +133,6 @@ credentials.json
 *jks
 *.pem
 
+# Mobile builds
 *.aab
+*.tar.gz
