@@ -1,36 +1,25 @@
-import { useFocusEffect } from '@react-navigation/native'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useCallback, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import { useMemo } from 'react'
 
 import { ModeType } from '../supabase/databaseTypes'
 import { useSupabase } from '../supabase/useSupabase'
-import { useUser } from '../useUser'
 
 const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
   const supabase = useSupabase()
-  const { user } = useUser()
-  const queryClient = useQueryClient()
 
   const queryFn = useMemo(() => {
     return async () => {
-      if (!user?.id) {
-        throw new Error('User ID is not available')
-      }
-
-      // Define the RPC call
-      let query = supabase.rpc('get_chapter_summary', {
-        user_id: user.id,
-        chapter_mode: mode,
+      let query = supabase.rpc('get_chapters_with_completion', {
+        mode,
       })
 
-      // Apply the limit directly on the query
       if (limit) {
         query = query.limit(limit)
       }
 
-      // Execute the query
       const { data, error } = await query
 
+      console.log(data)
       if (error) {
         // Handle unauthorized access by signing out if relevant
         if (error.code === 'PGRST116') {
@@ -43,16 +32,9 @@ const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
 
       return data
     }
-  }, [limit, supabase, user?.id, mode]) // Add `user?.id` to dependencies
+  }, [limit, supabase, mode])
 
-  useFocusEffect(
-    useCallback(() => {
-      // Refetch chapters on focus when navigating back
-      queryClient.invalidateQueries(['chapters', user?.id, limit, mode])
-    }, [queryClient, user?.id, limit, mode])
-  )
-
-  return useQuery(['chapters', user?.id, limit, mode], queryFn)
+  return useQuery(['chapters'], queryFn)
 }
 
 export default useFetchChapterWithLectureCount

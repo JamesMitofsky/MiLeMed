@@ -99,6 +99,7 @@ const QuizForm: React.FC = () => {
         setAreAnswersVisible(true)
 
         await queryClient.invalidateQueries(['lectures_with_completion', chapterId])
+        await queryClient.invalidateQueries(['chapters'])
         if (error) throw error
       } catch (error) {
         console.error('Submission error:', error)

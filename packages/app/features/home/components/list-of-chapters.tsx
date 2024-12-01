@@ -36,8 +36,8 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
               w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}
               progress={{
-                current: chapter.lectures_completed,
-                full: chapter.lecture_count,
+                current: chapter.completed_lectures,
+                full: chapter.total_lectures,
                 label: 'Lektionen',
               }}
               action={{

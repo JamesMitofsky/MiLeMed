@@ -409,6 +409,17 @@ export type Database = {
           lectures_completed: number
         }[]
       }
+      get_chapters_with_completion: {
+        Args: {
+          mode?: Database["public"]["Enums"]["mode"]
+        }
+        Returns: {
+          id: number
+          title: string
+          total_lectures: number
+          completed_lectures: number
+        }[]
+      }
       get_lecture_completion_counts: {
         Args: {
           user_id: string
