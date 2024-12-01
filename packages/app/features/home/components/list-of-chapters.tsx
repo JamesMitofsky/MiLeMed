@@ -31,7 +31,10 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
         <Text>Keine Kapitel gefunden.</Text>
       ) : (
         chapters?.map((chapter, index) => (
-          <Theme key={chapter.id} name={colors[index]}>
+          <Theme
+            key={chapter.id}
+            name={mode === 'PRACTICAL' ? colors[colors.length - 1 - index] : colors[index]}
+          >
             <ChapterLectureCard
               w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}

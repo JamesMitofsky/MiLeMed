@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION public.get_chapters_with_completion(mode mode DEFAULT NULL)
+CREATE OR REPLACE FUNCTION public.get_chapters_with_completion(p_mode mode DEFAULT NULL)
 RETURNS TABLE (
   id INT,
   title TEXT,
@@ -11,8 +11,8 @@ AS $$
   SELECT 
     c.id AS id,
     c.title AS title,
-    COUNT(l.id) AS total_lectures,
-    COUNT(qs.session_id) AS completed_lectures
+    COUNT(DISTINCT l.id) AS total_lectures,
+    COUNT(DISTINCT qs.lecture_id) AS completed_lectures
   FROM 
     chapters c
   LEFT JOIN 
@@ -20,9 +20,9 @@ AS $$
   LEFT JOIN 
     quiz_sessions qs ON qs.lecture_id = l.id AND qs.profile_id = auth.uid()
   WHERE
-    (mode IS NULL OR c.mode = mode)
+    (p_mode IS NULL OR c.mode = p_mode)
   GROUP BY 
-    c.id, c.title
+    c.id, c.title, c.mode, c.sort_order -- Include c.sort_order in GROUP BY
   ORDER BY 
-    c.id;
+    c.sort_order;
 $$;

@@ -411,7 +411,7 @@ export type Database = {
       }
       get_chapters_with_completion: {
         Args: {
-          mode?: Database["public"]["Enums"]["mode"]
+          p_mode?: Database["public"]["Enums"]["mode"]
         }
         Returns: {
           id: number

@@ -10,7 +10,7 @@ const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
   const queryFn = useMemo(() => {
     return async () => {
       let query = supabase.rpc('get_chapters_with_completion', {
-        mode,
+        p_mode: mode,
       })
 
       if (limit) {
@@ -19,7 +19,6 @@ const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
 
       const { data, error } = await query
 
-      console.log(data)
       if (error) {
         // Handle unauthorized access by signing out if relevant
         if (error.code === 'PGRST116') {
@@ -34,7 +33,7 @@ const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
     }
   }, [limit, supabase, mode])
 
-  return useQuery(['chapters'], queryFn)
+  return useQuery(['chapters', mode], queryFn)
 }
 
 export default useFetchChapterWithLectureCount
