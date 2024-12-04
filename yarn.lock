@@ -3957,7 +3957,7 @@ __metadata:
     "@types/pg": "npm:^8.11.6"
     dotenv-cli: "npm:^6.0.0"
     pg: "npm:^8.12.0"
-    supabase: "npm:1.223.10"
+    supabase: "npm:^2.0.0"
   languageName: unknown
   linkType: soft
 
@@ -28656,9 +28656,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supabase@npm:1.223.10":
-  version: 1.223.10
-  resolution: "supabase@npm:1.223.10"
+"supabase@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "supabase@npm:2.0.0"
   dependencies:
     bin-links: "npm:^5.0.0"
     https-proxy-agent: "npm:^7.0.2"
@@ -28666,7 +28666,7 @@ __metadata:
     tar: "npm:7.4.3"
   bin:
     supabase: bin/supabase
-  checksum: 10/e02e13a95a183b90f4e8cabc1ee60ec01d788893a2d280e29af23284fc1a25158c1c224c6fe83fbe4091126adde31296c2261eeb5efe6ecf53a6f4b0f6862d98
+  checksum: 10/2b2ac163c675c5429d12a115e7bf0098fa21b713920d7f3737fca7994c435c47859e4e86debca27292ec547f8195f8d2d61ed0a0057b53ffc7561bbdbd8ba2c5
   languageName: node
   linkType: hard
 
