@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import NextImage from 'next/image'
+import { useEffect, useState } from 'react'
 import { YStack, Text, useMedia, XStack } from 'tamagui'
 const DynamicVideo = dynamic(() => Promise.resolve(VideoComponent), { ssr: false })
 
@@ -88,54 +89,58 @@ const AppAnnouncement: NextPage = () => {
 
 export default AppAnnouncement
 
-const VideoComponent = ({ sm }: { sm: boolean }) => (
-  <video
-    autoPlay
-    muted
-    loop
-    playsInline
-    preload="auto"
-    style={{
-      width: '100%',
-      maxHeight: sm ? '20rem' : '60vh',
-      display: 'block',
-      margin: '0 auto',
-    }}
-  >
-    <source src="/animated-preview.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-)
+const DownloadButtons = ({ sm }: { sm: boolean }) => {
+  const [os, setOs] = useState<'ios' | 'android' | 'unknown'>()
 
-const DownloadButtons = ({ sm }: { sm: boolean }) => (
-  <>
-    <a href="https://apps.apple.com/app/id6737435431" target="_blank" rel="noopener noreferrer">
-      <NextImage
-        src="/download-on-app-store.svg"
-        alt="Apple App Store"
-        width={0}
-        height={0}
-        sizes="100vw"
-        style={{ width: '20%', minWidth: sm ? '12rem' : '11rem', height: 'auto' }}
-      />
-    </a>
+  useEffect(() => {
+    // Ensure we run this only in the browser
+    if (typeof navigator !== 'undefined') {
+      const userAgent = navigator.userAgent.toLowerCase()
 
-    <a
-      style={{
-        width: 'min-content',
-      }}
-      href="/android"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <NextImage
-        src="/download-on-google-play.webp"
-        alt="Google Play Store"
-        width={0}
-        height={0}
-        sizes="100vw"
-        style={{ width: '20%', minWidth: '12rem', height: 'auto' }}
-      />
-    </a>
-  </>
-)
+      if (userAgent.includes('android')) {
+        setOs('android')
+      } else if (/iphone|ipad|ipod/.test(userAgent)) {
+        setOs('ios')
+      } else {
+        setOs('unknown')
+      }
+    }
+  }, [])
+
+  return (
+    <>
+      {(os === 'ios' || os === 'unknown') && (
+        <a href="https://apps.apple.com/app/id6737435431" target="_blank" rel="noopener noreferrer">
+          <NextImage
+            src="/download-on-app-store.svg"
+            alt="Apple App Store"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '20%', minWidth: sm ? '12rem' : '11rem', height: 'auto' }}
+          />
+        </a>
+      )}
+
+      {(os === 'android' || os === 'unknown') && (
+        <a
+          style={{
+            width: 'min-content',
+          }}
+          href="/android"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <NextImage
+            src="/download-on-google-play.webp"
+            alt="Google Play Store"
+            width={0}
+            height={0}
+            sizes="100vw"
+            style={{ width: '20%', minWidth: '12rem', height: 'auto' }}
+          />
+        </a>
+      )}
+    </>
+  )
+}
