@@ -32,18 +32,18 @@ export function HomeScreen() {
     <XStack als="center" ai="flex-start" f={1}>
       <Confetti autoplay={false} fadeOutOnEnd ref={confettiRef} />
       <ScrollView f={1} fb={0}>
-        <YStack gap="$7" pb="$10" pt="$5" f={1}>
+        <YStack gap="$9" pb="$10" pt="$5" f={1}>
           {!profile ? (
             <FullscreenSpinner />
           ) : isMainPageVisible ? (
             <>
               <ChaptersPreviewList />
               <StatisticsPreviewList />
+              <FeedbackSection />
             </>
           ) : (
             <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />
           )}
-          <FeedbackSection />
         </YStack>
       </ScrollView>
     </XStack>

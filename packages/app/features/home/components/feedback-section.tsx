@@ -3,13 +3,13 @@ import {
   Stack,
   Text,
   View,
-  XStack,
   isWeb,
   Button,
   TextArea,
   YStack,
   useToastController,
   H2,
+  XStack,
 } from '@my/ui'
 import { Info, Rocket } from '@tamagui/lucide-icons'
 import { useForm, Controller } from 'react-hook-form'
@@ -63,17 +63,16 @@ export const FeedbackSection = () => {
 
   return (
     <View>
-      <XStack
-        paddingHorizontal="$4.5"
-        alignItems="center"
-        gap="$2"
-        justifyContent="space-between"
-        marginBottom="$4"
-      >
+      <XStack px="$4.5" ai="center" gap="$2" mb="$3">
         <H2 theme="alt1" fow="400">
-          <Rocket size={25} /> Feedback
+          <Rocket size={25} />
+        </H2>
+        <H2 theme="alt1" fow="400">
+          {' '}
+          Feedback
         </H2>
       </XStack>
+
       <Stack
         maxWidth={1070}
         gap="$3"

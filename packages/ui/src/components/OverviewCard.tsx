@@ -1,4 +1,4 @@
-import { type CardProps, Card, H6, H2, YStack, Button, Paragraph, Theme, XStack } from 'tamagui'
+import { type CardProps, Card, H6, YStack, Button, Paragraph, Theme, XStack, H3 } from 'tamagui'
 
 export type OverviewCardTypes = {
   title: string
@@ -41,7 +41,7 @@ export const OverviewCard = ({
           <H6 size="$4" fow="$1" theme="alt2">
             {title}
           </H6>
-          <H2 mt="$2">{value}</H2>
+          <H3 mt="$2">{value}</H3>
           {/* {progress && (
             <Progress
               w={50}
