@@ -316,6 +316,35 @@ export type Database = {
           },
         ]
       }
+      user_feedback: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: number
+          profile_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: number
+          profile_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: number
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_feedback_profile"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_quiz_answers: {
         Row: {
           answer_text: string | null

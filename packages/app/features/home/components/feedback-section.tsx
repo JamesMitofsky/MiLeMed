@@ -1,8 +1,66 @@
-import { H4, Stack, Text, View, XStack, isWeb, Button, TextArea, YStack } from '@my/ui'
+import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  Stack,
+  Text,
+  View,
+  XStack,
+  isWeb,
+  Button,
+  TextArea,
+  YStack,
+  useToastController,
+  H2,
+} from '@my/ui'
 import { Info, Rocket } from '@tamagui/lucide-icons'
+import { useForm, Controller } from 'react-hook-form'
+import { Keyboard } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { z } from 'zod'
+
+import { useSupabase } from '../../../utils/supabase/useSupabase'
+
+const feedbackSchema = z.object({
+  feedback: z.string().min(1, 'Feedback ist erforderlich'),
+})
+
+type FeedbackFormType = z.infer<typeof feedbackSchema>
 
 export const FeedbackSection = () => {
+  const {
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors, isSubmitted },
+  } = useForm<FeedbackFormType>({
+    resolver: zodResolver(feedbackSchema),
+    defaultValues: { feedback: '' },
+    mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
+  })
+
+  const supabase = useSupabase()
+  const toast = useToastController()
+
+  const onSubmit = async ({ feedback }: FeedbackFormType) => {
+    try {
+      const { error } = await supabase.from('user_feedback').insert({
+        description: feedback,
+      })
+
+      if (error) {
+        console.error('Error submitting feedback:', error)
+        toast.show('Fehler beim Absenden des Feedbacks')
+      } else {
+        toast.show('Feedback erfolgreich übermittelt')
+        Keyboard.dismiss()
+        reset()
+      }
+    } catch (err) {
+      console.error('Unexpected error:', err)
+      toast.show('Fehler beim Absenden des Feedbacks')
+    }
+  }
+
   return (
     <View>
       <XStack
@@ -12,14 +70,18 @@ export const FeedbackSection = () => {
         justifyContent="space-between"
         marginBottom="$4"
       >
-        <H4 theme="alt1" fow="400">
-          <Rocket size={15} /> Feedback
-        </H4>
+        <H2 theme="alt1" fow="400">
+          <Rocket size={25} /> Feedback
+        </H2>
       </XStack>
       <Stack
         maxWidth={1070}
         gap="$3"
-        $platform-native={{ marginBottom: '$0', marginLeft: '$3.5', marginRight: '$3.5' }}
+        $platform-native={{
+          marginBottom: '$0',
+          marginLeft: '$3.5',
+          marginRight: '$3.5',
+        }}
         justifyContent="flex-start"
         flexWrap="wrap"
         flexDirection={isWeb ? 'row' : 'column'}
@@ -29,17 +91,26 @@ export const FeedbackSection = () => {
       >
         <KeyboardAwareScrollView
           enableOnAndroid
-          keyboardOpeningTime={0} // Reduces keyboard opening delay
+          keyboardOpeningTime={0}
           resetScrollToCoords={{ x: 0, y: 0 }}
         >
           <YStack flexDirection="column" width="100%" gap="$1">
-            <TextArea
-              id="feedback-content"
-              size="$3"
-              fontWeight="300"
-              height={180}
-              placeholder="Teilen Sie uns Ihr Feedback mit"
+            <Controller
+              name="feedback"
+              control={control}
+              render={({ field: { onChange, value } }) => (
+                <TextArea
+                  id="feedback-content"
+                  size="$3"
+                  fontWeight="300"
+                  height={180}
+                  placeholder="Teilen Sie uns Ihr Feedback mit"
+                  onChangeText={onChange}
+                  value={value}
+                />
+              )}
             />
+            {errors.feedback && isSubmitted && <Text color="red">{errors.feedback.message}</Text>}
             <View flexDirection="row" theme="alt1" marginTop="$2.5" alignItems="center" gap="$2">
               <Info size={15} />
               <Text fontWeight="300" theme="alt2" fontSize="$2">
@@ -48,7 +119,7 @@ export const FeedbackSection = () => {
               </Text>
             </View>
 
-            <Button themeInverse marginTop="$3">
+            <Button themeInverse marginTop="$3" onPress={handleSubmit(onSubmit)}>
               <Button.Text>Absenden</Button.Text>
             </Button>
           </YStack>
