@@ -1,4 +1,5 @@
-import { H4, OverviewCard, XStack, YStack } from '@my/ui'
+import { H2, OverviewCard, XStack, YStack } from '@my/ui'
+import { ChartArea } from '@tamagui/lucide-icons'
 import { useQuery } from '@tanstack/react-query'
 
 import { ScrollAdapt } from './scroll-adapt'
@@ -59,10 +60,14 @@ export const StatisticsPreviewList = () => {
 
   return (
     <YStack>
-      <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
-        <H4 theme="alt1" fow="400">
-          Statistiken
-        </H4>
+      <XStack px="$4.5" ai="center" gap="$2" mb="$3">
+        <H2 theme="alt1" fow="400">
+          <ChartArea size={25} />
+        </H2>
+        <H2 theme="alt1" fow="400">
+          {' '}
+          Statistikenr
+        </H2>
         {/*TODO: add this back in when more stuff is ready to share <Theme name="alt2">
           <Button size="$2" chromeless iconAfter={ArrowRight}>
             Alle ansehen
