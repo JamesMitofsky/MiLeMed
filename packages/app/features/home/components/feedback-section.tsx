@@ -1,15 +1,8 @@
-import { H4, Stack, Text, View, XStack, Card, isWeb, validToken, Button, TextArea } from '@my/ui'
-import { Info } from '@tamagui/lucide-icons'
-import { Platform } from 'react-native'
+import { H4, Stack, Text, View, XStack, isWeb, Button, TextArea, YStack } from '@my/ui'
+import { Info, Rocket } from '@tamagui/lucide-icons'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-const feedCardWidthMd = validToken(
-  Platform.select({
-    web: 'calc(33.33% - 12px)',
-    native: '32%',
-  })
-)
-
-export const FeedbackPreview = () => {
+export const FeedbackSection = () => {
   return (
     <View>
       <XStack
@@ -19,14 +12,14 @@ export const FeedbackPreview = () => {
         justifyContent="space-between"
         marginBottom="$4"
       >
-        <H4 theme="alt1" fontWeight="400">
-          Feedback
+        <H4 theme="alt1" fow="400">
+          <Rocket size={15} /> Feedback
         </H4>
       </XStack>
       <Stack
         maxWidth={1070}
         gap="$3"
-        $platform-native={{ marginBottom: '$0', marginLeft: '$1', marginRight: '$2.5' }}
+        $platform-native={{ marginBottom: '$0', marginLeft: '$3.5', marginRight: '$3.5' }}
         justifyContent="flex-start"
         flexWrap="wrap"
         flexDirection={isWeb ? 'row' : 'column'}
@@ -34,23 +27,12 @@ export const FeedbackPreview = () => {
           gap: '$4',
         }}
       >
-        <Card
-          br="$3"
-          bordered
-          overflow="hidden"
-          padding="$4"
-          marginBottom="$3"
-          $gtMd={{ width: feedCardWidthMd, marginBottom: '1%', minWidth: '32.333%' }}
+        <KeyboardAwareScrollView
+          enableOnAndroid
+          keyboardOpeningTime={0} // Reduces keyboard opening delay
+          resetScrollToCoords={{ x: 0, y: 0 }}
         >
-          <View
-            flexDirection="column"
-            width={400}
-            maxWidth="100%"
-            gap="$1"
-            $sm={{
-              paddingVertical: '$3',
-            }}
-          >
+          <YStack flexDirection="column" width="100%" gap="$1">
             <TextArea
               id="feedback-content"
               size="$3"
@@ -69,8 +51,8 @@ export const FeedbackPreview = () => {
             <Button themeInverse marginTop="$3">
               <Button.Text>Absenden</Button.Text>
             </Button>
-          </View>
-        </Card>
+          </YStack>
+        </KeyboardAwareScrollView>
       </Stack>
     </View>
   )

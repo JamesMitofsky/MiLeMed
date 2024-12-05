@@ -5,6 +5,7 @@ import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 import { FinishRegistrationForm } from './components/FinishRegistrationForm'
 import { StatisticsPreviewList } from './components/StatisticsPreviewList'
 import { ChaptersPreviewList } from './components/achievements-section'
+import { FeedbackSection } from './components/feedback-section'
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
@@ -42,7 +43,7 @@ export function HomeScreen() {
           ) : (
             <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />
           )}
-          {/* <FeedbackPreview /> */}
+          <FeedbackSection />
         </YStack>
       </ScrollView>
     </XStack>

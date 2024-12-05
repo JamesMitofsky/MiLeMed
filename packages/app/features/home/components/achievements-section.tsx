@@ -1,5 +1,5 @@
 import { Button, H4, SizableText, Switch, XStack, YStack } from '@my/ui'
-import { ArrowRight } from '@tamagui/lucide-icons'
+import { ArrowRight, LibraryBig } from '@tamagui/lucide-icons'
 import { useRouter } from 'solito/router'
 
 import ListOfChapters from './list-of-chapters'
@@ -18,7 +18,7 @@ export const ChaptersPreviewList = () => {
     <YStack>
       <XStack px="$4.5" ai="center" gap="$2" jc="space-between" mb="$4">
         <H4 theme="alt1" fow="400">
-          Kapitel
+          <LibraryBig /> Kapitel
         </H4>
         <Button
           theme="alt2"
