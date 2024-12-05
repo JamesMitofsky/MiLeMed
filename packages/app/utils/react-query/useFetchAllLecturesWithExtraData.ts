@@ -22,4 +22,4 @@ function useFetchAllLecturesWithExtraData() {
   })
 }
 
-export default useFetchAllLecturesWithExtraData
+export { useFetchAllLecturesWithExtraData }

@@ -6,7 +6,7 @@ const getLectureById = async (supabase, id) => {
   return supabase.from('lectures').select('*').eq('id', id).single()
 }
 
-function useFetchSingleLecture(id) {
+function useFetchSingleLecture(id: number) {
   const supabase = useSupabase()
   const queryKey = ['lecture', id]
 
@@ -21,4 +21,4 @@ function useFetchSingleLecture(id) {
   })
 }
 
-export default useFetchSingleLecture
+export { useFetchSingleLecture }

@@ -3,7 +3,7 @@ import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLecture
 import { YStack, Text, useMedia, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import useFetchListOfLecturesWithCompletionData from '../../../utils/react-query/useFetchListOfLecturesWithCompletionData'
+import { useFetchListOfLecturesWithCompletionData } from '../../../utils/react-query/useFetchListOfLecturesWithCompletionData'
 
 type ListOfLecturesProps = {
   chapterId: string

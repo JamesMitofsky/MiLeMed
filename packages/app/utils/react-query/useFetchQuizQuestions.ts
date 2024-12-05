@@ -38,4 +38,4 @@ function useFetchQuizQuestions(lectureId: number) {
   })
 }
 
-export default useFetchQuizQuestions
+export { useFetchQuizQuestions }

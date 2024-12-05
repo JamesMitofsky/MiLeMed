@@ -1,7 +1,7 @@
 import { XStack, ScrollView, YStack, Button } from '@my/ui'
 import { ArrowLeft } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
-import useQuizQuestionsQuery from 'app/utils/react-query/useQuizQuestions'
+import { useFetchQuizQuestions } from 'app/utils/react-query/useFetchQuizQuestions'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -9,18 +9,18 @@ import { useRouter } from 'next/router'
 import QuizQuestionForm from '../../../../packages/app/features/lectures/QuizQuestionForm'
 import ReadModifyLecture from '../../../../packages/app/features/lectures/ReadModifyLecture'
 import ShowExistingQuizQuestions from '../../../../packages/app/features/lectures/ShowExistingQuizQuestions'
-import useLectureQuery from '../../../../packages/app/utils/react-query/useLectureQuery'
+import { useFetchSingleLecture } from '../../../../packages/app/utils/react-query/useFetchSingleLecture'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
-  const { data: lecture } = useLectureQuery(router.query.id as string)
+  const { data: lecture } = useFetchSingleLecture(parseInt(router.query.id as string, 10))
   const {
     data: quizQuestions,
     isLoading: areQuestionsLoading,
     error,
     refetch,
-  } = useQuizQuestionsQuery(parseInt(router.query.id as string, 10))
+  } = useFetchQuizQuestions(parseInt(router.query.id as string, 10))
   const supabase = useSupabase()
 
   const handleQuestionDelete = async (questionId: number) => {

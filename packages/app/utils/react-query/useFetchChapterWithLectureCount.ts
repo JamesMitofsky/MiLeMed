@@ -36,4 +36,4 @@ const useFetchChapterWithLectureCount = (limit?: number, mode?: ModeType) => {
   return useQuery(['chapters', mode], queryFn)
 }
 
-export default useFetchChapterWithLectureCount
+export { useFetchChapterWithLectureCount }

@@ -2,7 +2,7 @@ import { H4, OverviewCard, XStack, YStack } from '@my/ui'
 import { useQuery } from '@tanstack/react-query'
 
 import { ScrollAdapt } from './scroll-adapt'
-import useFetchCountOfLecturesCompleted from '../../../utils/react-query/useFetchCountOfLecturesCompleted'
+import { useFetchCountOfLecturesCompleted } from '../../../utils/react-query/useFetchCountOfLecturesCompleted'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 import { useUser } from '../../../utils/useUser'
 

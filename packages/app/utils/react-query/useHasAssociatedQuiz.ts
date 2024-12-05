@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-export const useHasAssociatedQuiz = (lectureId: number) => {
+const useHasAssociatedQuiz = (lectureId: number) => {
   const supabase = useSupabase()
 
   return useQuery({
@@ -24,3 +24,5 @@ export const useHasAssociatedQuiz = (lectureId: number) => {
     cacheTime: Infinity, // adjust based on your app's needs
   })
 }
+
+export { useHasAssociatedQuiz }

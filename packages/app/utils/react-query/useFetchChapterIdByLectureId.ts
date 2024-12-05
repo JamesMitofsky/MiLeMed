@@ -2,19 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
 
-/**
- * Fetches the chapter ID by lecture ID using the Supabase client.
- * @param supabase - The Supabase client instance.
- * @param lectureId - The ID of the lecture to fetch the chapter ID for.
- * @returns The chapter ID or null if not found.
- */
-
-/**
- * Custom hook to fetch the chapter ID by lecture ID using TanStack Query.
- * @param lectureId - The ID of the lecture to fetch the chapter ID for.
- * @returns The query result containing data, error, and loading state.
- */
-export const useFetchChapterIdByLectureId = (lectureId: number) => {
+const useFetchChapterIdByLectureId = (lectureId: number) => {
   const supabase = useSupabase()
 
   return useQuery(
@@ -38,3 +26,5 @@ export const useFetchChapterIdByLectureId = (lectureId: number) => {
     }
   )
 }
+
+export { useFetchChapterIdByLectureId }

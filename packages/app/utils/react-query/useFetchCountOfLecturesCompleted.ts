@@ -39,4 +39,4 @@ const useFetchCountOfLecturesCompleted = () => {
   })
 }
 
-export default useFetchCountOfLecturesCompleted
+export { useFetchCountOfLecturesCompleted }

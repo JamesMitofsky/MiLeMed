@@ -7,7 +7,7 @@ import { YStack, Text, Spinner, ScrollView, Button, Theme } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useHasAssociatedQuiz } from '../../utils/react-query/useHasAssociatedQuiz'
-import useMarkLectureAsRead from '../../utils/react-query/useMarkLectureAsRead'
+import { useMarkLectureAsRead } from '../../utils/react-query/useMarkLectureAsRead'
 import { supabase } from '../../utils/supabase/client.native'
 
 const { useParams } = createParam<{ id: string }>()

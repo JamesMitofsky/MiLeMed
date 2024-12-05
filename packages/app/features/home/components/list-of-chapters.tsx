@@ -3,7 +3,7 @@ import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLecture
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import useFetchChapterWithLectureCount from '../../../utils/react-query/useFetchChapterWithLectureCount'
+import { useFetchChapterWithLectureCount } from '../../../utils/react-query/useFetchChapterWithLectureCount'
 import { ModeType } from '../../../utils/supabase/databaseTypes'
 
 type ListOfChaptersProps = {

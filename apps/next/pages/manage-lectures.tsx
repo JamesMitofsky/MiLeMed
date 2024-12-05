@@ -23,10 +23,10 @@ import React, { useState } from 'react'
 import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
 
 import { NextPageWithLayout } from './_app'
-import useLecturesQuery from '../../../packages/app/utils/react-query/useLecturesQuery'
+import { useFetchAllLecturesWithExtraData } from '../../../packages/app/utils/react-query/useFetchAllLecturesWithExtraData'
 
 // Step 1: Define the type for the return value of useLecturesQuery
-type UseLecturesQueryReturnType = ReturnType<typeof useLecturesQuery>
+type UseLecturesQueryReturnType = ReturnType<typeof useFetchAllLecturesWithExtraData>
 
 // Step 2: Define the type for the data property
 type SingleLectureDataType = NonNullable<UseLecturesQueryReturnType['data']>[number]
@@ -42,7 +42,7 @@ const truncateContent = (content: string, sentenceCount: number = 2): string => 
 export const Page: NextPageWithLayout = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
-  const { data } = useLecturesQuery()
+  const { data } = useFetchAllLecturesWithExtraData()
 
   const toggleMode = () => {
     setMode(mode === 'THEORETICAL' ? 'PRACTICAL' : 'THEORETICAL')

@@ -47,4 +47,4 @@ const useFetchListOfLecturesWithCompletionData = ({
   }
 }
 
-export default useFetchListOfLecturesWithCompletionData
+export { useFetchListOfLecturesWithCompletionData }

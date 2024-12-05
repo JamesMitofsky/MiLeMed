@@ -29,4 +29,4 @@ const useMarkLectureAsRead = () => {
   })
 }
 
-export default useMarkLectureAsRead
+export { useMarkLectureAsRead }
