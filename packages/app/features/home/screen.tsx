@@ -14,11 +14,15 @@ export function HomeScreen() {
   const toast = useToastController()
   const [isMainPageVisible, setIsMainPageVisible] = useState(false)
 
-  const handleRegistrationSuccess = useCallback(() => {
+  const triggerConfetti = useCallback(() => {
     confettiRef.current?.restart()
+  }, [confettiRef])
+
+  const handleRegistrationSuccess = useCallback(() => {
+    triggerConfetti()
     toast.show('Profil erfolgreich eingerichtet.')
     setIsMainPageVisible(true)
-  }, [confettiRef])
+  }, [confettiRef, triggerConfetti, toast, setIsMainPageVisible])
 
   useEffect(() => {
     if (profile?.role) {
@@ -28,9 +32,13 @@ export function HomeScreen() {
     }
   }, [profile?.role, setIsMainPageVisible])
 
+  const onFeedbackSubmitSucccess = useCallback(() => {
+    triggerConfetti()
+  }, [triggerConfetti])
+
   return (
     <XStack als="center" ai="flex-start" f={1}>
-      <Confetti autoplay={false} fadeOutOnEnd ref={confettiRef} />
+      <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} />
       <ScrollView f={1} fb={0}>
         <YStack gap="$9" pb="$10" pt="$5" f={1}>
           {!profile ? (
@@ -39,7 +47,7 @@ export function HomeScreen() {
             <>
               <ChaptersPreviewList />
               <StatisticsPreviewList />
-              <FeedbackSection />
+              <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
             </>
           ) : (
             <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />

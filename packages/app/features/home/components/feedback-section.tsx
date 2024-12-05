@@ -25,7 +25,11 @@ const feedbackSchema = z.object({
 
 type FeedbackFormType = z.infer<typeof feedbackSchema>
 
-export const FeedbackSection = () => {
+type FeedbackSectionProps = {
+  onSubmitSuccess?: () => void
+}
+
+export const FeedbackSection = ({ onSubmitSuccess }: FeedbackSectionProps) => {
   const {
     handleSubmit,
     control,
@@ -51,9 +55,12 @@ export const FeedbackSection = () => {
         console.error('Error submitting feedback:', error)
         toast.show('Fehler beim Absenden des Feedbacks')
       } else {
-        toast.show('Feedback erfolgreich übermittelt')
+        toast.show('Danke für dein Feedback!')
         Keyboard.dismiss()
         reset()
+        if (onSubmitSuccess) {
+          onSubmitSuccess()
+        }
       }
     } catch (err) {
       console.error('Unexpected error:', err)
