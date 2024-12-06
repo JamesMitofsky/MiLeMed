@@ -73,23 +73,23 @@ export const StatisticsPreviewList = () => {
       <ScrollAdapt itemWidth={180} withSnap>
         <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
           <OverviewCard
-            title="Kapitel abgeschlossen"
-            value={`${chapterCompletion?.completed_chapters ?? '—'} ${
-              chapterCompletion?.completed_chapters === 1 ? 'Kapitel' : 'Kapitel'
-            }`}
-            badgeText={`Gesamt: ${chapterCompletion?.total_chapters} ${
-              chapterCompletion?.total_chapters === 1 ? 'Kapitel' : 'Kapitel'
-            }`}
-            badgeState="success"
-          />
-
-          <OverviewCard
             title="Lektion abgeschlossen" // Lectures Completed
             value={`${lectureTotals?.completed_lectures ?? '—'} ${
               lectureTotals?.completed_lectures === 1 ? 'Lektion' : 'Lektionen'
             }`}
             badgeText={`Gesamt: ${lectureTotals?.total_lectures ?? '—'} ${
               lectureTotals?.total_lectures === 1 ? 'Lektion' : 'Lektionen'
+            }`}
+            badgeState="success"
+          />
+
+          <OverviewCard
+            title="Kapitel abgeschlossen"
+            value={`${chapterCompletion?.completed_chapters ?? '—'} ${
+              chapterCompletion?.completed_chapters === 1 ? 'Kapitel' : 'Kapitel'
+            }`}
+            badgeText={`Gesamt: ${chapterCompletion?.total_chapters} ${
+              chapterCompletion?.total_chapters === 1 ? 'Kapitel' : 'Kapitel'
             }`}
             badgeState="success"
           />

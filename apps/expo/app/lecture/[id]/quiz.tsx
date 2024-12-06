@@ -100,6 +100,8 @@ const QuizForm: React.FC = () => {
 
         await queryClient.invalidateQueries(['lectures_with_completion', chapterId])
         await queryClient.invalidateQueries(['chapters'])
+        await queryClient.invalidateQueries(['lectureCompletionCounts'])
+        await queryClient.invalidateQueries(['chapterCompletionCounts'])
         if (error) throw error
       } catch (error) {
         console.error('Submission error:', error)
