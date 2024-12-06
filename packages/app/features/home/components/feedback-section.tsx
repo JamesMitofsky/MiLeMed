@@ -3,7 +3,6 @@ import { Stack, Text, View, Button, TextArea, YStack, useToastController, H2, XS
 import { Info, Rocket } from '@tamagui/lucide-icons'
 import { useForm, Controller } from 'react-hook-form'
 import { Keyboard } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { z } from 'zod'
 
 import { useSupabase } from '../../../utils/supabase/useSupabase'
@@ -70,41 +69,35 @@ export const FeedbackSection = ({ onSubmitSuccess }: FeedbackSectionProps) => {
       </XStack>
 
       <Stack maxWidth={1070} gap="$3" mx="$3.5">
-        <KeyboardAwareScrollView
-          enableOnAndroid
-          keyboardOpeningTime={0}
-          resetScrollToCoords={{ x: 0, y: 0 }}
-        >
-          <YStack flexDirection="column" width="100%" gap="$1">
-            <Controller
-              name="feedback"
-              control={control}
-              render={({ field: { onChange, value } }) => (
-                <TextArea
-                  id="feedback-content"
-                  size="$3"
-                  fontWeight="300"
-                  height={180}
-                  placeholder="Teilen Sie uns Ihr Feedback mit"
-                  onChangeText={onChange}
-                  value={value}
-                />
-              )}
-            />
-            {errors.feedback && isSubmitted && <Text color="red">{errors.feedback.message}</Text>}
-            <View flexDirection="row" theme="alt1" marginTop="$2.5" alignItems="center" gap="$2">
-              <Info size={15} />
-              <Text fontWeight="300" theme="alt2" fontSize="$2">
-                Wir freuen uns über Ihr Feedback zu Funktionen, die Sie lieben oder vermissen, oder
-                zu etwas, das Sie frustrierend finden.
-              </Text>
-            </View>
+        <YStack flexDirection="column" width="100%" gap="$1">
+          <Controller
+            name="feedback"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextArea
+                id="feedback-content"
+                size="$3"
+                fontWeight="300"
+                height={180}
+                placeholder="Teilen Sie uns Ihr Feedback mit"
+                onChangeText={onChange}
+                value={value}
+              />
+            )}
+          />
+          {errors.feedback && isSubmitted && <Text color="red">{errors.feedback.message}</Text>}
+          <View flexDirection="row" theme="alt1" marginTop="$2.5" alignItems="center" gap="$2">
+            <Info size={15} />
+            <Text fontWeight="300" theme="alt2" fontSize="$2">
+              Wir freuen uns über Ihr Feedback zu Funktionen, die Sie lieben oder vermissen, oder zu
+              etwas, das Sie frustrierend finden.
+            </Text>
+          </View>
 
-            <Button themeInverse marginTop="$3" onPress={handleSubmit(onSubmit)}>
-              <Button.Text>Absenden</Button.Text>
-            </Button>
-          </YStack>
-        </KeyboardAwareScrollView>
+          <Button themeInverse marginTop="$3" onPress={handleSubmit(onSubmit)}>
+            <Button.Text>Absenden</Button.Text>
+          </Button>
+        </YStack>
       </Stack>
     </View>
   )
