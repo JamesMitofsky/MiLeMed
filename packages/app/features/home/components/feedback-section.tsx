@@ -1,16 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import {
-  Stack,
-  Text,
-  View,
-  isWeb,
-  Button,
-  TextArea,
-  YStack,
-  useToastController,
-  H2,
-  XStack,
-} from '@my/ui'
+import { Stack, Text, View, Button, TextArea, YStack, useToastController, H2, XStack } from '@my/ui'
 import { Info, Rocket } from '@tamagui/lucide-icons'
 import { useForm, Controller } from 'react-hook-form'
 import { Keyboard } from 'react-native'
@@ -80,21 +69,7 @@ export const FeedbackSection = ({ onSubmitSuccess }: FeedbackSectionProps) => {
         </H2>
       </XStack>
 
-      <Stack
-        maxWidth={1070}
-        gap="$3"
-        $platform-native={{
-          marginBottom: '$0',
-          marginLeft: '$3.5',
-          marginRight: '$3.5',
-        }}
-        justifyContent="flex-start"
-        flexWrap="wrap"
-        flexDirection={isWeb ? 'row' : 'column'}
-        $gtMd={{
-          gap: '$4',
-        }}
-      >
+      <Stack maxWidth={1070} gap="$3" mx="$3.5">
         <KeyboardAwareScrollView
           enableOnAndroid
           keyboardOpeningTime={0}
