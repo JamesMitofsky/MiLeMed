@@ -17,9 +17,7 @@ export const StatisticsPreviewList = () => {
     ['chapterCompletionCounts'],
     async () => {
       if (!user?.id) throw new Error('User ID is not available')
-      const { data, error } = await supabase.rpc('get_chapter_completion_counts', {
-        user_id: user?.id,
-      })
+      const { data, error } = await supabase.rpc('fetch_count_of_chapters_completed')
 
       if (error) {
         console.error('Error fetching chapter completion counts:', error)

@@ -16,9 +16,10 @@ const useFetchCountOfLecturesCompleted = () => {
     }
 
     // Call the Supabase RPC function
-    const { data, error } = await supabase.rpc('get_lecture_completion_counts', { user_id: userId })
+    const { data, error } = await supabase.rpc('fetch_lecture_completion_counts')
 
     if (error) {
+      console.error(error.details, error.hint, error.code)
       throw new Error(error.message)
     }
 
