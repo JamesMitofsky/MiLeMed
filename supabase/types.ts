@@ -101,7 +101,6 @@ export type Database = {
       lecture_events: {
         Row: {
           created_at: string | null
-          description: string | null
           event_type: Database["public"]["Enums"]["lecture_event_type"]
           id: number
           lecture_id: number
@@ -110,7 +109,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          description?: string | null
           event_type: Database["public"]["Enums"]["lecture_event_type"]
           id?: number
           lecture_id: number
@@ -119,7 +117,6 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          description?: string | null
           event_type?: Database["public"]["Enums"]["lecture_event_type"]
           id?: number
           lecture_id?: number
@@ -477,6 +474,7 @@ export type Database = {
         | "LECTURE_SKIPPED"
         | "LECTURE_MARKED_AS_READ"
         | "QUIZ_PASSED"
+        | "LECTURE_COMPLETED"
       mode: "THEORETICAL" | "PRACTICAL"
       question_type: "OPEN" | "MULTIPLE_CHOICE"
       quiz_event_type: "QUIZ_STARTED" | "QUESTION_ANSWERED" | "QUIZ_COMPLETED"
