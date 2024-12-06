@@ -66,7 +66,7 @@ export const StatisticsPreviewList = () => {
         </H2>
         <H2 theme="alt1" fow="400">
           {' '}
-          Statistikenr
+          Statistiken
         </H2>
         {/*TODO: add this back in when more stuff is ready to share <Theme name="alt2">
           <Button size="$2" chromeless iconAfter={ArrowRight}>
