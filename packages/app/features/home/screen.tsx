@@ -42,10 +42,11 @@ export function HomeScreen() {
       enableOnAndroid
       keyboardOpeningTime={0}
       resetScrollToCoords={{ x: 0, y: 0 }}
+      keyboardShouldPersistTaps="handled"
     >
       <XStack als="center" ai="flex-start" f={1}>
         <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} />
-        <ScrollView f={1} fb={0}>
+        <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
             {!profile ? (
               <FullscreenSpinner />
