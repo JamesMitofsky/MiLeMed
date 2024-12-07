@@ -1,24 +1,17 @@
 import { useQuery } from '@tanstack/react-query'
 
 import { useSupabase } from '../supabase/useSupabase'
-import { useUser } from '../useUser'
 
 // Custom hook for fetching lecture completion counts
 const useFetchCountOfLecturesCompleted = () => {
   const supabase = useSupabase()
-  const { profile } = useUser()
-
-  const userId = profile?.id
 
   const fetchLectureCompletionCounts = async () => {
-    if (!userId) {
-      throw new Error('User ID is not available')
-    }
-
     // Call the Supabase RPC function
-    const { data, error } = await supabase.rpc('get_lecture_completion_counts', { user_id: userId })
+    const { data, error } = await supabase.rpc('fetch_lecture_completion_counts')
 
     if (error) {
+      console.error(error.details, error.hint, error.code)
       throw new Error(error.message)
     }
 
@@ -32,8 +25,7 @@ const useFetchCountOfLecturesCompleted = () => {
   }
 
   // Use TanStack Query's useQuery to fetch data
-  return useQuery(['lectureCompletionCounts', userId], fetchLectureCompletionCounts, {
-    enabled: !!userId, // Only run the query if userId is provided
+  return useQuery(['lectureCompletionCounts'], fetchLectureCompletionCounts, {
     staleTime: 5 * 60 * 1000, // Optionally, set a stale time to avoid refetching too frequently
     retry: false, // Optionally, disable retries if userId is unavailable
   })

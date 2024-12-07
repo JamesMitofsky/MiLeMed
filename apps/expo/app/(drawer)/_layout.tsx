@@ -1,8 +1,11 @@
 import { SidebarDrawer } from '@my/app/features/profile/screen'
-import { Button } from '@my/ui'
+import { Button, Image } from '@my/ui'
 import { DrawerActions, useNavigation } from '@react-navigation/native'
 import { Menu } from '@tamagui/lucide-icons'
 import { Drawer } from 'expo-router/drawer'
+
+// @ts-ignore
+import logo from '../../assets/cropped-logo.png' // Import the image
 
 export default function Layout() {
   const navigation = useNavigation()
@@ -24,6 +27,9 @@ export default function Layout() {
             <Menu size={24} color="black" />
           </Button>
         ),
+        headerRight: () => {
+          return <Image mr="$2" height={27} width={135} src={logo} />
+        },
         // TODO fix color
         sceneContainerStyle: { backgroundColor: 'white' },
       }}
