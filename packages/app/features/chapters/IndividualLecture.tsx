@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useContext } from 'react'
-import Markdown from 'react-native-markdown-display'
+import { Image } from 'react-native'
+import Markdown, { ASTNode } from 'react-native-markdown-display'
 import { createParam } from 'solito'
 import { useRouter } from 'solito/router'
-import { YStack, Text, ScrollView, Button, Theme } from 'tamagui'
+import { YStack, Text, ScrollView, Button, Theme, SizableText } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useHasAssociatedQuiz } from '../../utils/react-query/useHasAssociatedQuiz'
@@ -31,7 +32,6 @@ const IndividualLecture = () => {
     router.back()
   }
 
-  // Use the ID to query specific module data
   const { data: lecture, isLoading } = useQuery(['lecture', id], {
     queryFn: async () => {
       if (!id) return null
@@ -41,9 +41,30 @@ const IndividualLecture = () => {
       }
       return data
     },
-    enabled: !!id, // Only run the query if 'id' is available
+    enabled: !!id,
   })
   const context = useContext(ThemeContext)
+
+  const customRules = {
+    image: (node: ASTNode) => {
+      const { src, alt } = node.attributes as { src: string; alt: string }
+
+      return (
+        <YStack ai="center" w="100%">
+          <Image
+            source={{ uri: src }}
+            style={{ maxHeight: 400, width: '100%', height: '100%' }}
+            resizeMode="contain"
+          />
+          {alt && (
+            <SizableText size="$1" my="$2" fontStyle="italic" theme="alt1">
+              {alt}
+            </SizableText>
+          )}
+        </YStack>
+      )
+    },
+  }
 
   if (isLoading) {
     return (
@@ -98,6 +119,7 @@ const IndividualLecture = () => {
               color: context?.systemTheme === 'dark' ? 'white' : 'black',
             },
           }}
+          rules={customRules}
         >
           {lecture.content}
         </Markdown>
