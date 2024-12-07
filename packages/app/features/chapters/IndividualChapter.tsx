@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useLocalSearchParams } from 'expo-router'
-import { YStack, Text, Separator, ScrollView, View } from 'tamagui'
+import { YStack, Text, Separator, ScrollView } from 'tamagui'
 
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { Skeleton } from '../general/Skeleton'
@@ -35,7 +35,7 @@ export const IndividualChapter = () => {
   return (
     <YStack padding="$4" flex={1} mb="$4">
       {isLoading ? (
-        <YStack o={0.5} padding="$4" gap="$2">
+        <YStack o={0.5} gap="$2" pb="$4">
           <Skeleton height={16} width="100%" />
           <YStack gap="$2" mt="$3">
             <Skeleton height={12} width="75%" />
@@ -44,14 +44,14 @@ export const IndividualChapter = () => {
           </YStack>
         </YStack>
       ) : (
-        <View>
+        <YStack gap="$2" pb="$4">
           <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
             {chapter.title}
           </Text>
           <Text fontSize="$4" marginBottom="$4">
             {chapter.description}
           </Text>
-        </View>
+        </YStack>
       )}
       <Separator />
 

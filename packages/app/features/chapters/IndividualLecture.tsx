@@ -3,12 +3,13 @@ import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
 import { createParam } from 'solito'
 import { useRouter } from 'solito/router'
-import { YStack, Text, Spinner, ScrollView, Button, Theme } from 'tamagui'
+import { YStack, Text, ScrollView, Button, Theme } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useHasAssociatedQuiz } from '../../utils/react-query/useHasAssociatedQuiz'
 import { useMarkLectureAsRead } from '../../utils/react-query/useMarkLectureAsRead'
 import { supabase } from '../../utils/supabase/client.native'
+import { Skeleton } from '../general/Skeleton'
 
 const { useParams } = createParam<{ id: string }>()
 
@@ -46,9 +47,31 @@ const IndividualLecture = () => {
 
   if (isLoading) {
     return (
-      <YStack padding="$4" alignItems="center">
-        <Spinner size="small" />
-        <Text marginTop="$2">Lade Vorlesung...</Text>
+      <YStack o={0.5} padding="$4" mb="$8" gap="$4">
+        <YStack mt="$1" mb="$6">
+          <Skeleton height={20} width="100%" />
+        </YStack>
+        <YStack gap="$2">
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="35%" />
+        </YStack>
+        <YStack gap="$2">
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="35%" />
+        </YStack>
+        <YStack gap="$2">
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="75%" />
+          <Skeleton height={12} width="90%" />
+          <Skeleton height={12} width="35%" />
+        </YStack>
       </YStack>
     )
   }
@@ -63,7 +86,7 @@ const IndividualLecture = () => {
 
   return (
     <ScrollView snapToAlignment="start">
-      <YStack padding="$4">
+      <YStack padding="$4" mb="$8">
         <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
           {lecture.title}
         </Text>
