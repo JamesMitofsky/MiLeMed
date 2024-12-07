@@ -1,4 +1,12 @@
-import { Avatar, FullscreenSpinner, SubmitButton, Theme, YStack, useToastController } from '@my/ui'
+import {
+  Avatar,
+  FullscreenSpinner,
+  SizableText,
+  SubmitButton,
+  Theme,
+  YStack,
+  useToastController,
+} from '@my/ui'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { SchemaForm, formFields } from 'app/utils/SchemaForm'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
@@ -8,6 +16,7 @@ import { SolitoImage } from 'solito/image'
 import { useRouter } from 'solito/router'
 
 import { api } from '../../utils/api'
+import { UserRoleType } from '../../utils/supabase/databaseTypes'
 import { z } from '../../utils/zod-de'
 
 const { useParams } = createParam<{ edit_name?: ''; edit_about?: '' }>()
@@ -17,19 +26,33 @@ export const EditProfileScreen = () => {
   if (!profile || !user?.id) {
     return <FullscreenSpinner />
   }
-  return <EditProfileForm userId={user.id} initial={{ name: profile.name, about: profile.about }} />
+  return (
+    <EditProfileForm
+      userId={user.id}
+      initial={{
+        name: profile.name,
+        role: profile.role,
+        clinicalSemeseter: profile.clinical_semester,
+        overallSemester: profile.overall_semester,
+      }}
+    />
+  )
 }
 
 const ProfileSchema = z.object({
   name: formFields.text.describe('Name // Max Mustermann'), // Changed to a more common German name
-  about: formFields.textarea.describe('Über // Erzählen Sie uns ein wenig über sich selbst'),
 })
 
 const EditProfileForm = ({
   initial,
   userId,
 }: {
-  initial: { name: string | null; about: string | null }
+  initial: {
+    name: string | null
+    role: UserRoleType | null
+    clinicalSemeseter: number | null
+    overallSemester: number | null
+  }
   userId: string
 }) => {
   const { params } = useParams()
@@ -40,10 +63,7 @@ const EditProfileForm = ({
   const apiUtils = api.useUtils()
   const mutation = useMutation({
     async mutationFn(data: z.infer<typeof ProfileSchema>) {
-      await supabase
-        .from('profiles')
-        .update({ name: data.name, about: data.about })
-        .eq('id', userId)
+      await supabase.from('profiles').update({ name: data.name }).eq('id', userId)
     },
 
     async onSuccess() {
@@ -61,13 +81,9 @@ const EditProfileForm = ({
         name: {
           autoFocus: !!params?.edit_name,
         },
-        about: {
-          autoFocus: !!params?.edit_about,
-        },
       }}
       defaultValues={{
         name: initial.name ?? '',
-        about: initial.about ?? '',
       }}
       onSubmit={(values) => mutation.mutate(values)}
       renderAfter={({ submit }) => (
@@ -82,6 +98,26 @@ const EditProfileForm = ({
             <UserAvatar />
           </YStack>
           {Object.values(fields)}
+          {initial.role === 'STUDENT' && (
+            <>
+              <YStack gap="$2">
+                <SizableText size="$4">Fachsemester</SizableText>
+                <SizableText size="$3">
+                  {initial.overallSemester
+                    ? initial.overallSemester
+                    : 'Fachsemester nicht angegeben'}
+                </SizableText>
+              </YStack>
+              <YStack gap="$2">
+                <SizableText size="$4">Klinisches Semester</SizableText>
+                <SizableText size="$3">
+                  {initial.clinicalSemeseter
+                    ? initial.clinicalSemeseter
+                    : 'Klinisches Semester nicht angegeben'}
+                </SizableText>
+              </YStack>
+            </>
+          )}
         </>
       )}
     </SchemaForm>
