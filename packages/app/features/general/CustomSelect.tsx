@@ -19,16 +19,7 @@ export function CustomSelect({ placeholder, items, value, onChange }: CustomSele
       </Select.Trigger>
 
       <Adapt when="sm" platform="touch">
-        <Sheet
-          modal
-          dismissOnSnapToBottom
-          animationConfig={{
-            type: 'spring',
-            damping: 20,
-            mass: 1.2,
-            stiffness: 250,
-          }}
-        >
+        <Sheet modal dismissOnSnapToBottom>
           <Sheet.Frame>
             <Sheet.ScrollView>
               <Adapt.Contents />
