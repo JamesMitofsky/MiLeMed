@@ -9,7 +9,6 @@ import {
   H1,
   Input,
   Text,
-  DatePickerForControl,
   Checkbox,
   FullscreenSpinner,
 } from '@my/ui'
@@ -17,6 +16,7 @@ import { Check } from '@tamagui/lucide-icons'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
+import { MinimalDatePicker } from './MinimalDatePicker'
 import { ProfilesType, UserRoleType, GenderType } from '../../../utils/supabase/databaseTypes'
 import { useSupabase } from '../../../utils/supabase/useSupabase'
 import { useUser } from '../../../utils/useUser'
@@ -126,6 +126,7 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
     setIsPendingUpdate(true)
 
     const role = getRoleByEmailEnding(user?.email || '')
+
     const transformedData: ProfileFormType = {
       ...data,
       birthdate: data.birthdate ? data.birthdate.toISOString() : null,
@@ -178,11 +179,7 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
                 name="birthdate"
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <DatePickerForControl
-                    placeholder="Geburtsdatum"
-                    value={value ? value.toISOString().split('T')[0] : ''}
-                    onChangeText={(dateAsString) => onChange(new Date(dateAsString))}
-                  />
+                  <MinimalDatePicker placeholder="Geburtsdatum" onChange={onChange} value={value} />
                 )}
               />
               {errors.birthdate && <Text color="red">{errors.birthdate.message}</Text>}

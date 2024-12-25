@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "clean": "react-native-clean-project",
-    "start": "EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start -c",
+    "start": "EXPO_USE_METRO_WORKSPACE_ROOT=1 npx expo start -c --go --ios --android",
     "start:dev-client": "EXPO_USE_METRO_WORKSPACE_ROOT=1 yarn expo:prebuild && yarn expo start --dev-client",
     "expo:prebuild": "yarn expo prebuild --skip-dependency-update react-native,react",
     "android": "yarn expo run:android",
@@ -93,7 +93,7 @@
   "devDependencies": {
     "@babel/core": "^7.24",
     "@expo/metro-config": "~0.18.11",
-    "@tamagui/babel-plugin": "^1.116.15",
+    "@tamagui/babel-plugin": "^1.120.1",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "babel-preset-expo": "~11.0.0",
     "cross-env": "^7.0.3",
