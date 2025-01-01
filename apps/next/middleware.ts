@@ -13,6 +13,7 @@ const publicRoutes = [
   '/delete-account',
   '/app',
   '/android',
+  '/qvk2025',
 ]
 // put the authentication routes here - these will only be accessed by guests
 const authRoutes = ['/sign-in', '/sign-up', '/request-password-reset']
