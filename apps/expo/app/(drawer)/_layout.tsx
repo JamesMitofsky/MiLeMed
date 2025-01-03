@@ -5,7 +5,7 @@ import { Menu } from '@tamagui/lucide-icons'
 import { Drawer } from 'expo-router/drawer'
 
 // @ts-ignore
-import logo from '../../assets/cropped-logo.png' // Import the image
+import logoText from '../../assets/logoText.png' // Import the image
 
 export default function Layout() {
   const navigation = useNavigation()
@@ -28,7 +28,7 @@ export default function Layout() {
           </Button>
         ),
         headerRight: () => {
-          return <Image mr="$2" height={27} width={135} src={logo} />
+          return <Image mr="$2" height="$1" width="$9" marginRight="$3" src={logoText} />
         },
         // TODO fix color
         sceneContainerStyle: { backgroundColor: 'white' },
