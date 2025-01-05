@@ -39,13 +39,13 @@ export const ChapterLectureCard = ({
       <Card.Header my="auto" padded gap={!dense ? '$3' : undefined}>
         {Icon && <Icon size="$3" o={0.6} />}
         <YStack gap={!dense ? '$2' : undefined}>
-          <H4 size="$5" mt="$2">
+          <H4 size="$4" mt="$2">
             {title}
           </H4>
 
           {progress && (
             <XStack ai="center">
-              <SizableText size="$4" theme="alt1">
+              <SizableText size="$3" theme="alt1">
                 {progress.current}
               </SizableText>
               <SizableText size="$2" theme="alt1">
