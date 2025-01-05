@@ -119,7 +119,7 @@ const IndividualLecture = () => {
               color: context?.systemTheme === 'dark' ? 'white' : 'black',
             },
           }}
-          rules={customRules}
+          // rules={customRules}
         >
           {lecture.content}
         </Markdown>
