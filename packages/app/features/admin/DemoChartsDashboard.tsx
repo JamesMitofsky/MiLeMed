@@ -6,7 +6,6 @@ import {
   BarElement,
   CategoryScale,
   Chart as ChartJS,
-  ChartOptions,
   Legend,
   LinearScale,
   LineElement,
@@ -15,10 +14,13 @@ import {
   Tooltip,
   ChartData,
 } from 'chart.js'
+import { motion } from 'framer-motion'
 import React from 'react'
 import { Line, Bar } from 'react-chartjs-2'
 
-// 2. Register Chart.js Components
+const MotionYStack = motion(YStack)
+
+// Chart.js-Komponenten registrieren
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,55 +32,72 @@ ChartJS.register(
   Legend
 )
 
-// 3. Generate Fake Data
-const generateFakeData = (): {
-  daysInMonth: string[]
-  userRegistrations: number[]
-  quizCompletions: number[]
-  avgQuizTimes: number[]
-  appUsage: number[]
-} => {
+// Fake-Daten generieren
+const generateFakeData = () => {
   const today = new Date()
   const daysInMonth = Array.from({ length: 30 }, (_, i) => {
     const date = new Date(today)
     date.setDate(today.getDate() - (30 - i))
-
-    // Format the date in German with words
     return new Intl.DateTimeFormat('de-DE', {
-      day: 'numeric', // Day of the month
-      month: 'short', // Full month name
-      year: '2-digit', // Full year
+      day: 'numeric',
+      month: 'short',
+      year: '2-digit',
     }).format(date)
   })
 
   const userRegistrations = daysInMonth.map((_, i) =>
     Math.floor((i + 1) * faker.number.float({ min: 0.5, max: 1.5 }))
   )
-
   const quizCompletions = daysInMonth.map((_, i) =>
     Math.floor((i + 1) * faker.number.float({ min: 0.7, max: 2 }))
   )
-
   const avgQuizTimes = daysInMonth.map((_, i) =>
     Math.floor(
       30 + i * faker.number.float({ min: 1, max: 5 }) + faker.number.float({ min: -10, max: 10 })
     )
   )
-
   const appUsage = Array.from({ length: 6 }, (_, i) =>
     Math.floor(
       (i + 1) * faker.number.float({ min: 1, max: 5 }) + faker.number.float({ min: 5, max: 15 })
     )
   )
+  const dailyActiveUsers = daysInMonth.map(() => faker.number.int({ min: 200, max: 800 }))
+  const quizAttempts = daysInMonth.map(() => faker.number.int({ min: 100, max: 500 }))
+  const lectureCompletionRates = daysInMonth.map(() => faker.number.float({ min: 50, max: 100 }))
+  const chapterProgress = Array.from({ length: 10 }, () => faker.number.float({ min: 1, max: 100 }))
+  const weeklyActiveUsers = Array.from({ length: 4 }, (_, i) =>
+    faker.number.int({ min: 800, max: 2000 })
+  )
 
-  return { daysInMonth, userRegistrations, quizCompletions, avgQuizTimes, appUsage }
+  return {
+    daysInMonth,
+    userRegistrations,
+    quizCompletions,
+    avgQuizTimes,
+    appUsage,
+    dailyActiveUsers,
+    quizAttempts,
+    lectureCompletionRates,
+    chapterProgress,
+    weeklyActiveUsers,
+  }
 }
 
-const { daysInMonth, userRegistrations, quizCompletions, avgQuizTimes, appUsage } =
-  generateFakeData()
+const {
+  daysInMonth,
+  userRegistrations,
+  quizCompletions,
+  avgQuizTimes,
+  appUsage,
+  dailyActiveUsers,
+  quizAttempts,
+  lectureCompletionRates,
+  chapterProgress,
+  weeklyActiveUsers,
+} = generateFakeData()
 
-// 4. Chart.js options
-const options: ChartOptions<'line' | 'bar'> = {
+// Chart.js-Optionen
+const options = {
   responsive: true,
   plugins: {
     legend: { display: false },
@@ -86,12 +105,11 @@ const options: ChartOptions<'line' | 'bar'> = {
   },
 }
 
-// Define data types
+// Datentypen definieren
 type LineChartData = ChartData<'line', number[], string>
 type BarChartData = ChartData<'bar', number[], string>
 
 const DemoChartsDashboard: React.FC = () => {
-  // 5. Define chart data
   const lineData1: LineChartData = {
     labels: daysInMonth,
     datasets: [
@@ -108,7 +126,7 @@ const DemoChartsDashboard: React.FC = () => {
     labels: daysInMonth,
     datasets: [
       {
-        label: 'Quiz-Abschlüsse',
+        label: 'Abgeschlossene Quizze',
         data: quizCompletions,
         borderColor: 'rgba(75, 192, 192, 1)',
         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -128,11 +146,11 @@ const DemoChartsDashboard: React.FC = () => {
     ],
   }
 
-  const barData: BarChartData = {
+  const barData1: BarChartData = {
     labels: ['0-5', '5-10', '10-20', '20-30', '40+'],
     datasets: [
       {
-        label: 'Nutzeranzahl',
+        label: 'App-Nutzungsverteilung',
         data: appUsage,
         backgroundColor: 'rgba(153, 102, 255, 0.5)',
         borderColor: 'rgba(153, 102, 255, 1)',
@@ -141,51 +159,140 @@ const DemoChartsDashboard: React.FC = () => {
     ],
   }
 
-  // 6. Render UI
+  const barData2: BarChartData = {
+    labels: daysInMonth,
+    datasets: [
+      {
+        label: 'Tägliche aktive Benutzer',
+        data: dailyActiveUsers,
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+    ],
+  }
+
+  const lineData4: LineChartData = {
+    labels: daysInMonth,
+    datasets: [
+      {
+        label: 'Quizversuche',
+        data: quizAttempts,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      },
+    ],
+  }
+
+  const lineData5: LineChartData = {
+    labels: daysInMonth,
+    datasets: [
+      {
+        label: 'Vorlesungsabschlussrate (%)',
+        data: lectureCompletionRates,
+        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      },
+    ],
+  }
+
+  const barData3: BarChartData = {
+    labels: Array.from({ length: 10 }, (_, i) => `Kapitel ${i + 1}`),
+    datasets: [
+      {
+        label: 'Kapitel-Fortschritt (%)',
+        data: chapterProgress,
+        backgroundColor: 'rgba(255, 206, 86, 0.5)',
+        borderColor: 'rgba(255, 206, 86, 1)',
+        borderWidth: 1,
+      },
+    ],
+  }
+
+  const barData4: BarChartData = {
+    labels: ['Woche 1', 'Woche 2', 'Woche 3', 'Woche 4'],
+    datasets: [
+      {
+        label: 'Wöchentliche aktive Benutzer',
+        data: weeklyActiveUsers,
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        borderWidth: 1,
+      },
+    ],
+  }
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: i * 0.2 },
+    }),
+  }
+
   return (
-    <YStack
-      gap="$4"
-      // bg="$accentBackground"
-      borderRadius="$5"
-      justifyContent="center"
-      alignItems="center"
-      padding="$4"
-    >
-      {/* A single XStack that wraps */}
-      <XStack flexWrap="wrap" gap="$8">
-        {/* Item 1 */}
-        <YStack flexBasis="30%" minWidth="$20" bg="$blue3Light" p="$4" borderRadius="$5">
-          <SizableText size="$7" mb="$4">
-            Benutzerregistrierung
-          </SizableText>
-          <Line options={options} data={lineData1} />
-        </YStack>
-
-        {/* Item 2 */}
-        <YStack flexBasis="30%" minWidth="$20" bg="$green2Light" p="$4" borderRadius="$5">
+    <XStack flexWrap="wrap" gap="$8" jc="center">
+      {[
+        lineData1,
+        lineData2,
+        lineData3,
+        barData1,
+        barData3,
+        barData2,
+        lineData4,
+        lineData5,
+        barData4,
+      ].map((data, index) => (
+        <MotionYStack
+          key={index}
+          custom={index}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          width="45%"
+          minWidth="$20"
+          maxWidth={500}
+          // @ts-ignore
+          bg={`$${
+            [
+              'blue3Light',
+              'green2Light',
+              'orange2Light',
+              'purple3Light',
+              'yellow3Light',
+              'green2Light',
+              'red2Light',
+              'blue2Light',
+              'green2Light',
+            ][index]
+          }`}
+          p="$4"
+          borderRadius="$5"
+        >
           <SizableText size="$6" mb="$4">
-            Quiz-Abschlüsse
+            {
+              [
+                'Benutzerregistrierungen',
+                'Abgeschlossene Quizze',
+                'Durchschnittliche Quizzeit',
+                'App-Nutzungsverteilung',
+                'Kapitel-Fortschritt',
+                'Tägliche aktive Benutzer',
+                'Quizversuche',
+                'Vorlesungsabschlussrate',
+                'Wöchentliche aktive Benutzer',
+              ][index]
+            }
           </SizableText>
-          <Line options={options} data={lineData2} />
-        </YStack>
-
-        {/* Item 3 */}
-        <YStack flexBasis="30%" minWidth="$20" bg="$orange2Light" p="$4" borderRadius="$5">
-          <SizableText size="$6" mb="$4">
-            Durchschnittliche Quizzeit
-          </SizableText>
-          <Line options={options} data={lineData3} />
-        </YStack>
-
-        {/* Item 4 */}
-        <YStack flexBasis="30%" minWidth="$20" bg="$purple3Light" p="$4" borderRadius="$5">
-          <SizableText size="$6" mb="$4">
-            App-Nutzungsverteilung
-          </SizableText>
-          <Bar options={options} data={barData} />
-        </YStack>
-      </XStack>
-    </YStack>
+          {index < 3 || index === 5 || index === 6 ? (
+            <Line options={options} data={data as LineChartData} />
+          ) : (
+            <Bar options={options} data={data as BarChartData} />
+          )}
+        </MotionYStack>
+      ))}
+    </XStack>
   )
 }
 
