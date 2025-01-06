@@ -102,10 +102,10 @@ export const NavTabs = (props: TabsProps) => {
         {user.profile?.role === 'ADMIN' && (
           <>
             <Tab value="/dashboard" onInteraction={handleOnInteraction}>
-              Dashboard
+              Übersicht
             </Tab>
             <Tab value="/manage-lectures" onInteraction={handleOnInteraction}>
-              Manage Lectures
+              Lektionen verwalten
             </Tab>
           </>
         )}
