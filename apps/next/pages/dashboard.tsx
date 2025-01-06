@@ -1,4 +1,5 @@
-import { H2, isWeb, ScrollView, XStack, YStack, Text } from '@my/ui'
+import { H1, isWeb, ScrollView, YStack } from '@my/ui'
+import { DemoChartsDashboard } from 'app/features/admin/DemoChartsDashboard'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -11,16 +12,15 @@ export const Page: NextPageWithLayout = () => {
       <Head>
         <title>Dashboard</title>
       </Head>
-      <XStack maw={1480} width={800} m="auto" f={1}>
-        <ScrollView f={4} fb={0}>
-          <ScrollToTopTabBarContainer>
-            <YStack gap="$7" pb="$10" pt="$5">
-              {isWeb && <H2>Dashboard</H2>}
-              <Text>Here we will display relevant data</Text>
-            </YStack>
-          </ScrollToTopTabBarContainer>
-        </ScrollView>
-      </XStack>
+
+      <ScrollView f={4} fb={0} mx="$5">
+        <ScrollToTopTabBarContainer>
+          <YStack gap="$7" pb="$10" pt="$5">
+            {isWeb && <H1>Interaktive Daten-Dashboard</H1>}
+            <DemoChartsDashboard />
+          </YStack>
+        </ScrollToTopTabBarContainer>
+      </ScrollView>
     </>
   )
 }
