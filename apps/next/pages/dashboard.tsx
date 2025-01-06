@@ -16,7 +16,11 @@ export const Page: NextPageWithLayout = () => {
       <ScrollView f={4} fb={0} mx="$5">
         <ScrollToTopTabBarContainer>
           <YStack gap="$7" pb="$10" pt="$5">
-            {isWeb && <H1>Interaktive Daten-Dashboard</H1>}
+            {isWeb && (
+              <H1 m={0} size="$9">
+                Interaktive Daten-Dashboard
+              </H1>
+            )}
             <DemoChartsDashboard />
           </YStack>
         </ScrollToTopTabBarContainer>

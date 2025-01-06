@@ -129,7 +129,7 @@ const DemoChartsDashboard: React.FC = () => {
   }
 
   const barData: BarChartData = {
-    labels: ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60'],
+    labels: ['0-5', '5-10', '10-20', '20-30', '40+'],
     datasets: [
       {
         label: 'Nutzeranzahl',
@@ -152,9 +152,9 @@ const DemoChartsDashboard: React.FC = () => {
       padding="$4"
     >
       {/* A single XStack that wraps */}
-      <XStack flexWrap="wrap" gap="$8" justifyContent="center">
+      <XStack flexWrap="wrap" gap="$8">
         {/* Item 1 */}
-        <YStack flexBasis="45%" minWidth="$20" bg="$blue3Light" p="$4" borderRadius="$5">
+        <YStack flexBasis="30%" minWidth="$20" bg="$blue3Light" p="$4" borderRadius="$5">
           <SizableText size="$7" mb="$4">
             Benutzerregistrierung
           </SizableText>
@@ -162,24 +162,24 @@ const DemoChartsDashboard: React.FC = () => {
         </YStack>
 
         {/* Item 2 */}
-        <YStack flexBasis="45%" minWidth="$20" bg="$green2Light" p="$4" borderRadius="$5">
-          <SizableText size="$8" mb="$4">
+        <YStack flexBasis="30%" minWidth="$20" bg="$green2Light" p="$4" borderRadius="$5">
+          <SizableText size="$6" mb="$4">
             Quiz-Abschlüsse
           </SizableText>
           <Line options={options} data={lineData2} />
         </YStack>
 
         {/* Item 3 */}
-        <YStack flexBasis="45%" minWidth="$20" bg="$orange2Light" p="$4" borderRadius="$5">
-          <SizableText size="$8" mb="$4">
+        <YStack flexBasis="30%" minWidth="$20" bg="$orange2Light" p="$4" borderRadius="$5">
+          <SizableText size="$6" mb="$4">
             Durchschnittliche Quizzeit
           </SizableText>
           <Line options={options} data={lineData3} />
         </YStack>
 
         {/* Item 4 */}
-        <YStack flexBasis="45%" minWidth="$20" bg="$purple3Light" p="$4" borderRadius="$5">
-          <SizableText size="$8" mb="$4">
+        <YStack flexBasis="30%" minWidth="$20" bg="$purple3Light" p="$4" borderRadius="$5">
+          <SizableText size="$6" mb="$4">
             App-Nutzungsverteilung
           </SizableText>
           <Bar options={options} data={barData} />
