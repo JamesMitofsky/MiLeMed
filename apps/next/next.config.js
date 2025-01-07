@@ -117,6 +117,11 @@ module.exports = () => {
         destination: '/sign-in',
         permanent: false,
       },
+      {
+        source: '/qvk2025',
+        destination: 'https://bit.ly/milemed-2024-recap',
+        permanent: false,
+      },
     ],
   }
 
