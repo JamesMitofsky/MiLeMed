@@ -8,6 +8,7 @@ import {
   Tabs,
   TabsProps,
   TabsTabProps,
+  Image,
 } from '@my/ui'
 import { useRouter as useNextRouter } from 'next/router'
 import { useState } from 'react'
@@ -48,6 +49,8 @@ export const NavTabs = (props: TabsProps) => {
       value={currentTab}
       onValueChange={setCurrentTab}
       activationMode="manual"
+      jc="space-between"
+      ai="center"
       {...props}
     >
       <AnimatePresence>
@@ -113,6 +116,9 @@ export const NavTabs = (props: TabsProps) => {
           Einstellungen
         </Tab>
       </Tabs.List>
+      {props.orientation === 'horizontal' && (
+        <Image src="/full-width-logo.png" height={40} width={160} />
+      )}
     </Tabs>
   )
 }

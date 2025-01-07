@@ -61,12 +61,12 @@ const generateFakeData = () => {
       (i + 1) * faker.number.float({ min: 1, max: 5 }) + faker.number.float({ min: 5, max: 15 })
     )
   )
-  const dailyActiveUsers = daysInMonth.map(() => faker.number.int({ min: 200, max: 800 }))
-  const quizAttempts = daysInMonth.map(() => faker.number.int({ min: 100, max: 500 }))
-  const lectureCompletionRates = daysInMonth.map(() => faker.number.float({ min: 50, max: 100 }))
-  const chapterProgress = Array.from({ length: 10 }, () => faker.number.float({ min: 1, max: 100 }))
+  const dailyActiveUsers = daysInMonth.map(() => faker.number.int({ min: 15, max: 30 }))
+  const quizAttempts = daysInMonth.map(() => faker.number.int({ min: 15, max: 60 }))
+  const lectureCompletionRates = daysInMonth.map(() => faker.number.float({ min: 10, max: 50 }))
+  const chapterProgress = Array.from({ length: 10 }, () => faker.number.float({ min: 1, max: 3 }))
   const weeklyActiveUsers = Array.from({ length: 4 }, (_, i) =>
-    faker.number.int({ min: 800, max: 2000 })
+    faker.number.int({ min: 105, max: 210 })
   )
 
   return {
