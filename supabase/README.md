@@ -1,3 +1,6 @@
+# Notes to self
+* Running `npx @snaplet/seed init` resolved the type errors I had in seed.ts
+
 ## Setting up Supabase
 
 To go through the Supabase setup, CD to the root of the directory and run `yarn setup`.
