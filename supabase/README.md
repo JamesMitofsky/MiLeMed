@@ -1,6 +1,10 @@
 # Notes to self
 * Running `npx @snaplet/seed init` resolved the type errors I had in seed.ts
 
+## Following existing changes to db
+Using a script, we can get all the past migrations written to a file, useful for passing to AI. This file is named `combine_migrations.sh`
+
+# Pre-existing Supabase
 ## Setting up Supabase
 
 To go through the Supabase setup, CD to the root of the directory and run `yarn setup`.
