@@ -9,34 +9,7 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      app_events: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          event_type: string
-          id: number
-          profile_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          event_type: string
-          id?: number
-          profile_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          event_type?: string
-          id?: number
-          profile_id?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      chapters: {
+      content_chapters: {
         Row: {
           created_at: string | null
           description: string | null
@@ -66,74 +39,7 @@ export type Database = {
         }
         Relationships: []
       }
-      images: {
-        Row: {
-          created_at: string | null
-          id: number
-          image_url: string
-          lecture_id: number | null
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          image_url: string
-          lecture_id?: number | null
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          image_url?: string
-          lecture_id?: number | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "images_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "lectures"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      lecture_events: {
-        Row: {
-          created_at: string | null
-          event_type: Database["public"]["Enums"]["lecture_event_type"]
-          id: number
-          lecture_id: number
-          profile_id: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          event_type: Database["public"]["Enums"]["lecture_event_type"]
-          id?: number
-          lecture_id: number
-          profile_id: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          event_type?: Database["public"]["Enums"]["lecture_event_type"]
-          id?: number
-          lecture_id?: number
-          profile_id?: string
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lecture_events_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "lectures"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      lectures: {
+      content_lectures: {
         Row: {
           chapter_id: number
           content: string
@@ -163,15 +69,249 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "lectures_chapter_id_fkey"
+            foreignKeyName: "content_lectures_chapter_id_fkey"
             columns: ["chapter_id"]
             isOneToOne: false
-            referencedRelation: "chapters"
+            referencedRelation: "content_chapters"
             referencedColumns: ["id"]
           },
         ]
       }
-      profiles: {
+      quiz_options: {
+        Row: {
+          id: number
+          option_text: string
+          question_id: number
+        }
+        Insert: {
+          id?: number
+          option_text: string
+          question_id: number
+        }
+        Update: {
+          id?: number
+          option_text?: string
+          question_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_options_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_questions: {
+        Row: {
+          created_at: string | null
+          id: number
+          lecture_id: number
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: number
+          lecture_id: number
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: number
+          lecture_id?: number
+          question_text?: string
+          question_type?: Database["public"]["Enums"]["question_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_lecture_id_fkey"
+            columns: ["lecture_id"]
+            isOneToOne: false
+            referencedRelation: "content_lectures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_reference_answers: {
+        Row: {
+          answer_text: string | null
+          answer_type: string
+          created_at: string | null
+          id: number
+          option_id: number | null
+          question_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          answer_text?: string | null
+          answer_type: string
+          created_at?: string | null
+          id?: number
+          option_id?: number | null
+          question_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          answer_text?: string | null
+          answer_type?: string
+          created_at?: string | null
+          id?: number
+          option_id?: number | null
+          question_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_reference_answers_option_id_fkey"
+            columns: ["option_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_options"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quiz_reference_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quiz_user_answers: {
+        Row: {
+          answer_text: string | null
+          chosen_option_ids: number[] | null
+          created_at: string | null
+          id: number
+          is_correct: boolean | null
+          profile_id: string
+          question_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          answer_text?: string | null
+          chosen_option_ids?: number[] | null
+          created_at?: string | null
+          id?: number
+          is_correct?: boolean | null
+          profile_id: string
+          question_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          answer_text?: string | null
+          chosen_option_ids?: number[] | null
+          created_at?: string | null
+          id?: number
+          is_correct?: boolean | null
+          profile_id?: string
+          question_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_user_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      system_events: {
+        Row: {
+          chapter_id: number | null
+          created_at: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          id: number
+          lecture_id: number | null
+          metadata: Json | null
+          profile_id: string
+          quiz_question_id: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          chapter_id?: number | null
+          created_at?: string | null
+          event_type: Database["public"]["Enums"]["event_type"]
+          id?: number
+          lecture_id?: number | null
+          metadata?: Json | null
+          profile_id: string
+          quiz_question_id?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          chapter_id?: number | null
+          created_at?: string | null
+          event_type?: Database["public"]["Enums"]["event_type"]
+          id?: number
+          lecture_id?: number | null
+          metadata?: Json | null
+          profile_id?: string
+          quiz_question_id?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_events_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "content_chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_events_lecture_id_fkey"
+            columns: ["lecture_id"]
+            isOneToOne: false
+            referencedRelation: "content_lectures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_events_quiz_question_id_fkey"
+            columns: ["quiz_question_id"]
+            isOneToOne: false
+            referencedRelation: "quiz_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users_feedback: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: number
+          profile_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: number
+          profile_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: number
+          profile_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_user_feedback_profile"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "users_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users_profiles: {
         Row: {
           about: string | null
           birthdate: string | null
@@ -210,233 +350,14 @@ export type Database = {
         }
         Relationships: []
       }
-      quiz_question_options: {
-        Row: {
-          id: number
-          is_correct: boolean | null
-          option_text: string
-          question_id: number
-          updated_at: string | null
-        }
-        Insert: {
-          id?: number
-          is_correct?: boolean | null
-          option_text: string
-          question_id: number
-          updated_at?: string | null
-        }
-        Update: {
-          id?: number
-          is_correct?: boolean | null
-          option_text?: string
-          question_id?: number
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_question_options_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_questions: {
-        Row: {
-          created_at: string | null
-          id: number
-          lecture_id: number
-          question_text: string
-          question_type: Database["public"]["Enums"]["question_type"]
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: number
-          lecture_id: number
-          question_text: string
-          question_type: Database["public"]["Enums"]["question_type"]
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: number
-          lecture_id?: number
-          question_text?: string
-          question_type?: Database["public"]["Enums"]["question_type"]
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_questions_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "lectures"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      quiz_sessions: {
-        Row: {
-          created_at: string | null
-          lecture_id: number | null
-          profile_id: string | null
-          session_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          lecture_id?: number | null
-          profile_id?: string | null
-          session_id: string
-        }
-        Update: {
-          created_at?: string | null
-          lecture_id?: number | null
-          profile_id?: string | null
-          session_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_sessions_lecture_id_fkey"
-            columns: ["lecture_id"]
-            isOneToOne: false
-            referencedRelation: "lectures"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "quiz_sessions_profile_id_fkey"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_feedback: {
-        Row: {
-          created_at: string | null
-          description: string
-          id: number
-          profile_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          description: string
-          id?: number
-          profile_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          description?: string
-          id?: number
-          profile_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_user_feedback_profile"
-            columns: ["profile_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_quiz_answers: {
-        Row: {
-          answer_text: string | null
-          answered_at: string | null
-          chosen_option_ids: number[] | null
-          id: number
-          is_correct: boolean | null
-          profile_id: string
-          question_id: number
-          session_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          answer_text?: string | null
-          answered_at?: string | null
-          chosen_option_ids?: number[] | null
-          id?: number
-          is_correct?: boolean | null
-          profile_id: string
-          question_id: number
-          session_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          answer_text?: string | null
-          answered_at?: string | null
-          chosen_option_ids?: number[] | null
-          id?: number
-          is_correct?: boolean | null
-          profile_id?: string
-          question_id?: number
-          session_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "quiz_answers_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_questions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_quiz_answers_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: false
-            referencedRelation: "quiz_sessions"
-            referencedColumns: ["session_id"]
-          },
-        ]
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      fetch_count_of_chapters_completed: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          total_chapters: number
-          completed_chapters: number
-        }[]
-      }
-      fetch_lecture_completion_counts: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          total_lectures: number
-          completed_lectures: number
-        }[]
-      }
-      get_all_sorted_lectures: {
-        Args: Record<PropertyKey, never>
-        Returns: {
-          lecture_id: number
-          lecture_title: string
-          lecture_content: string
-          lecture_sort_order: number
-          chapter_id: number
-          chapter_title: string
-          chapter_sort_order: number
-          chapter_mode: Database["public"]["Enums"]["mode"]
-        }[]
-      }
-      get_chapter_completion_counts: {
+      chapter_get_summary: {
         Args: {
-          user_id: string
-        }
-        Returns: {
-          total_chapters: number
-          completed_chapters: number
-        }[]
-      }
-      get_chapter_summary: {
-        Args: {
-          user_id: string
+          user_id?: string
           chapter_mode?: Database["public"]["Enums"]["mode"]
         }
         Returns: {
@@ -449,27 +370,16 @@ export type Database = {
           lectures_completed: number
         }[]
       }
-      get_chapters_with_completion: {
+      lecture_get_completion_counts: {
         Args: {
-          p_mode?: Database["public"]["Enums"]["mode"]
-        }
-        Returns: {
-          id: number
-          title: string
-          total_lectures: number
-          completed_lectures: number
-        }[]
-      }
-      get_lecture_completion_counts: {
-        Args: {
-          user_id: string
+          user_id?: string
         }
         Returns: {
           total_lectures: number
           completed_lectures: number
         }[]
       }
-      get_lectures_with_completion: {
+      lecture_get_with_completion: {
         Args: {
           p_chapter_id: number
         }
@@ -481,17 +391,109 @@ export type Database = {
           is_completed: boolean
         }[]
       }
+      lecture_mark_completed: {
+        Args: {
+          p_lecture_id: number
+        }
+        Returns: number
+      }
+      quiz_check_completion: {
+        Args: {
+          p_lecture_id: number
+          user_id?: string
+        }
+        Returns: boolean
+      }
+      quiz_get_results: {
+        Args: {
+          p_lecture_id: number
+          user_id?: string
+        }
+        Returns: {
+          question_id: number
+          question_text: string
+          question_type: Database["public"]["Enums"]["question_type"]
+          answer_text: string
+          chosen_option_ids: number[]
+          correct_option_ids: number[]
+          correct_answer_text: string
+          is_correct: boolean
+          answered_at: string
+        }[]
+      }
+      quiz_mark_completed: {
+        Args: {
+          p_lecture_id: number
+          p_passed: boolean
+        }
+        Returns: boolean
+      }
+      quiz_record_user_answer: {
+        Args: {
+          p_question_id: number
+          p_answer_text?: string
+          p_chosen_option_ids?: number[]
+        }
+        Returns: number
+      }
+      quiz_set_reference_option: {
+        Args: {
+          p_question_id: number
+          p_correct_option_id: number
+        }
+        Returns: number
+      }
+      quiz_set_reference_text: {
+        Args: {
+          p_question_id: number
+          p_reference_answer: string
+        }
+        Returns: number
+      }
+      system_record_event: {
+        Args: {
+          p_event_type: Database["public"]["Enums"]["event_type"]
+          p_lecture_id?: number
+          p_chapter_id?: number
+          p_quiz_question_id?: number
+          p_metadata?: Json
+        }
+        Returns: number
+      }
+      user_get_completion_stats: {
+        Args: {
+          user_id?: string
+        }
+        Returns: {
+          total_chapters: number
+          completed_chapters: number
+          total_lectures: number
+          completed_lectures: number
+          completion_percentage: number
+        }[]
+      }
     }
     Enums: {
-      gender: "MALE" | "FEMALE" | "OTHER"
-      lecture_event_type:
-        | "LECTURE_SKIPPED"
-        | "LECTURE_MARKED_AS_READ"
-        | "QUIZ_PASSED"
+      event_type:
+        | "LECTURE_VIEWED"
         | "LECTURE_COMPLETED"
+        | "LECTURE_SKIPPED"
+        | "QUIZ_STARTED"
+        | "QUIZ_COMPLETED"
+        | "QUIZ_PASSED"
+        | "QUIZ_FAILED"
+        | "QUESTION_ANSWERED"
+        | "PAGE_VIEWED"
+        | "SEARCH_PERFORMED"
+        | "USER_REGISTERED"
+        | "USER_LOGGED_IN"
+        | "USER_LOGGED_OUT"
+        | "PROFILE_UPDATED"
+        | "ERROR_OCCURRED"
+        | "FEEDBACK_SUBMITTED"
+      gender: "MALE" | "FEMALE" | "OTHER"
       mode: "THEORETICAL" | "PRACTICAL"
       question_type: "OPEN" | "MULTIPLE_CHOICE"
-      quiz_event_type: "QUIZ_STARTED" | "QUESTION_ANSWERED" | "QUIZ_COMPLETED"
       user_role: "ADMIN" | "MEDICAL_PROFESSIONAL" | "STUDENT" | "STUDENT_TESTER"
     }
     CompositeTypes: {
