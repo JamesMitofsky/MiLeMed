@@ -1,4 +1,4 @@
-import { Database } from '../../../../supabase/types.ts'
+import { Database } from '@my/supabase/types'
 
 // Types based on the schema (you'd typically generate these)
 export type Chapter = {

@@ -1,8 +1,8 @@
+import { Database, Json } from '@my/supabase/types'
 import { createClient } from '@supabase/supabase-js'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { Database, Json } from '../../../../supabase/types.ts'
-import { UserProfile, SystemEvent } from '../supabase/databaseTypes.ts'
+import { UserProfile, SystemEvent } from '../supabase/databaseTypes'
 
 // Initialize Supabase client
 const supabase = createClient<Database>(
