@@ -10187,6 +10187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.70.0":
+  version: 5.70.0
+  resolution: "@tanstack/query-core@npm:5.70.0"
+  checksum: 10/00c141b53258c3ea0c6b9ea3f4d1361cfc0401326c0ef0b9b211d03d76267c19740948b857b37bc74e941f103e9aed90f3227f1a3adc221d4f64e6a931281a8a
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:4.18.0":
   version: 4.18.0
   resolution: "@tanstack/react-query@npm:4.18.0"
@@ -10203,6 +10210,17 @@ __metadata:
     react-native:
       optional: true
   checksum: 10/fd2f3a95474752d65289f98750343224eef98706f3ecc484beb0f67a64df0961479652b420504429da3cac86441d23d19f716f84bcce7d5614993ebe8a6bb20a
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.70.0":
+  version: 5.70.0
+  resolution: "@tanstack/react-query@npm:5.70.0"
+  dependencies:
+    "@tanstack/query-core": "npm:5.70.0"
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: 10/c2d58673d4b1883e165098c11b905786fa89e788b3cce54a5852208bc714853a679cbddd34e11fd99d9986c27ffbd11edb3b0b5843828b4047ff21469ac71d25
   languageName: node
   linkType: hard
 
@@ -13320,7 +13338,7 @@ __metadata:
     "@tamagui/lucide-icons": "npm:^1.121.7"
     "@tamagui/shorthands": "npm:^1.121.7"
     "@tamagui/themes": "npm:^1.121.7"
-    "@tanstack/react-query": "npm:4.18.0"
+    "@tanstack/react-query": "npm:^5.70.0"
     "@trpc/client": "npm:^10.45.1"
     "@trpc/react-query": "npm:^10.45.1"
     "@types/react": "npm:^18.0.27"
