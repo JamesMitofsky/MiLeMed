@@ -1,43 +1,65 @@
-import { Database } from '@my/supabase/types'
+import { Database } from '../../../../supabase/types.ts'
 
-// Tables
-type AppEventsType = Database['public']['Tables']['app_events']['Row']
-type ChaptersType = Database['public']['Tables']['chapters']['Row']
-type ImagesType = Database['public']['Tables']['images']['Row']
-type LectureEventsType = Database['public']['Tables']['lecture_events']['Row']
-type LecturesType = Database['public']['Tables']['lectures']['Row']
-type ProfilesType = Database['public']['Tables']['profiles']['Row']
-type QuizAnswersType = Database['public']['Tables']['user_quiz_answers']['Row']
-type QuizQuestionOptionsType = Database['public']['Tables']['quiz_question_options']['Row']
-type QuizQuestionsType = Database['public']['Tables']['quiz_questions']['Row']
+// Types based on the schema (you'd typically generate these)
+export type Chapter = {
+  id: number
+  title: string
+  description: string
+  mode: 'THEORETICAL' | 'PRACTICAL'
+  sort_order: number
+}
 
-// Functions
-type GetLecturesWithCompletionType =
-  Database['public']['Functions']['get_lectures_with_completion']['Returns']
+export type Lecture = {
+  id: number
+  title: string
+  content: string
+  chapter_id: number
+  sort_order: number
+}
 
-// Enums
-type GenderType = Database['public']['Enums']['gender']
-type ModeType = Database['public']['Enums']['mode']
-type QuestionType = Database['public']['Enums']['question_type']
-type QuizEventType = Database['public']['Enums']['quiz_event_type']
-type UserRoleType = Database['public']['Enums']['user_role']
-type LectureEventEnumType = Database['public']['Enums']['lecture_event_type']
+// export type UserProfile = {
+//   id: string
+//   name: string
+//   about: string
+//   gender: 'MALE' | 'FEMALE' | 'OTHER'
+//   birthdate: string
+//   overall_semester: number
+//   clinical_semester: number
+//   role: 'ADMIN' | 'MEDICAL_PROFESSIONAL' | 'STUDENT' | 'STUDENT_TESTER'
+// }
+export type UserProfile = {
+  about: string | null
+  birthdate: string | null
+  clinical_semester: number | null
+  created_at: string | null
+  gender: Database['public']['Enums']['gender'] | null
+  id: string
+  name: string | null
+  overall_semester: number | null
+  role: Database['public']['Enums']['user_role'] | null
+  updated_at: string | null
+}
 
-export {
-  AppEventsType,
-  ChaptersType,
-  ImagesType,
-  LectureEventsType,
-  LecturesType,
-  ProfilesType,
-  QuizAnswersType,
-  QuizQuestionOptionsType,
-  QuizQuestionsType,
-  GenderType,
-  ModeType,
-  QuestionType,
-  QuizEventType,
-  UserRoleType,
-  LectureEventEnumType,
-  GetLecturesWithCompletionType,
+export type QuizQuestion = {
+  id: number
+  lecture_id: number
+  question_text: string
+  question_type: 'OPEN' | 'MULTIPLE_CHOICE'
+}
+
+export type QuizOption = {
+  id: number
+  question_id: number
+  option_text: string
+}
+
+export type SystemEvent = {
+  id: number
+  profile_id: string
+  event_type: string
+  created_at: string
+  lecture_id?: number
+  chapter_id?: number
+  quiz_question_id?: number
+  metadata: Record<string, unknown>
 }
