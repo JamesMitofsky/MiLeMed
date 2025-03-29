@@ -370,6 +370,21 @@ export type Database = {
           lectures_completed: number
         }[]
       }
+      lecture_get_by_id: {
+        Args: {
+          p_lecture_id: number
+        }
+        Returns: {
+          id: number
+          title: string
+          content: string
+          chapter_id: number
+          chapter_title: string
+          chapter_mode: Database["public"]["Enums"]["mode"]
+          sort_order: number
+          is_completed: boolean
+        }[]
+      }
       lecture_get_completion_counts: {
         Args: {
           user_id?: string
