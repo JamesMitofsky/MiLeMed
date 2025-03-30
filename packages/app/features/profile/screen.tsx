@@ -1,10 +1,11 @@
 import { Settings, YStack, useWindowDimensions } from '@my/ui'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
-import { Cog, User } from '@tamagui/lucide-icons'
+import { Cog, Home, User } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'app/utils/useSafeAreaInsets'
 import { useUser } from 'app/utils/useUser'
 import { useLink } from 'solito/link'
 
+// used in expo
 export function SidebarDrawer(props) {
   const { profile } = useUser()
   const name = profile?.name
@@ -25,6 +26,9 @@ export function SidebarDrawer(props) {
         <Settings>
           <Settings.Items>
             <Settings.Group>
+              <Settings.Item icon={Home} {...useLink({ href: '/' })} accentTheme="blue">
+                Home
+              </Settings.Item>
               <Settings.Item icon={User} {...useLink({ href: '/profile' })} accentTheme="pink">
                 Profil bearbeiten
               </Settings.Item>

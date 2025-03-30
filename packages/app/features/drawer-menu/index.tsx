@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from 'app/utils/useSafeAreaInsets'
 import { useUser } from 'app/utils/useUser'
 import { useLink } from 'solito/link'
 
+// not used in expo
 export function DrawerMenu(props) {
   const { profile } = useUser()
   const name = profile?.name

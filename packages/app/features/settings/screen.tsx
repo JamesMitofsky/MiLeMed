@@ -1,12 +1,15 @@
 import { Paragraph, ScrollView, Settings, useToastController, YStack } from '@my/ui'
-import { LogOut, Moon, Trash } from '@tamagui/lucide-icons'
+import { LogOut, Moon, Paperclip, Trash } from '@tamagui/lucide-icons'
 import { useThemeSetting } from 'app/provider/theme'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
+import { useRouter } from 'solito/router'
 import { AlertDialog, Button, SizableText, XStack } from 'tamagui'
 
 import packageJson from '../../package.json'
 
 export const SettingsScreen = () => {
+  const router = useRouter()
+
   return (
     <YStack f={1}>
       <ScrollView>
@@ -40,6 +43,14 @@ export const SettingsScreen = () => {
               </Settings.Group> */}
             <Settings.Group>
               {/* <SettingsThemeAction /> TODO: add back in the theme when this is fixed */}
+              <Settings.Item
+                icon={Paperclip}
+                accentTheme="green"
+                onPress={() => router.push('/terms-of-service')}
+              >
+                Studienteilnahme
+              </Settings.Item>
+
               <SettingsItemLogoutAction />
 
               <Settings.Item icon={Trash} accentTheme="red">

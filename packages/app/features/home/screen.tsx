@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useUser } from '../../utils/useUser'
+import { Text } from 'react-native'
 
 export function HomeScreen() {
   const { profile } = useUser()
@@ -44,6 +45,7 @@ export function HomeScreen() {
         {/* <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} /> */}
         <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
+            <Text>Home page</Text>
             {/* {!profile ? (
               <FullscreenSpinner />
             ) : isMainPageVisible ? (
