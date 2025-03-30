@@ -44,7 +44,7 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
-    "@tamagui/build": "^1.125.31",
+    "@tamagui/build": "^1.124.1",
     "eslint": "^8.46.0",
     "eslint-config-custom": "*",
     "typescript": "^5.3.3"

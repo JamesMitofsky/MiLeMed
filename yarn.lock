@@ -4300,7 +4300,7 @@ __metadata:
     "@hookform/resolvers": "npm:^3.1.0"
     "@tamagui/animations-moti": "npm:^1.124.1"
     "@tamagui/animations-react-native": "npm:^1.124.1"
-    "@tamagui/build": "npm:^1.125.31"
+    "@tamagui/build": "npm:^1.124.1"
     "@tamagui/cli": "npm:^1.124.1"
     "@tamagui/config": "npm:^1.124.1"
     "@tamagui/create-theme": "npm:^1.124.1"
@@ -8235,7 +8235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tamagui/build@npm:1.125.31, @tamagui/build@npm:^1.125.31":
+"@tamagui/build@npm:1.125.31, @tamagui/build@npm:^1.124.1, @tamagui/build@npm:^1.125.31":
   version: 1.125.31
   resolution: "@tamagui/build@npm:1.125.31"
   dependencies:
