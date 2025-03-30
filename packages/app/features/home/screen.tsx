@@ -1,25 +1,25 @@
 import { ScrollView, YStack, XStack, useToastController } from '@my/ui'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
+import { useEffect, useState } from 'react'
+// import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
   const { profile } = useUser()
-  const confettiRef = useRef<ConfettiMethods>(null)
+  // const confettiRef = useRef<ConfettiMethods>(null)
   const toast = useToastController()
   const [isMainPageVisible, setIsMainPageVisible] = useState(false)
 
-  const triggerConfetti = useCallback(() => {
-    confettiRef.current?.restart()
-  }, [confettiRef])
+  // const triggerConfetti = useCallback(() => {
+  //   confettiRef.current?.restart()
+  // }, [confettiRef])
 
-  const handleRegistrationSuccess = useCallback(() => {
-    triggerConfetti()
-    toast.show('Profil erfolgreich eingerichtet.')
-    setIsMainPageVisible(true)
-  }, [confettiRef, triggerConfetti, toast, setIsMainPageVisible])
+  // const handleRegistrationSuccess = useCallback(() => {
+  //   triggerConfetti()
+  //   toast.show('Profil erfolgreich eingerichtet.')
+  //   setIsMainPageVisible(true)
+  // }, [confettiRef, triggerConfetti, toast, setIsMainPageVisible])
 
   useEffect(() => {
     if (profile?.role) {
@@ -29,9 +29,9 @@ export function HomeScreen() {
     }
   }, [profile?.role, setIsMainPageVisible])
 
-  const onFeedbackSubmitSucccess = useCallback(() => {
-    triggerConfetti()
-  }, [triggerConfetti])
+  // const onFeedbackSubmitSucccess = useCallback(() => {
+  //   triggerConfetti()
+  // }, [triggerConfetti])
 
   return (
     <KeyboardAwareScrollView
@@ -41,7 +41,7 @@ export function HomeScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <XStack als="center" ai="flex-start" f={1}>
-        <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} />
+        {/* <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} /> */}
         <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
             {/* {!profile ? (
