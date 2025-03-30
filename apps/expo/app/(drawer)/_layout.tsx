@@ -1,39 +1,27 @@
 import { SidebarDrawer } from '@my/app/features/profile/screen'
-import { Button, Image } from '@my/ui'
-import { DrawerActions, useNavigation } from '@react-navigation/native'
-import { Menu } from '@tamagui/lucide-icons'
+import { Image } from '@my/ui'
+import { DrawerToggleButton } from '@react-navigation/drawer'
 import { Drawer } from 'expo-router/drawer'
 
 // @ts-ignore
-import logoText from '../../assets/logoText.png' // Import the image
+import logoText from '../../assets/logoText.png'
 
 export default function Layout() {
-  const navigation = useNavigation()
   return (
     <Drawer
       screenOptions={{
         title: '', // Set an empty title if you still want to show the header but without text
-        headerLeft: () => (
-          <Button
-            borderStyle="unset"
-            borderWidth={0}
-            backgroundColor="transparent"
-            marginLeft="$-1"
-            paddingHorizontal="$4"
-            onPress={() => {
-              navigation.dispatch(DrawerActions.openDrawer())
-            }}
-          >
-            <Menu size={24} color="black" />
-          </Button>
-        ),
-        headerRight: () => {
-          return <Image mr="$2" height="$1" width="$9" marginRight="$3" src={logoText} />
-        },
-        // TODO fix color
+        headerLeft: () => <DrawerToggleButton tintColor="black" pressColor="rgba(0,0,0,0.1)" />,
+        headerRight: () => <Image mr="$2" height="$1" width="$9" marginRight="$3" src={logoText} />,
         sceneContainerStyle: { backgroundColor: 'white' },
+        drawerStyle: {
+          backgroundColor: 'white',
+          width: '80%',
+        },
+        drawerType: 'front',
+        overlayColor: 'rgba(0,0,0,0.5)',
       }}
-      drawerContent={SidebarDrawer}
+      drawerContent={(props) => <SidebarDrawer {...props} />}
     />
   )
 }
