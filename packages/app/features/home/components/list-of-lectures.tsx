@@ -3,7 +3,7 @@ import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLecture
 import { YStack, Text, useMedia, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import { useFetchListOfLecturesWithCompletionData } from '../../../utils/react-query/useFetchListOfLecturesWithCompletionData'
+import { useLectures } from '../../../utils/hooks/queryHooks'
 
 type ListOfLecturesProps = {
   chapterId: string
@@ -11,23 +11,11 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
-  const {
-    data: lectures,
-    // isLoading,
-    // error,
-  } = useFetchListOfLecturesWithCompletionData({
-    chapterId: parseInt(chapterId, 10),
-    limit,
-  })
-
+  const { getLecturesWithCompletion } = useLectures()
+  const { data: lectures, isLoading } = getLecturesWithCompletion(parseInt(chapterId, 10))
   const { md } = useMedia()
 
-  // const lecturesCompleted = useMemo(() => {
-  //   if (!lectures) return 0
-  //   return lectures.filter((lecture) => lecture.is_completed).length
-  // }, [lectures])
-
-  if (!lectures) {
+  if (isLoading || !lectures) {
     return (
       <YStack fw="wrap" f={1} gap="$3">
         <ChapterLectureCardSkeleton isDense />
@@ -42,9 +30,6 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
 
   return (
     <YStack my="$4" fw="wrap" gap="$3">
-      {/* <SizableText size="$3">
-        {lecturesCompleted} / {lectures.length}
-      </SizableText> */}
       {lectures.map((lecture, index) => (
         <Theme key={lecture.id} name={colors[index]}>
           <ChapterLectureCard

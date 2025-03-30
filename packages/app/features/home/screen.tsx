@@ -1,12 +1,8 @@
-import { ScrollView, YStack, XStack, FullscreenSpinner, useToastController } from '@my/ui'
+import { ScrollView, YStack, XStack, useToastController } from '@my/ui'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { FinishRegistrationForm } from './components/FinishRegistrationForm'
-import { StatisticsPreviewList } from './components/StatisticsPreviewList'
-import { ChaptersPreviewList } from './components/achievements-section'
-import { FeedbackSection } from './components/feedback-section'
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
@@ -48,7 +44,7 @@ export function HomeScreen() {
         <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} />
         <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
-            {!profile ? (
+            {/* {!profile ? (
               <FullscreenSpinner />
             ) : isMainPageVisible ? (
               <>
@@ -58,7 +54,7 @@ export function HomeScreen() {
               </>
             ) : (
               <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />
-            )}
+            )} */}
           </YStack>
         </ScrollView>
       </XStack>
