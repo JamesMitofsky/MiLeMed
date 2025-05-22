@@ -29,7 +29,7 @@ export type Lecture = {
 // }
 export type UserProfile = {
   about: string | null
-  birthdate: string | null
+  birthDate: string | null
   clinical_semester: number | null
   created_at: string | null
   gender: Database['public']['Enums']['gender'] | null
