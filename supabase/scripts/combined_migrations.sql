@@ -85,7 +85,7 @@ CREATE TABLE users_profiles (
     name TEXT,
     about TEXT,
     gender gender,
-    birthDate DATE,
+    birthdate DATE,
     overall_semester INTEGER,
     clinical_semester INTEGER,
     role user_role,

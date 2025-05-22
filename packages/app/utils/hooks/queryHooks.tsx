@@ -160,9 +160,12 @@ export const useUserProfile = () => {
   // Update user profile
   const updateProfile = useMutation({
     mutationFn: async (updates: Partial<UserProfile>): Promise<UserProfile> => {
+      if (!user?.id) throw new Error('User ID is required for profile update')
+      
       const { data, error } = await supabaseClient
         .from('users_profiles')
         .update(updates)
+        .eq('id', user.id) // Add WHERE clause to specify which user's profile to update
         .select()
         .single()
 

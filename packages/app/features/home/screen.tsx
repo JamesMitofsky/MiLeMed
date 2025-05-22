@@ -1,10 +1,13 @@
-import { ScrollView, YStack, XStack, useToastController } from '@my/ui'
-import { useEffect, useState } from 'react'
-// import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
+import { ScrollView, YStack, XStack, useToastController, FullscreenSpinner } from '@my/ui'
+import { useEffect, useState, useCallback } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+// import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 
+import { FinishRegistrationForm } from './components/FinishRegistrationForm'
+import StatisticsPreviewList from './components/StatisticsPreviewList'
+import { ChaptersPreviewList } from './components/achievements-section'
+import { FeedbackSection } from './components/feedback-section'
 import { useUser } from '../../utils/useUser'
-import { Text } from 'react-native'
 
 export function HomeScreen() {
   const { profile } = useUser()
@@ -16,11 +19,11 @@ export function HomeScreen() {
   //   confettiRef.current?.restart()
   // }, [confettiRef])
 
-  // const handleRegistrationSuccess = useCallback(() => {
-  //   triggerConfetti()
-  //   toast.show('Profil erfolgreich eingerichtet.')
-  //   setIsMainPageVisible(true)
-  // }, [confettiRef, triggerConfetti, toast, setIsMainPageVisible])
+  const handleRegistrationSuccess = useCallback(() => {
+    // triggerConfetti()
+    toast.show('Profil erfolgreich eingerichtet.')
+    setIsMainPageVisible(true)
+  }, [toast])
 
   useEffect(() => {
     if (profile?.role) {
@@ -28,11 +31,7 @@ export function HomeScreen() {
     } else {
       setIsMainPageVisible(false)
     }
-  }, [profile?.role, setIsMainPageVisible])
-
-  // const onFeedbackSubmitSucccess = useCallback(() => {
-  //   triggerConfetti()
-  // }, [triggerConfetti])
+  }, [profile?.role])
 
   return (
     <KeyboardAwareScrollView
@@ -45,18 +44,19 @@ export function HomeScreen() {
         {/* <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} /> */}
         <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
-            <Text>Home page</Text>
-            {/* {!profile ? (
+            {!profile ? (
               <FullscreenSpinner />
             ) : isMainPageVisible ? (
               <>
                 <ChaptersPreviewList />
                 <StatisticsPreviewList />
-                <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
+                <FeedbackSection onSubmitSuccess={() => console.log('Feedback submitted')} />
+                {/*                 <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
+                 */}
               </>
             ) : (
               <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />
-            )} */}
+            )}
           </YStack>
         </ScrollView>
       </XStack>

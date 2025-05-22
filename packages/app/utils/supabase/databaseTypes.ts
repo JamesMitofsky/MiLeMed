@@ -17,19 +17,9 @@ export type Lecture = {
   sort_order: number
 }
 
-// export type UserProfile = {
-//   id: string
-//   name: string
-//   about: string
-//   gender: 'MALE' | 'FEMALE' | 'OTHER'
-//   birthdate: string
-//   overall_semester: number
-//   clinical_semester: number
-//   role: 'ADMIN' | 'MEDICAL_PROFESSIONAL' | 'STUDENT' | 'STUDENT_TESTER'
-// }
 export type UserProfile = {
   about: string | null
-  birthDate: string | null
+  birthdate: string | null
   clinical_semester: number | null
   created_at: string | null
   gender: Database['public']['Enums']['gender'] | null

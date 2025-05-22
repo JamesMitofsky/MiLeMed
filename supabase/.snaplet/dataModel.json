@@ -120,218 +120,6 @@
       ],
       "uniqueConstraints": []
     },
-    "app_events": {
-      "id": "public.app_events",
-      "schemaName": "public",
-      "tableName": "app_events",
-      "fields": [
-        {
-          "id": "public.app_events.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"app_events_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_events.profile_id",
-          "name": "profile_id",
-          "columnName": "profile_id",
-          "type": "uuid",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_events.event_type",
-          "name": "event_type",
-          "columnName": "event_type",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_events.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_events.description",
-          "name": "description",
-          "columnName": "description",
-          "type": "text",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_events.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "users",
-          "type": "users",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "app_eventsTousers",
-          "relationFromFields": [
-            "profile_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "app_events_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "app_version_metadata": {
-      "id": "public.app_version_metadata",
-      "schemaName": "public",
-      "tableName": "app_version_metadata",
-      "fields": [
-        {
-          "id": "public.app_version_metadata.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"app_version_metadata_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_version_metadata.min_version",
-          "name": "min_version",
-          "columnName": "min_version",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_version_metadata.description",
-          "name": "description",
-          "columnName": "description",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_version_metadata.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.app_version_metadata.effective_date",
-          "name": "effective_date",
-          "columnName": "effective_date",
-          "type": "date",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "app_version_metadata_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
     "audit_log_entries": {
       "id": "auth.audit_log_entries",
       "schemaName": "auth",
@@ -623,13 +411,13 @@
         }
       ]
     },
-    "chapters": {
-      "id": "public.chapters",
+    "content_chapters": {
+      "id": "public.content_chapters",
       "schemaName": "public",
-      "tableName": "chapters",
+      "tableName": "content_chapters",
       "fields": [
         {
-          "id": "public.chapters.id",
+          "id": "public.content_chapters.id",
           "name": "id",
           "columnName": "id",
           "type": "int4",
@@ -638,7 +426,7 @@
           "isList": false,
           "isGenerated": false,
           "sequence": {
-            "identifier": "\"public\".\"chapters_id_seq\"",
+            "identifier": "\"public\".\"content_chapters_id_seq\"",
             "increment": 1,
             "start": 1
           },
@@ -647,7 +435,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.title",
+          "id": "public.content_chapters.title",
           "name": "title",
           "columnName": "title",
           "type": "text",
@@ -661,7 +449,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.description",
+          "id": "public.content_chapters.description",
           "name": "description",
           "columnName": "description",
           "type": "text",
@@ -675,7 +463,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.created_at",
+          "id": "public.content_chapters.created_at",
           "name": "created_at",
           "columnName": "created_at",
           "type": "timestamp",
@@ -689,7 +477,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.updated_at",
+          "id": "public.content_chapters.updated_at",
           "name": "updated_at",
           "columnName": "updated_at",
           "type": "timestamp",
@@ -703,7 +491,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.mode",
+          "id": "public.content_chapters.mode",
           "name": "mode",
           "columnName": "mode",
           "type": "mode",
@@ -717,7 +505,7 @@
           "maxLength": null
         },
         {
-          "id": "public.chapters.sort_order",
+          "id": "public.content_chapters.sort_order",
           "name": "sort_order",
           "columnName": "sort_order",
           "type": "int4",
@@ -731,11 +519,25 @@
           "maxLength": null
         },
         {
-          "name": "lectures",
-          "type": "lectures",
+          "name": "content_lectures",
+          "type": "content_lectures",
           "isRequired": false,
           "kind": "object",
-          "relationName": "lecturesTochapters",
+          "relationName": "content_lecturesTocontent_chapters",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "system_events",
+          "type": "system_events",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsTocontent_chapters",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -747,7 +549,7 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "chapters_pkey",
+          "name": "content_chapters_pkey",
           "fields": [
             "id"
           ],
@@ -756,6 +558,178 @@
         {
           "name": "unique_chapter_order",
           "fields": [
+            "sort_order"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "content_lectures": {
+      "id": "public.content_lectures",
+      "schemaName": "public",
+      "tableName": "content_lectures",
+      "fields": [
+        {
+          "id": "public.content_lectures.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"content_lectures_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.title",
+          "name": "title",
+          "columnName": "title",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.content",
+          "name": "content",
+          "columnName": "content",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.chapter_id",
+          "name": "chapter_id",
+          "columnName": "chapter_id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.content_lectures.sort_order",
+          "name": "sort_order",
+          "columnName": "sort_order",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "content_chapters",
+          "type": "content_chapters",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "content_lecturesTocontent_chapters",
+          "relationFromFields": [
+            "chapter_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "quiz_questions",
+          "type": "quiz_questions",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "quiz_questionsTocontent_lectures",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "system_events",
+          "type": "system_events",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsTocontent_lectures",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "content_lectures_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        },
+        {
+          "name": "unique_lecture_order",
+          "fields": [
+            "chapter_id",
             "sort_order"
           ],
           "nullNotDistinct": false
@@ -1433,114 +1407,6 @@
         }
       ]
     },
-    "images": {
-      "id": "public.images",
-      "schemaName": "public",
-      "tableName": "images",
-      "fields": [
-        {
-          "id": "public.images.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"images_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.images.image_url",
-          "name": "image_url",
-          "columnName": "image_url",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.images.lecture_id",
-          "name": "lecture_id",
-          "columnName": "lecture_id",
-          "type": "int4",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.images.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.images.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "lectures",
-          "type": "lectures",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "imagesTolectures",
-          "relationFromFields": [
-            "lecture_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "images_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
     "instances": {
       "id": "auth.instances",
       "schemaName": "auth",
@@ -1900,346 +1766,6 @@
           "name": "pgsodium_key_unique_name",
           "fields": [
             "name"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "lecture_events": {
-      "id": "public.lecture_events",
-      "schemaName": "public",
-      "tableName": "lecture_events",
-      "fields": [
-        {
-          "id": "public.lecture_events.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"lecture_events_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.lecture_events.profile_id",
-          "name": "profile_id",
-          "columnName": "profile_id",
-          "type": "uuid",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lecture_events.lecture_id",
-          "name": "lecture_id",
-          "columnName": "lecture_id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lecture_events.event_type",
-          "name": "event_type",
-          "columnName": "event_type",
-          "type": "lecture_event_type",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lecture_events.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lecture_events.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "users",
-          "type": "users",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "lecture_eventsTousers",
-          "relationFromFields": [
-            "profile_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "lectures",
-          "type": "lectures",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "lecture_eventsTolectures",
-          "relationFromFields": [
-            "lecture_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "lecture_events_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "lectures": {
-      "id": "public.lectures",
-      "schemaName": "public",
-      "tableName": "lectures",
-      "fields": [
-        {
-          "id": "public.lectures.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"lectures_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.title",
-          "name": "title",
-          "columnName": "title",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.content",
-          "name": "content",
-          "columnName": "content",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.chapter_id",
-          "name": "chapter_id",
-          "columnName": "chapter_id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.lectures.sort_order",
-          "name": "sort_order",
-          "columnName": "sort_order",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "chapters",
-          "type": "chapters",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "lecturesTochapters",
-          "relationFromFields": [
-            "chapter_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "images",
-          "type": "images",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "imagesTolectures",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "lecture_events",
-          "type": "lecture_events",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "lecture_eventsTolectures",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "quiz_questions",
-          "type": "quiz_questions",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "quiz_questionsTolectures",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "quiz_sessions",
-          "type": "quiz_sessions",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "quiz_sessionsTolectures",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "lectures_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        },
-        {
-          "name": "unique_lecture_order",
-          "fields": [
-            "chapter_id",
-            "sort_order"
           ],
           "nullNotDistinct": false
         }
@@ -3330,215 +2856,13 @@
         }
       ]
     },
-    "profiles": {
-      "id": "public.profiles",
+    "quiz_options": {
+      "id": "public.quiz_options",
       "schemaName": "public",
-      "tableName": "profiles",
+      "tableName": "quiz_options",
       "fields": [
         {
-          "id": "public.profiles.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "uuid",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.name",
-          "name": "name",
-          "columnName": "name",
-          "type": "text",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.about",
-          "name": "about",
-          "columnName": "about",
-          "type": "text",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.gender",
-          "name": "gender",
-          "columnName": "gender",
-          "type": "gender",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.role",
-          "name": "role",
-          "columnName": "role",
-          "type": "user_role",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.birthdate",
-          "name": "birthdate",
-          "columnName": "birthdate",
-          "type": "date",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.overall_semester",
-          "name": "overall_semester",
-          "columnName": "overall_semester",
-          "type": "int4",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.profiles.clinical_semester",
-          "name": "clinical_semester",
-          "columnName": "clinical_semester",
-          "type": "int4",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "users",
-          "type": "users",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "profilesTousers",
-          "relationFromFields": [
-            "id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "quiz_sessions",
-          "type": "quiz_sessions",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "quiz_sessionsToprofiles",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "user_feedback",
-          "type": "user_feedback",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "user_feedbackToprofiles",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "profiles_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "quiz_question_options": {
-      "id": "public.quiz_question_options",
-      "schemaName": "public",
-      "tableName": "quiz_question_options",
-      "fields": [
-        {
-          "id": "public.quiz_question_options.id",
+          "id": "public.quiz_options.id",
           "name": "id",
           "columnName": "id",
           "type": "int4",
@@ -3547,7 +2871,7 @@
           "isList": false,
           "isGenerated": false,
           "sequence": {
-            "identifier": "\"public\".\"quiz_question_options_id_seq\"",
+            "identifier": "\"public\".\"quiz_options_id_seq\"",
             "increment": 1,
             "start": 1
           },
@@ -3556,7 +2880,7 @@
           "maxLength": null
         },
         {
-          "id": "public.quiz_question_options.question_id",
+          "id": "public.quiz_options.question_id",
           "name": "question_id",
           "columnName": "question_id",
           "type": "int4",
@@ -3570,7 +2894,7 @@
           "maxLength": null
         },
         {
-          "id": "public.quiz_question_options.option_text",
+          "id": "public.quiz_options.option_text",
           "name": "option_text",
           "columnName": "option_text",
           "type": "text",
@@ -3584,39 +2908,11 @@
           "maxLength": null
         },
         {
-          "id": "public.quiz_question_options.is_correct",
-          "name": "is_correct",
-          "columnName": "is_correct",
-          "type": "bool",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.quiz_question_options.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
           "name": "quiz_questions",
           "type": "quiz_questions",
           "isRequired": true,
           "kind": "object",
-          "relationName": "quiz_question_optionsToquiz_questions",
+          "relationName": "quiz_optionsToquiz_questions",
           "relationFromFields": [
             "question_id"
           ],
@@ -3628,11 +2924,25 @@
           "isGenerated": false,
           "sequence": false,
           "hasDefaultValue": false
+        },
+        {
+          "name": "quiz_reference_answers",
+          "type": "quiz_reference_answers",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "quiz_reference_answersToquiz_options",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
         }
       ],
       "uniqueConstraints": [
         {
-          "name": "quiz_question_options_pkey",
+          "name": "quiz_options_pkey",
           "fields": [
             "id"
           ],
@@ -3734,11 +3044,11 @@
           "maxLength": null
         },
         {
-          "name": "lectures",
-          "type": "lectures",
+          "name": "content_lectures",
+          "type": "content_lectures",
           "isRequired": true,
           "kind": "object",
-          "relationName": "quiz_questionsTolectures",
+          "relationName": "quiz_questionsTocontent_lectures",
           "relationFromFields": [
             "lecture_id"
           ],
@@ -3752,11 +3062,11 @@
           "hasDefaultValue": false
         },
         {
-          "name": "quiz_question_options",
-          "type": "quiz_question_options",
+          "name": "quiz_options",
+          "type": "quiz_options",
           "isRequired": false,
           "kind": "object",
-          "relationName": "quiz_question_optionsToquiz_questions",
+          "relationName": "quiz_optionsToquiz_questions",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -3766,11 +3076,39 @@
           "hasDefaultValue": false
         },
         {
-          "name": "user_quiz_answers",
-          "type": "user_quiz_answers",
+          "name": "quiz_reference_answers",
+          "type": "quiz_reference_answers",
           "isRequired": false,
           "kind": "object",
-          "relationName": "user_quiz_answersToquiz_questions",
+          "relationName": "quiz_reference_answersToquiz_questions",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "quiz_user_answers",
+          "type": "quiz_user_answers",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "quiz_user_answersToquiz_questions",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "system_events",
+          "type": "system_events",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsToquiz_questions",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -3790,31 +3128,35 @@
         }
       ]
     },
-    "quiz_sessions": {
-      "id": "public.quiz_sessions",
+    "quiz_reference_answers": {
+      "id": "public.quiz_reference_answers",
       "schemaName": "public",
-      "tableName": "quiz_sessions",
+      "tableName": "quiz_reference_answers",
       "fields": [
         {
-          "id": "public.quiz_sessions.session_id",
-          "name": "session_id",
-          "columnName": "session_id",
-          "type": "uuid",
+          "id": "public.quiz_reference_answers.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
           "isRequired": true,
           "kind": "scalar",
           "isList": false,
           "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
+          "sequence": {
+            "identifier": "\"public\".\"quiz_reference_answers_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
           "isId": true,
           "maxLength": null
         },
         {
-          "id": "public.quiz_sessions.profile_id",
-          "name": "profile_id",
-          "columnName": "profile_id",
-          "type": "uuid",
-          "isRequired": false,
+          "id": "public.quiz_reference_answers.question_id",
+          "name": "question_id",
+          "columnName": "question_id",
+          "type": "int4",
+          "isRequired": true,
           "kind": "scalar",
           "isList": false,
           "isGenerated": false,
@@ -3824,9 +3166,23 @@
           "maxLength": null
         },
         {
-          "id": "public.quiz_sessions.lecture_id",
-          "name": "lecture_id",
-          "columnName": "lecture_id",
+          "id": "public.quiz_reference_answers.answer_type",
+          "name": "answer_type",
+          "columnName": "answer_type",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_reference_answers.option_id",
+          "name": "option_id",
+          "columnName": "option_id",
           "type": "int4",
           "isRequired": false,
           "kind": "scalar",
@@ -3838,7 +3194,21 @@
           "maxLength": null
         },
         {
-          "id": "public.quiz_sessions.created_at",
+          "id": "public.quiz_reference_answers.answer_text",
+          "name": "answer_text",
+          "columnName": "answer_text",
+          "type": "text",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_reference_answers.created_at",
           "name": "created_at",
           "columnName": "created_at",
           "type": "timestamp",
@@ -3852,13 +3222,27 @@
           "maxLength": null
         },
         {
-          "name": "lectures",
-          "type": "lectures",
+          "id": "public.quiz_reference_answers.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "quiz_options",
+          "type": "quiz_options",
           "isRequired": false,
           "kind": "object",
-          "relationName": "quiz_sessionsTolectures",
+          "relationName": "quiz_reference_answersToquiz_options",
           "relationFromFields": [
-            "lecture_id"
+            "option_id"
           ],
           "relationToFields": [
             "id"
@@ -3870,11 +3254,161 @@
           "hasDefaultValue": false
         },
         {
-          "name": "profiles",
-          "type": "profiles",
-          "isRequired": false,
+          "name": "quiz_questions",
+          "type": "quiz_questions",
+          "isRequired": true,
           "kind": "object",
-          "relationName": "quiz_sessionsToprofiles",
+          "relationName": "quiz_reference_answersToquiz_questions",
+          "relationFromFields": [
+            "question_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "quiz_reference_answers_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "quiz_user_answers": {
+      "id": "public.quiz_user_answers",
+      "schemaName": "public",
+      "tableName": "quiz_user_answers",
+      "fields": [
+        {
+          "id": "public.quiz_user_answers.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"quiz_user_answers_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.profile_id",
+          "name": "profile_id",
+          "columnName": "profile_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.question_id",
+          "name": "question_id",
+          "columnName": "question_id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.answer_text",
+          "name": "answer_text",
+          "columnName": "answer_text",
+          "type": "text",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.chosen_option_ids",
+          "name": "chosen_option_ids",
+          "columnName": "chosen_option_ids",
+          "type": "int4[]",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.is_correct",
+          "name": "is_correct",
+          "columnName": "is_correct",
+          "type": "bool",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.quiz_user_answers.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "users",
+          "type": "users",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "quiz_user_answersTousers",
           "relationFromFields": [
             "profile_id"
           ],
@@ -3888,14 +3422,18 @@
           "hasDefaultValue": false
         },
         {
-          "name": "user_quiz_answers",
-          "type": "user_quiz_answers",
-          "isRequired": false,
+          "name": "quiz_questions",
+          "type": "quiz_questions",
+          "isRequired": true,
           "kind": "object",
-          "relationName": "user_quiz_answersToquiz_sessions",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
+          "relationName": "quiz_user_answersToquiz_questions",
+          "relationFromFields": [
+            "question_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
           "isId": false,
           "isGenerated": false,
           "sequence": false,
@@ -3904,9 +3442,9 @@
       ],
       "uniqueConstraints": [
         {
-          "name": "quiz_sessions_pkey",
+          "name": "quiz_user_answers_pkey",
           "fields": [
-            "session_id"
+            "id"
           ],
           "nullNotDistinct": false
         }
@@ -5086,50 +4624,6 @@
         }
       ]
     },
-    "seed_files": {
-      "id": "supabase_migrations.seed_files",
-      "schemaName": "supabase_migrations",
-      "tableName": "seed_files",
-      "fields": [
-        {
-          "id": "supabase_migrations.seed_files.path",
-          "name": "path",
-          "columnName": "path",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "supabase_migrations.seed_files.hash",
-          "name": "hash",
-          "columnName": "hash",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "seed_files_pkey",
-          "fields": [
-            "path"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
     "sessions": {
       "id": "auth.sessions",
       "schemaName": "auth",
@@ -5684,6 +5178,224 @@
         }
       ]
     },
+    "system_events": {
+      "id": "public.system_events",
+      "schemaName": "public",
+      "tableName": "system_events",
+      "fields": [
+        {
+          "id": "public.system_events.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"system_events_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.profile_id",
+          "name": "profile_id",
+          "columnName": "profile_id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.event_type",
+          "name": "event_type",
+          "columnName": "event_type",
+          "type": "event_type",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.lecture_id",
+          "name": "lecture_id",
+          "columnName": "lecture_id",
+          "type": "int4",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.chapter_id",
+          "name": "chapter_id",
+          "columnName": "chapter_id",
+          "type": "int4",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.quiz_question_id",
+          "name": "quiz_question_id",
+          "columnName": "quiz_question_id",
+          "type": "int4",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.system_events.metadata",
+          "name": "metadata",
+          "columnName": "metadata",
+          "type": "jsonb",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "users",
+          "type": "users",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "system_eventsTousers",
+          "relationFromFields": [
+            "profile_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "content_chapters",
+          "type": "content_chapters",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsTocontent_chapters",
+          "relationFromFields": [
+            "chapter_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "content_lectures",
+          "type": "content_lectures",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsTocontent_lectures",
+          "relationFromFields": [
+            "lecture_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "quiz_questions",
+          "type": "quiz_questions",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "system_eventsToquiz_questions",
+          "relationFromFields": [
+            "quiz_question_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "system_events_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
     "tenants": {
       "id": "_realtime.tenants",
       "schemaName": "_realtime",
@@ -5933,300 +5645,6 @@
           "name": "tenants_external_id_index",
           "fields": [
             "external_id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "user_feedback": {
-      "id": "public.user_feedback",
-      "schemaName": "public",
-      "tableName": "user_feedback",
-      "fields": [
-        {
-          "id": "public.user_feedback.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"user_feedback_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_feedback.profile_id",
-          "name": "profile_id",
-          "columnName": "profile_id",
-          "type": "uuid",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_feedback.description",
-          "name": "description",
-          "columnName": "description",
-          "type": "text",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_feedback.created_at",
-          "name": "created_at",
-          "columnName": "created_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "profiles",
-          "type": "profiles",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "user_feedbackToprofiles",
-          "relationFromFields": [
-            "profile_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "user_feedback_pkey",
-          "fields": [
-            "id"
-          ],
-          "nullNotDistinct": false
-        }
-      ]
-    },
-    "user_quiz_answers": {
-      "id": "public.user_quiz_answers",
-      "schemaName": "public",
-      "tableName": "user_quiz_answers",
-      "fields": [
-        {
-          "id": "public.user_quiz_answers.id",
-          "name": "id",
-          "columnName": "id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": {
-            "identifier": "\"public\".\"quiz_answers_id_seq\"",
-            "increment": 1,
-            "start": 1
-          },
-          "hasDefaultValue": true,
-          "isId": true,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.question_id",
-          "name": "question_id",
-          "columnName": "question_id",
-          "type": "int4",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.profile_id",
-          "name": "profile_id",
-          "columnName": "profile_id",
-          "type": "uuid",
-          "isRequired": true,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.answer_text",
-          "name": "answer_text",
-          "columnName": "answer_text",
-          "type": "text",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.is_correct",
-          "name": "is_correct",
-          "columnName": "is_correct",
-          "type": "bool",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.answered_at",
-          "name": "answered_at",
-          "columnName": "answered_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.updated_at",
-          "name": "updated_at",
-          "columnName": "updated_at",
-          "type": "timestamp",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": true,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.chosen_option_ids",
-          "name": "chosen_option_ids",
-          "columnName": "chosen_option_ids",
-          "type": "int4[]",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "id": "public.user_quiz_answers.session_id",
-          "name": "session_id",
-          "columnName": "session_id",
-          "type": "uuid",
-          "isRequired": false,
-          "kind": "scalar",
-          "isList": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false,
-          "isId": false,
-          "maxLength": null
-        },
-        {
-          "name": "users",
-          "type": "users",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "user_quiz_answersTousers",
-          "relationFromFields": [
-            "profile_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "quiz_questions",
-          "type": "quiz_questions",
-          "isRequired": true,
-          "kind": "object",
-          "relationName": "user_quiz_answersToquiz_questions",
-          "relationFromFields": [
-            "question_id"
-          ],
-          "relationToFields": [
-            "id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "quiz_sessions",
-          "type": "quiz_sessions",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "user_quiz_answersToquiz_sessions",
-          "relationFromFields": [
-            "session_id"
-          ],
-          "relationToFields": [
-            "session_id"
-          ],
-          "isList": false,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        }
-      ],
-      "uniqueConstraints": [
-        {
-          "name": "quiz_answers_pkey",
-          "fields": [
-            "id"
           ],
           "nullNotDistinct": false
         }
@@ -6784,11 +6202,11 @@
           "hasDefaultValue": false
         },
         {
-          "name": "app_events",
-          "type": "app_events",
+          "name": "quiz_user_answers",
+          "type": "quiz_user_answers",
           "isRequired": false,
           "kind": "object",
-          "relationName": "app_eventsTousers",
+          "relationName": "quiz_user_answersTousers",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -6798,11 +6216,11 @@
           "hasDefaultValue": false
         },
         {
-          "name": "lecture_events",
-          "type": "lecture_events",
+          "name": "system_events",
+          "type": "system_events",
           "isRequired": false,
           "kind": "object",
-          "relationName": "lecture_eventsTousers",
+          "relationName": "system_eventsTousers",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -6812,25 +6230,11 @@
           "hasDefaultValue": false
         },
         {
-          "name": "profiles",
-          "type": "profiles",
+          "name": "users_profiles",
+          "type": "users_profiles",
           "isRequired": false,
           "kind": "object",
-          "relationName": "profilesTousers",
-          "relationFromFields": [],
-          "relationToFields": [],
-          "isList": true,
-          "isId": false,
-          "isGenerated": false,
-          "sequence": false,
-          "hasDefaultValue": false
-        },
-        {
-          "name": "user_quiz_answers",
-          "type": "user_quiz_answers",
-          "isRequired": false,
-          "kind": "object",
-          "relationName": "user_quiz_answersTousers",
+          "relationName": "users_profilesTousers",
           "relationFromFields": [],
           "relationToFields": [],
           "isList": true,
@@ -6894,6 +6298,288 @@
           "name": "users_email_partial_key",
           "fields": [
             "email"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "users_feedback": {
+      "id": "public.users_feedback",
+      "schemaName": "public",
+      "tableName": "users_feedback",
+      "fields": [
+        {
+          "id": "public.users_feedback.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "int4",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": {
+            "identifier": "\"public\".\"users_feedback_id_seq\"",
+            "increment": 1,
+            "start": 1
+          },
+          "hasDefaultValue": true,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_feedback.profile_id",
+          "name": "profile_id",
+          "columnName": "profile_id",
+          "type": "uuid",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_feedback.description",
+          "name": "description",
+          "columnName": "description",
+          "type": "text",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_feedback.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "users_profiles",
+          "type": "users_profiles",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "users_feedbackTousers_profiles",
+          "relationFromFields": [
+            "profile_id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "users_feedback_pkey",
+          "fields": [
+            "id"
+          ],
+          "nullNotDistinct": false
+        }
+      ]
+    },
+    "users_profiles": {
+      "id": "public.users_profiles",
+      "schemaName": "public",
+      "tableName": "users_profiles",
+      "fields": [
+        {
+          "id": "public.users_profiles.id",
+          "name": "id",
+          "columnName": "id",
+          "type": "uuid",
+          "isRequired": true,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": true,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.name",
+          "name": "name",
+          "columnName": "name",
+          "type": "text",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.about",
+          "name": "about",
+          "columnName": "about",
+          "type": "text",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.gender",
+          "name": "gender",
+          "columnName": "gender",
+          "type": "gender",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.birthdate",
+          "name": "birthdate",
+          "columnName": "birthdate",
+          "type": "date",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.overall_semester",
+          "name": "overall_semester",
+          "columnName": "overall_semester",
+          "type": "int4",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.clinical_semester",
+          "name": "clinical_semester",
+          "columnName": "clinical_semester",
+          "type": "int4",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.role",
+          "name": "role",
+          "columnName": "role",
+          "type": "user_role",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.created_at",
+          "name": "created_at",
+          "columnName": "created_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "id": "public.users_profiles.updated_at",
+          "name": "updated_at",
+          "columnName": "updated_at",
+          "type": "timestamp",
+          "isRequired": false,
+          "kind": "scalar",
+          "isList": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": true,
+          "isId": false,
+          "maxLength": null
+        },
+        {
+          "name": "users",
+          "type": "users",
+          "isRequired": true,
+          "kind": "object",
+          "relationName": "users_profilesTousers",
+          "relationFromFields": [
+            "id"
+          ],
+          "relationToFields": [
+            "id"
+          ],
+          "isList": false,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        },
+        {
+          "name": "users_feedback",
+          "type": "users_feedback",
+          "isRequired": false,
+          "kind": "object",
+          "relationName": "users_feedbackTousers_profiles",
+          "relationFromFields": [],
+          "relationToFields": [],
+          "isList": true,
+          "isId": false,
+          "isGenerated": false,
+          "sequence": false,
+          "hasDefaultValue": false
+        }
+      ],
+      "uniqueConstraints": [
+        {
+          "name": "users_profiles_pkey",
+          "fields": [
+            "id"
           ],
           "nullNotDistinct": false
         }
@@ -7043,6 +6729,59 @@
         }
       ]
     },
+    "event_type": {
+      "schemaName": "public",
+      "values": [
+        {
+          "name": "ERROR_OCCURRED"
+        },
+        {
+          "name": "FEEDBACK_SUBMITTED"
+        },
+        {
+          "name": "LECTURE_COMPLETED"
+        },
+        {
+          "name": "LECTURE_SKIPPED"
+        },
+        {
+          "name": "LECTURE_VIEWED"
+        },
+        {
+          "name": "PAGE_VIEWED"
+        },
+        {
+          "name": "PROFILE_UPDATED"
+        },
+        {
+          "name": "QUESTION_ANSWERED"
+        },
+        {
+          "name": "QUIZ_COMPLETED"
+        },
+        {
+          "name": "QUIZ_FAILED"
+        },
+        {
+          "name": "QUIZ_PASSED"
+        },
+        {
+          "name": "QUIZ_STARTED"
+        },
+        {
+          "name": "SEARCH_PERFORMED"
+        },
+        {
+          "name": "USER_LOGGED_IN"
+        },
+        {
+          "name": "USER_LOGGED_OUT"
+        },
+        {
+          "name": "USER_REGISTERED"
+        }
+      ]
+    },
     "gender": {
       "schemaName": "public",
       "values": [
@@ -7054,23 +6793,6 @@
         },
         {
           "name": "OTHER"
-        }
-      ]
-    },
-    "lecture_event_type": {
-      "schemaName": "public",
-      "values": [
-        {
-          "name": "LECTURE_COMPLETED"
-        },
-        {
-          "name": "LECTURE_MARKED_AS_READ"
-        },
-        {
-          "name": "LECTURE_SKIPPED"
-        },
-        {
-          "name": "QUIZ_PASSED"
         }
       ]
     },
@@ -7093,20 +6815,6 @@
         },
         {
           "name": "OPEN"
-        }
-      ]
-    },
-    "quiz_event_type": {
-      "schemaName": "public",
-      "values": [
-        {
-          "name": "QUESTION_ANSWERED"
-        },
-        {
-          "name": "QUIZ_COMPLETED"
-        },
-        {
-          "name": "QUIZ_STARTED"
         }
       ]
     },

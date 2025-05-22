@@ -142,7 +142,8 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
       .update(transformedData)
       .eq('id', user.id)
 
-    if (updateError?.code === 'PGRST116') { // No rows updated
+    if (updateError?.code === 'PGRST116') {
+      // No rows updated
       // Create new profile
       const { error: insertError } = await supabase
         .from('users_profiles')
