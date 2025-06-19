@@ -77,17 +77,6 @@ module.exports = () => {
       ],
     },
 
-    modularizeImports: {
-      '@tamagui/lucide-icons': {
-        transform: `@tamagui/lucide-icons/dist/esm/icons/{{kebabCase member}}`,
-        skipDefaultConversion: true,
-      },
-      // '@tamagui-icons/icon-ph': {
-      //   transform: '@tamagui-icons/icon-ph/dist/esm/icons/{{kebabCase member}}',
-      //   skipDefaultConversion: true,
-      // },
-    },
-
     transpilePackages: [
       'solito',
       'react-native-web',
