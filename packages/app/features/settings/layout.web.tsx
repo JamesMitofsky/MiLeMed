@@ -1,4 +1,4 @@
-import { FullscreenSpinner, Separator, XStack, YStack } from '@my/ui'
+import { FullscreenSpinner, XStack, YStack } from '@my/ui'
 import { useUser } from 'app/utils/useUser'
 
 import { SettingsScreen } from './screen'
@@ -21,7 +21,7 @@ export const SettingsLayout = ({ children, isSettingsHome = false }: SettingsLay
   }
 
   return (
-    <XStack separator={<Separator vertical />} f={1}>
+    <XStack f={1}>
       <YStack
         bg="$color1"
         $sm={{ f: 1, dsp: isSettingsHome ? 'flex' : 'none' }}

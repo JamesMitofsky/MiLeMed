@@ -1,5 +1,4 @@
 import { H1, isWeb, ScrollView, YStack } from '@my/ui'
-import { DemoChartsDashboard } from 'app/features/admin/DemoChartsDashboard'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -21,7 +20,7 @@ export const Page: NextPageWithLayout = () => {
                 Interaktive Daten-Dashboard
               </H1>
             )}
-            <DemoChartsDashboard />
+            {/* <DemoChartsDashboard /> */}
           </YStack>
         </ScrollToTopTabBarContainer>
       </ScrollView>
