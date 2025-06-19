@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const withBundleAnalyzer = require('@next/bundle-analyzer')
 const { withTamagui } = require('@tamagui/next-plugin')
 const { join } = require('path')
 
@@ -12,10 +11,6 @@ const disableExtraction =
   boolVals[process.env.DISABLE_EXTRACTION] ?? process.env.NODE_ENV === 'development'
 
 const plugins = [
-  withBundleAnalyzer({
-    enabled: process.env.ANALYZE === 'true',
-    openAnalyzer: process.env.ANALYZE === 'true',
-  }),
   withTamagui({
     themeBuilder: {
       input: '../../packages/ui/src/themes/theme.ts',
@@ -32,17 +27,6 @@ const plugins = [
         return true
       }
     },
-    excludeReactNativeWebExports: [
-      'VirtualizedList',
-      'Switch',
-      'ProgressBar',
-      'Picker',
-      'CheckBox',
-      'Touchable',
-      'FlatList',
-      'Animated',
-      'Modal',
-    ],
   }),
   (nextConfig) => {
     return {
@@ -84,8 +68,10 @@ module.exports = () => {
       'expo-constants',
       'expo-modules-core',
       'expo-image-picker',
-      'expo-web-browser',
       'react-native-gesture-handler',
+      '@ts-react/form',
+      'react-hook-form',
+      'react-native-reanimated',
     ],
     /*
        A few notes before enabling app directory:
