@@ -371,9 +371,7 @@ export type Database = {
         }[]
       }
       lecture_get_by_id: {
-        Args: {
-          p_lecture_id: number
-        }
+        Args: { p_lecture_id: number }
         Returns: {
           id: number
           title: string
@@ -386,18 +384,14 @@ export type Database = {
         }[]
       }
       lecture_get_completion_counts: {
-        Args: {
-          user_id?: string
-        }
+        Args: { user_id?: string }
         Returns: {
           total_lectures: number
           completed_lectures: number
         }[]
       }
       lecture_get_with_completion: {
-        Args: {
-          p_chapter_id: number
-        }
+        Args: { p_chapter_id: number }
         Returns: {
           id: number
           title: string
@@ -407,23 +401,15 @@ export type Database = {
         }[]
       }
       lecture_mark_completed: {
-        Args: {
-          p_lecture_id: number
-        }
+        Args: { p_lecture_id: number }
         Returns: number
       }
       quiz_check_completion: {
-        Args: {
-          p_lecture_id: number
-          user_id?: string
-        }
+        Args: { p_lecture_id: number; user_id?: string }
         Returns: boolean
       }
       quiz_get_results: {
-        Args: {
-          p_lecture_id: number
-          user_id?: string
-        }
+        Args: { p_lecture_id: number; user_id?: string }
         Returns: {
           question_id: number
           question_text: string
@@ -437,10 +423,7 @@ export type Database = {
         }[]
       }
       quiz_mark_completed: {
-        Args: {
-          p_lecture_id: number
-          p_passed: boolean
-        }
+        Args: { p_lecture_id: number; p_passed: boolean }
         Returns: boolean
       }
       quiz_record_user_answer: {
@@ -452,17 +435,11 @@ export type Database = {
         Returns: number
       }
       quiz_set_reference_option: {
-        Args: {
-          p_question_id: number
-          p_correct_option_id: number
-        }
+        Args: { p_question_id: number; p_correct_option_id: number }
         Returns: number
       }
       quiz_set_reference_text: {
-        Args: {
-          p_question_id: number
-          p_reference_answer: string
-        }
+        Args: { p_question_id: number; p_reference_answer: string }
         Returns: number
       }
       system_record_event: {
@@ -476,9 +453,7 @@ export type Database = {
         Returns: number
       }
       user_get_completion_stats: {
-        Args: {
-          user_id?: string
-        }
+        Args: { user_id?: string }
         Returns: {
           total_chapters: number
           completed_chapters: number
@@ -517,27 +492,29 @@ export type Database = {
   }
 }
 
-type PublicSchema = Database[Extract<keyof Database, "public">]
+type DefaultSchema = Database[Extract<keyof Database, "public">]
 
 export type Tables<
-  PublicTableNameOrOptions extends
-    | keyof (PublicSchema["Tables"] & PublicSchema["Views"])
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-        Database[PublicTableNameOrOptions["schema"]]["Views"])
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
-      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
     ? R
     : never
-  : PublicTableNameOrOptions extends keyof (PublicSchema["Tables"] &
-        PublicSchema["Views"])
-    ? (PublicSchema["Tables"] &
-        PublicSchema["Views"])[PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
         Row: infer R
       }
       ? R
@@ -545,20 +522,22 @@ export type Tables<
     : never
 
 export type TablesInsert<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Insert: infer I
     }
     ? I
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Insert: infer I
       }
       ? I
@@ -566,20 +545,22 @@ export type TablesInsert<
     : never
 
 export type TablesUpdate<
-  PublicTableNameOrOptions extends
-    | keyof PublicSchema["Tables"]
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
     | { schema: keyof Database },
-  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicTableNameOrOptions["schema"]]["Tables"]
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
-> = PublicTableNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+> = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
       Update: infer U
     }
     ? U
     : never
-  : PublicTableNameOrOptions extends keyof PublicSchema["Tables"]
-    ? PublicSchema["Tables"][PublicTableNameOrOptions] extends {
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
         Update: infer U
       }
       ? U
@@ -587,21 +568,23 @@ export type TablesUpdate<
     : never
 
 export type Enums<
-  PublicEnumNameOrOptions extends
-    | keyof PublicSchema["Enums"]
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
     | { schema: keyof Database },
-  EnumName extends PublicEnumNameOrOptions extends { schema: keyof Database }
-    ? keyof Database[PublicEnumNameOrOptions["schema"]]["Enums"]
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
-> = PublicEnumNameOrOptions extends { schema: keyof Database }
-  ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
-  : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
-    ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+> = DefaultSchemaEnumNameOrOptions extends { schema: keyof Database }
+  ? Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
     : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof PublicSchema["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof Database },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof Database
@@ -610,7 +593,36 @@ export type CompositeTypes<
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
   ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
-    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
+
+export const Constants = {
+  public: {
+    Enums: {
+      event_type: [
+        "LECTURE_VIEWED",
+        "LECTURE_COMPLETED",
+        "LECTURE_SKIPPED",
+        "QUIZ_STARTED",
+        "QUIZ_COMPLETED",
+        "QUIZ_PASSED",
+        "QUIZ_FAILED",
+        "QUESTION_ANSWERED",
+        "PAGE_VIEWED",
+        "SEARCH_PERFORMED",
+        "USER_REGISTERED",
+        "USER_LOGGED_IN",
+        "USER_LOGGED_OUT",
+        "PROFILE_UPDATED",
+        "ERROR_OCCURRED",
+        "FEEDBACK_SUBMITTED",
+      ],
+      gender: ["MALE", "FEMALE", "OTHER"],
+      mode: ["THEORETICAL", "PRACTICAL"],
+      question_type: ["OPEN", "MULTIPLE_CHOICE"],
+      user_role: ["ADMIN", "MEDICAL_PROFESSIONAL", "STUDENT", "STUDENT_TESTER"],
+    },
+  },
+} as const
 
