@@ -1,8 +1,8 @@
 import { LegalLayout } from 'app/features/legal/layout.web'
-import { TermsOfServiceScreen } from 'app/features/legal/terms-of-service-screen'
 import Head from 'next/head'
 
 import { NextPageWithLayout } from './_app'
+import { PrivacyPolicyScreen } from 'app/features/legal/privacy-policy-screen'
 
 export const Page: NextPageWithLayout = () => {
   return (
@@ -10,7 +10,7 @@ export const Page: NextPageWithLayout = () => {
       <Head>
         <title>Terms of Service</title>
       </Head>
-      <TermsOfServiceScreen />
+      <PrivacyPolicyScreen />
     </>
   )
 }
