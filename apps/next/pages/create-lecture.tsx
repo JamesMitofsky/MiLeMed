@@ -32,7 +32,7 @@ export const Page: NextPageWithLayout = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [chapterId, setChapterId] = useState<number | null>(null)
-  const [sortOrder, setSortOrder] = useState(0)
+  const [sortOrder, setSortOrder] = useState(1) // Default to 1 as the starting sort order
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
 
   // State for chapters
@@ -70,6 +70,26 @@ export const Page: NextPageWithLayout = () => {
   const handleModeToggle = (newMode: 'THEORETICAL' | 'PRACTICAL') => {
     setMode(newMode)
     setChapterId(null) // Reset chapter selection when mode changes
+  }
+
+  // Fetch the highest sort order for the selected chapter
+  const fetchHighestSortOrder = async (selectedChapterId: number) => {
+    try {
+      const { data, error } = await supabaseClient
+        .from('content_lectures')
+        .select('sort_order')
+        .eq('chapter_id', selectedChapterId)
+        .order('sort_order', { ascending: false })
+        .limit(1)
+
+      if (error) throw error
+
+      // If there are lectures in this chapter, set sort order to highest + 1, otherwise start at 1
+      const nextSortOrder = data && data.length > 0 ? data[0].sort_order + 1 : 1
+      setSortOrder(nextSortOrder)
+    } catch (err) {
+      console.error('Error fetching highest sort order:', err)
+    }
   }
 
   // Handle form submission
@@ -115,7 +135,7 @@ export const Page: NextPageWithLayout = () => {
       setTitle('')
       setContent('')
       setChapterId(null)
-      setSortOrder(0)
+      setSortOrder(1) // Reset to default sort order of 1
 
       // Redirect after short delay
       setTimeout(() => {
@@ -192,7 +212,11 @@ export const Page: NextPageWithLayout = () => {
                         ) : chapters.length > 0 ? (
                           <Select
                             value={chapterId?.toString() || ''}
-                            onValueChange={(value) => setChapterId(parseInt(value, 10))}
+                            onValueChange={(value) => {
+                              const selectedChapterId = parseInt(value, 10)
+                              setChapterId(selectedChapterId)
+                              fetchHighestSortOrder(selectedChapterId)
+                            }}
                           >
                             <Select.Trigger>
                               <Select.Value placeholder="Kapitel auswählen" />
@@ -234,15 +258,16 @@ export const Page: NextPageWithLayout = () => {
                         />
                       </YStack>
 
-                      {/* Sort order input */}
+                      {/* Sort order input - automatically calculated but can be overridden */}
                       <YStack gap="$2">
                         <Text fontWeight="bold">Sortierreihenfolge</Text>
                         <Input
                           placeholder="Sortierreihenfolge (z.B. 1, 2, 3)"
                           value={sortOrder.toString()}
-                          onChangeText={(text) => setSortOrder(parseInt(text, 10) || 0)}
-                          keyboardType="numeric"
+                          editable={false}
+                          opacity={0.7}
                         />
+                        <Text fontSize="$2" color="$gray10">Wird automatisch gesetzt, kann aber überschrieben werden</Text>
                       </YStack>
 
                       {/* Content textarea */}
