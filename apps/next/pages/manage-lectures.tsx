@@ -230,7 +230,9 @@ export const Page: NextPageWithLayout = () => {
                         ) : (
                           <XStack ai="center" gap="$2" opacity={0.7}>
                             <Info size="$1" color="$gray9" />
-                            <Text color="$gray9">No lectures found for this chapter</Text>
+                            <Text color="$gray9">
+                              Für dieses Kapitel wurden keine Vorlesungen gefunden
+                            </Text>
                           </XStack>
                         )}
                       </YStack>
