@@ -1,3 +1,5 @@
+'use client'
+
 import { XStack, ScrollView, YStack, Button } from '@my/ui'
 import { ArrowLeft } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
@@ -5,17 +7,14 @@ import { useSupabase } from 'app/utils/supabase/useSupabase'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import QuizQuestionForm from '../../../../packages/app/features/lectures/QuizQuestionForm'
-import ReadModifyLecture from '../../../../packages/app/features/lectures/ReadModifyLecture'
-import ShowExistingQuizQuestions from '../../../../packages/app/features/lectures/ShowExistingQuizQuestions'
-import { useLectures, useQuizSystem } from '../../../../packages/app/utils/hooks/queryHooks'
+import { useQuizSystem } from '../../../../packages/app/utils/hooks/queryHooks'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
-  const { getLectureById } = useLectures()
-  const { data: lecture } = getLectureById(parseInt(router.query.id as string, 10))
+  // const { getLectureById } = useLectures()
+  // const { data: lecture } = getLectureById(parseInt(router.query.id as string, 10))
 
   const { getQuizResults } = useQuizSystem()
   const {
@@ -53,7 +52,7 @@ export const Page: NextPageWithLayout = () => {
               Back
             </Button>
             <YStack gap="$12">
-              <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
+              {/* <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
               <ShowExistingQuizQuestions
                 quizQuestions={quizQuestions}
                 areQuestionsLoading={areQuestionsLoading}
@@ -62,7 +61,7 @@ export const Page: NextPageWithLayout = () => {
                   handleQuestionDelete(questionId)
                 }}
               />
-              <QuizQuestionForm onSubmitSuccess={() => {}} lectureId={lecture?.id} />
+              <QuizQuestionForm onSubmitSuccess={() => {}} lectureId={lecture?.id} /> */}
             </YStack>
           </YStack>
         </ScrollView>
