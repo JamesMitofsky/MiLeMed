@@ -5,31 +5,35 @@ import { UserProfile, SystemEvent } from '../supabase/databaseTypes'
 import { useSessionContext } from '../supabase/useSessionContext'
 
 // Comprehensive Hooks Collection
-export const useChapters = () => {
+export const useChapters = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
   const { supabaseClient } = useSessionContext()
 
   // Define query key as a constant
-  const getChapterSummaryKey = (mode?: 'THEORETICAL' | 'PRACTICAL') => ['chapters', mode] as const
+  const getChapterSummaryKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
+    ['chapters', chapterMode] as const
 
   // Get chapter summary with completion status
-  const getChapterSummary = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
-    return useQuery({
-      queryKey: getChapterSummaryKey(mode),
-      queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('chapter_get_summary', {
-          chapter_mode: mode,
-        })
+  const chapterQuery = useQuery({
+    queryKey: getChapterSummaryKey(mode),
+    queryFn: async () => {
+      const { data, error } = await supabaseClient.rpc('chapter_get_summary', {
+        chapter_mode: mode,
+      })
 
-        if (error) throw error
-        return data
-      },
-    })
+      if (error) throw error
+      return data
+    },
+  })
+
+  return {
+    data: chapterQuery.data,
+    isLoading: chapterQuery.isLoading,
+    error: chapterQuery.error,
+    refetch: chapterQuery.refetch,
   }
-
-  return { getChapterSummary }
 }
 
-export const useLectures = () => {
+export const useLectures = (chapterId?: number) => {
   const { supabaseClient } = useSessionContext()
   const queryClient = useQueryClient()
 
@@ -38,22 +42,22 @@ export const useLectures = () => {
   const getLectureByIdKey = (lectureId: number) => ['lecture', lectureId] as const
 
   // Get lectures with completion status for a specific chapter
-  const getLecturesWithCompletion = (chapterId: number) => {
-    return useQuery({
-      queryKey: getLecturesKey(chapterId),
-      queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('lecture_get_with_completion', {
-          p_chapter_id: chapterId,
-        })
+  const lecturesQuery = useQuery({
+    queryKey: chapterId ? getLecturesKey(chapterId) : ['lectures'],
+    queryFn: async () => {
+      if (!chapterId) return null
 
-        if (error) throw error
-        return data
-      },
-    })
-  }
+      const { data, error } = await supabaseClient.rpc('lecture_get_with_completion', {
+        p_chapter_id: chapterId,
+      })
 
-  // Get a single lecture by ID
-  const getLectureById = (lectureId: number) => {
+      if (error) throw error
+      return data
+    },
+    enabled: !!chapterId, // Only run the query if chapterId is provided
+  })
+  // Function to get a single lecture by ID
+  const useLectureById = (lectureId: number) => {
     return useQuery({
       queryKey: getLectureByIdKey(lectureId),
       queryFn: async () => {
@@ -115,8 +119,11 @@ export const useLectures = () => {
   })
 
   return {
-    getLecturesWithCompletion,
-    getLectureById,
+    data: lecturesQuery.data,
+    isLoading: lecturesQuery.isLoading,
+    error: lecturesQuery.error,
+    refetch: lecturesQuery.refetch,
+    useLectureById,
     markLectureCompleted,
   }
 }
@@ -161,7 +168,7 @@ export const useUserProfile = () => {
   const updateProfile = useMutation({
     mutationFn: async (updates: Partial<UserProfile>): Promise<UserProfile> => {
       if (!user?.id) throw new Error('User ID is required for profile update')
-      
+
       const { data, error } = await supabaseClient
         .from('users_profiles')
         .update(updates)
