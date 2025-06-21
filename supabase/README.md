@@ -1,6 +1,8 @@
 # Notes to self
 * Running `npx @snaplet/seed init` resolved the type errors I had in seed.ts
 
+`yarn migration:diff .` and `yarn migration:up` are both interacting with the local db. Only `yarn deploy` does the push to prod. 
+
 ## Following existing changes to db
 Using a script, we can get all the past migrations written to a file, useful for passing to AI. This file is named `combine_migrations.sh`
 

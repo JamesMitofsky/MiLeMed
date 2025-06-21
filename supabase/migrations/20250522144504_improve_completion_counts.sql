@@ -62,6 +62,8 @@ BEGIN
 END;
 $$;
 
+DROP FUNCTION IF EXISTS lecture_get_by_id(INTEGER);
+
 -- lecture_get_by_id
 CREATE OR REPLACE FUNCTION lecture_get_by_id(p_lecture_id INTEGER)
 RETURNS TABLE (

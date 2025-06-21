@@ -10,8 +10,8 @@
       "env": {
         "APP_ENV": "development",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "ios": {
         "simulator": true,
@@ -25,8 +25,8 @@
       "env": {
         "APP_ENV": "development",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "ios": {
         "image": "latest"
@@ -39,8 +39,8 @@
         "APP_ENV": "development",
         "NODE_ENV": "development",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "android": {
         "buildType": "apk"
@@ -58,8 +58,8 @@
       "env": {
         "APP_ENV": "staging",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "ios": {
         "image": "latest"
@@ -75,8 +75,8 @@
       "env": {
         "APP_ENV": "production",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "ios": {
         "image": "latest"
@@ -88,8 +88,8 @@
         "APP_ENV": "production",
         "NODE_ENV": "production",
         "EXPO_PUBLIC_URL": "https://milemed.de",
-        "EXPO_PUBLIC_SUPABASE_URL": "https://zpndmrhsvloyxegyygkt.supabase.co",
-        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwbmRtcmhzdmxveXhlZ3l5Z2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mjk3MjY3NjcsImV4cCI6MjA0NTMwMjc2N30.GxGAUgxbDb9-7VUk60Gd7WH59giLwPirRAb59GllCHQ"
+        "EXPO_PUBLIC_SUPABASE_URL": "https://iktbxsxagquhtbjeqhby.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrdGJ4c3hhZ3F1aHRiamVxaGJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA1MTMxODQsImV4cCI6MjA2NjA4OTE4NH0.kb49HIWtKf3wpfgQQpl3lGcrK_PWE8OiRF8DO2D1RoY"
       },
       "channel": "production"
     }
