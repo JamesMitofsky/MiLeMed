@@ -12,7 +12,7 @@ import {
   Button,
   Theme,
 } from '@my/ui'
-import { BookOpen, Stethoscope, Info, List, Loader2, Plus } from '@tamagui/lucide-icons'
+import { BookOpen, Stethoscope, Info, List, Loader2, Plus, Search } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -21,6 +21,7 @@ import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
 import { useAllChaptersAndLectures } from '../../../packages/app/utils/hooks/queryHooks'
+import { Input } from '@my/ui/src/components/forms/inputs/components/inputsParts'
 
 // Define types for the data structure returned by useAllChaptersAndLectures
 type ChapterData = {
@@ -44,12 +45,43 @@ export const Page: NextPageWithLayout = () => {
   // State for mode filter (THEORETICAL or PRACTICAL)
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
 
+  // State for search term
+  const [searchTerm, setSearchTerm] = useState('')
+
   // Get all chapters and lectures using the new hook
   const { data, isLoading } = useAllChaptersAndLectures(mode)
 
   // Extract chapters and lectures from the data
-  const chapters = (data?.chapters || []) as ChapterData[]
-  const lecturesByChapter = (data?.lecturesByChapter || {}) as Record<number, LectureData[]>
+  const allChapters = (data?.chapters || []) as ChapterData[]
+  const allLecturesByChapter = (data?.lecturesByChapter || {}) as Record<number, LectureData[]>
+
+  // Filter chapters and lectures based on search term
+  const chapters = searchTerm
+    ? allChapters.filter((chapter) => {
+        // Check if chapter title matches search
+        const chapterMatches = chapter.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+        // Check if any lectures in this chapter match search
+        const hasMatchingLectures = allLecturesByChapter[chapter.id]?.some((lecture) =>
+          lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+
+        return chapterMatches || hasMatchingLectures
+      })
+    : allChapters
+
+  // Filter lectures for each chapter
+  const lecturesByChapter = chapters.reduce((filtered, chapter) => {
+    const chapterLectures = allLecturesByChapter[chapter.id] || []
+
+    filtered[chapter.id] = searchTerm
+      ? chapterLectures.filter((lecture) =>
+          lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : chapterLectures
+
+    return filtered
+  }, {} as Record<number, LectureData[]>)
 
   // Toggle between THEORETICAL and PRACTICAL modes
   const handleModeToggle = (checked: boolean) => {
@@ -135,6 +167,27 @@ export const Page: NextPageWithLayout = () => {
                   >
                     <Button.Text color="orange">Neues Kapitel</Button.Text>
                   </Button>
+                </XStack>
+
+                {/* Search bar */}
+                <XStack ml="$3" mr="$3" mt="$4">
+                  <Input size="$3" minWidth="100%">
+                    <Input.Box>
+                      <Input.Icon>
+                        <Search size="$1" color="$gray10" />
+                      </Input.Icon>
+                      <Input.Area
+                        paddingLeft={0}
+                        flex={1}
+                        placeholder="Suche nach Kapiteln oder Lektionen..."
+                        value={searchTerm}
+                        onChangeText={setSearchTerm}
+                        size="$3"
+                        borderColor="$gray8"
+                        clearButtonMode="while-editing"
+                      />
+                    </Input.Box>
+                  </Input>
                 </XStack>
               </YStack>
 
