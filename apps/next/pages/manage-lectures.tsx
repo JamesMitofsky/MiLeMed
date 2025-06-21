@@ -1,6 +1,5 @@
 import {
   H2,
-  isWeb,
   ScrollView,
   XStack,
   YStack,
@@ -8,11 +7,11 @@ import {
   FullscreenSpinner,
   Card,
   H3,
-  Button,
   Switch,
   Label,
+  Button,
 } from '@my/ui'
-import { ArrowLeft } from '@tamagui/lucide-icons'
+import { BookOpen, Beaker, Info, List, Loader2, Plus } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -77,32 +76,58 @@ export const Page: NextPageWithLayout = () => {
         <ScrollView f={4} fb={0}>
           <ScrollToTopTabBarContainer>
             <YStack gap="$7" pb="$10" pt="$5">
-              <XStack>
+              {/* <XStack>
                 <Button icon={ArrowLeft} chromeless onPress={() => router.back()}>
                   <Button.Text>Zurück</Button.Text>
                 </Button>
-              </XStack>
-
-              {isWeb && <H2>Lektionen verwalten</H2>}
+              </XStack> */}
 
               {/* Mode toggle switch */}
-              <XStack alignItems="center" space="$4" p="$4">
-                <Label htmlFor="mode-switch" flex={1}>
-                  {mode === 'PRACTICAL' ? 'Praktisch' : 'Theoretisch'}
-                </Label>
-                <Switch
-                  id="mode-switch"
-                  checked={mode === 'PRACTICAL'}
-                  onCheckedChange={handleModeToggle}
-                  size="$4"
+              <XStack jc="space-between" ai="center" mt="$3">
+                <XStack ai="center" gap="$2" ml="$3">
+                  <List size="$3" color="$gray10" />
+                  <H2>Lektionen verwalten</H2>
+                </XStack>
+                <XStack alignItems="center" gap="$4">
+                  <XStack flex={1} gap="$2" ai="center">
+                    <Label htmlFor="mode-switch" size="$6" fontWeight="bold">
+                      {mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}
+                    </Label>
+                    {mode === 'THEORETICAL' ? (
+                      <BookOpen size="$1" color="$blue10" />
+                    ) : (
+                      <Beaker size="$1" color="$green10" />
+                    )}
+                  </XStack>
+                  <Switch
+                    id="mode-switch"
+                    checked={mode === 'PRACTICAL'}
+                    onCheckedChange={handleModeToggle}
+                    size="$4"
+                    theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                  >
+                    <Switch.Thumb animation="quick" />
+                  </Switch>
+                </XStack>
+              </XStack>
+              <XStack ml="$3" mt="$4">
+                <Button
+                  size="$3"
+                  alignSelf="flex-start"
+                  theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                  icon={Plus}
+                  onPress={() => router.push('/create-lecture')}
                 >
-                  <Switch.Thumb animation="quick" />
-                </Switch>
+                  <Button.Text>Neue Lektion erstellen</Button.Text>
+                </Button>
               </XStack>
 
               {isLoading ? (
                 <YStack p="$4" gap="$4" ai="center">
-                  <H3>Loading chapters and lectures...</H3>
+                  <XStack ai="center" gap="$2">
+                    <Loader2 size="$1" color="$blue10" />
+                    <H3>Loading chapters and lectures...</H3>
+                  </XStack>
                   <FullscreenSpinner />
                 </YStack>
               ) : (
@@ -110,19 +135,34 @@ export const Page: NextPageWithLayout = () => {
                   {/* Display chapters and their lectures */}
                   {chapters.map((chapter) => (
                     <YStack key={chapter.id} gap="$2">
-                      <H2>{chapter.title}</H2>
-                      <Text color="$gray10">{chapter.chapter_mode}</Text>
+                      <XStack ai="center" gap="$2">
+                        {mode === 'THEORETICAL' ? (
+                          <BookOpen size="$2" color="$blue10" />
+                        ) : (
+                          <Beaker size="$2" color="$green10" />
+                        )}
+                        <H2>{chapter.title}</H2>
+                      </XStack>
+                      <XStack pl="$4" ai="center" gap="$1">
+                        {/* <Info size="$1" color="$gray10" /> */}
+                        <Text color="$gray10">{chapter.chapter_mode}</Text>
+                      </XStack>
 
                       {/* Display lectures for this chapter */}
                       <YStack pl="$4" gap="$4">
                         {lecturesByChapter[chapter.id]?.length > 0 ? (
                           lecturesByChapter[chapter.id].map((lecture: LectureData) => (
                             <Card key={lecture.id} bordered padding="$3" mb="$2">
-                              <H3>{lecture.title}</H3>
+                              <XStack ai="center" gap="$2">
+                                <H3>{lecture.title}</H3>
+                              </XStack>
                             </Card>
                           ))
                         ) : (
-                          <Text color="$gray9">No lectures found for this chapter</Text>
+                          <XStack ai="center" gap="$2" opacity={0.7}>
+                            <Info size="$1" color="$gray9" />
+                            <Text color="$gray9">No lectures found for this chapter</Text>
+                          </XStack>
                         )}
                       </YStack>
                     </YStack>
@@ -131,8 +171,11 @@ export const Page: NextPageWithLayout = () => {
               )}
 
               {/* Debug info */}
-              <YStack p="$4" gap="$4" opacity={0.7} borderTopWidth={1} borderColor="$gray5" mt="$4">
-                <H3>Debug Information</H3>
+              {/* <YStack p="$4" gap="$4" opacity={0.7} borderTopWidth={1} borderColor="$gray5" mt="$4">
+                <XStack ai="center" gap="$2">
+                  <Info size="$1" color="$gray10" />
+                  <H3>Debug Information</H3>
+                </XStack>
                 <YStack>
                   <Text>Current Mode: {mode || 'All'}</Text>
                   <Text>Chapters: {chapters.length}</Text>
@@ -146,11 +189,12 @@ export const Page: NextPageWithLayout = () => {
                       console.log('Total lectures:', Object.values(lecturesByChapter).flat().length)
                     }}
                     mt="$2"
+                    icon={RefreshCw}
                   >
-                    Log Data to Console
+                    <Button.Text>Log Data to Console</Button.Text>
                   </Button>
                 </YStack>
-              </YStack>
+              </YStack> */}
             </YStack>
           </ScrollToTopTabBarContainer>
         </ScrollView>
