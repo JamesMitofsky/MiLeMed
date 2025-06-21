@@ -14,7 +14,7 @@ import {
   Label,
   Theme,
 } from '@my/ui'
-import { ArrowLeft, BookOpen, Beaker, Save } from '@tamagui/lucide-icons'
+import { ArrowLeft, BookOpen, Stethoscope, Save } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
@@ -143,7 +143,7 @@ export const Page: NextPageWithLayout = () => {
                   {mode === 'THEORETICAL' ? (
                     <BookOpen size="$3" color="$blue10" />
                   ) : (
-                    <Beaker size="$3" color="$green10" />
+                    <Stethoscope size="$3" color="$green10" />
                   )}
                   <H2>Neues Kapitel erstellen</H2>
                 </XStack>
@@ -176,7 +176,7 @@ export const Page: NextPageWithLayout = () => {
                           {mode === 'THEORETICAL' ? (
                             <BookOpen size="$1" color="$blue10" />
                           ) : (
-                            <Beaker size="$1" color="$green10" />
+                            <Stethoscope size="$1" color="$green10" />
                           )}
                         </XStack>
                       </YStack>

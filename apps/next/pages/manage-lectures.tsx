@@ -12,7 +12,7 @@ import {
   Button,
   Theme,
 } from '@my/ui'
-import { BookOpen, Beaker, Info, List, Loader2, Plus } from '@tamagui/lucide-icons'
+import { BookOpen, Stethoscope, Info, List, Loader2, Plus } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
@@ -84,56 +84,59 @@ export const Page: NextPageWithLayout = () => {
               </XStack> */}
 
               {/* Mode toggle switch */}
-              <XStack jc="space-between" ai="center" mt="$3">
-                <XStack ai="center" gap="$2" ml="$3">
-                  <List size="$3" color="$gray10" />
-                  <H2>Lektionen verwalten</H2>
-                </XStack>
-                <XStack alignItems="center" gap="$4">
-                  <XStack flex={1} gap="$2" ai="center">
-                    <Label htmlFor="mode-switch" size="$6" fontWeight="bold">
-                      {mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}
-                    </Label>
-                    {mode === 'THEORETICAL' ? (
-                      <BookOpen size="$1" color="$blue10" />
-                    ) : (
-                      <Beaker size="$1" color="$green10" />
-                    )}
+              <YStack gap="$3">
+                <XStack jc="space-between" ai="center" mt="$3">
+                  <XStack ai="center" gap="$2" ml="$3">
+                    <List size="$3" color="$gray11" />
+                    <H2 color="$gray11">Lektionen verwalten</H2>
                   </XStack>
+                  <XStack alignItems="center" gap="$4">
+                    <XStack flex={1} gap="$2" ai="center">
+                      <Label htmlFor="mode-switch" size="$6" fontWeight="bold">
+                        {mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}
+                      </Label>
+                      {mode === 'THEORETICAL' ? (
+                        <BookOpen size="$1" color="$blue10" />
+                      ) : (
+                        <Stethoscope size="$1" color="$green10" />
+                      )}
+                    </XStack>
 
-                  <Theme name={mode === 'PRACTICAL' ? 'green' : 'light_blue_active'}>
-                    <Switch
-                      id="mode-switch"
-                      checked={mode === 'PRACTICAL'}
-                      onCheckedChange={handleModeToggle}
-                      size="$4"
-                      theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
-                    >
-                      <Switch.Thumb animation="quick" />
-                    </Switch>
-                  </Theme>
+                    <Theme name={mode === 'PRACTICAL' ? 'green' : 'light_blue_active'}>
+                      <Switch
+                        id="mode-switch"
+                        checked={mode === 'PRACTICAL'}
+                        onCheckedChange={handleModeToggle}
+                        size="$4"
+                        theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                      >
+                        <Switch.Thumb animation="quick" />
+                      </Switch>
+                    </Theme>
+                  </XStack>
                 </XStack>
-              </XStack>
-              <XStack ml="$3" mt="$4" gap="$4">
-                <Button
-                  size="$3"
-                  alignSelf="flex-start"
-                  theme="orange"
-                  icon={Plus}
-                  onPress={() => router.push('/create-lecture')}
-                >
-                  <Button.Text>Neue Lektion erstellen</Button.Text>
-                </Button>
-                <Button
-                  size="$3"
-                  alignSelf="flex-start"
-                  theme="purple"
-                  icon={Plus}
-                  onPress={() => router.push('/create-chapter')}
-                >
-                  <Button.Text>Neues Kapitel erstellen</Button.Text>
-                </Button>
-              </XStack>
+                <XStack ml="$3" gap="$4">
+                  <Button
+                    size="$2"
+                    alignSelf="flex-start"
+                    theme="orange"
+                    icon={<Plus color="$gray12" />}
+                    onPress={() => router.push('/create-lecture')}
+                  >
+                    <Button.Text color="$gray12">Neue Lektion</Button.Text>
+                  </Button>
+                  <Button
+                    size="$2"
+                    alignSelf="flex-start"
+                    theme="orange"
+                    variant="outlined"
+                    icon={<Plus color="orange" />}
+                    onPress={() => router.push('/create-chapter')}
+                  >
+                    <Button.Text color="orange">Neues Kapitel</Button.Text>
+                  </Button>
+                </XStack>
+              </YStack>
 
               {isLoading ? (
                 <YStack p="$4" gap="$4" ai="center">
@@ -152,7 +155,7 @@ export const Page: NextPageWithLayout = () => {
                         {mode === 'THEORETICAL' ? (
                           <BookOpen size="$2" color="$blue10" />
                         ) : (
-                          <Beaker size="$2" color="$green10" />
+                          <Stethoscope size="$2" color="$green10" />
                         )}
                         <H2>{chapter.title}</H2>
                       </XStack>

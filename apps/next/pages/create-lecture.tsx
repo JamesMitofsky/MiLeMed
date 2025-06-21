@@ -12,7 +12,7 @@ import {
   Spinner,
   Card,
 } from '@my/ui'
-import { ArrowLeft, BookOpen, Beaker, Save } from '@tamagui/lucide-icons'
+import { ArrowLeft, BookOpen, Stethoscope, Save } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
@@ -170,7 +170,7 @@ export const Page: NextPageWithLayout = () => {
                   {mode === 'THEORETICAL' ? (
                     <BookOpen size="$3" color="$blue10" />
                   ) : (
-                    <Beaker size="$3" color="$green10" />
+                    <Stethoscope size="$3" color="$green10" />
                   )}
                   <H2>Neue Lektion erstellen</H2>
                 </XStack>
@@ -194,7 +194,7 @@ export const Page: NextPageWithLayout = () => {
                           <Button
                             theme={mode === 'PRACTICAL' ? 'green' : 'gray'}
                             onPress={() => handleModeToggle('PRACTICAL')}
-                            icon={Beaker}
+                            icon={Stethoscope}
                           >
                             <Button.Text>Blockpraktikum</Button.Text>
                           </Button>
@@ -267,7 +267,9 @@ export const Page: NextPageWithLayout = () => {
                           editable={false}
                           opacity={0.7}
                         />
-                        <Text fontSize="$2" color="$gray10">Wird automatisch gesetzt, kann aber überschrieben werden</Text>
+                        <Text fontSize="$2" color="$gray10">
+                          Wird automatisch gesetzt, kann aber überschrieben werden
+                        </Text>
                       </YStack>
 
                       {/* Content textarea */}
