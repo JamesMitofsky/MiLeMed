@@ -11,17 +11,24 @@ import {
   Select,
   Spinner,
   Card,
+  Separator,
+  Accordion,
+  SizableText,
 } from '@my/ui'
-import { ArrowLeft, BookOpen, Stethoscope, Save } from '@tamagui/lucide-icons'
+import { ArrowLeft, BookOpen, Stethoscope, Save, Plus, Pen } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import { useSessionContext } from 'app/utils/supabase/useSessionContext'
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
+import QuizQuestionForm, {
+  QuizQuestionFormData,
+} from '../../../packages/app/features/lectures/QuizQuestionForm'
+import { addQuizQuestion } from '../../../packages/app/utils/supabase/simpleQueries/addQuizQuestion'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
@@ -34,6 +41,12 @@ export const Page: NextPageWithLayout = () => {
   const [chapterId, setChapterId] = useState<number | null>(null)
   const [sortOrder, setSortOrder] = useState<number>() // Default to 1 as the starting sort order
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+
+  // State for quiz questions
+  const [quizQuestions, setQuizQuestions] = useState<QuizQuestionFormData[]>([])
+  const [showQuizForm, setShowQuizForm] = useState(false)
+  const [accordionValue, setAccordionValue] = useState<string[]>([])
+  const lectureIdRef = useRef<number | null>(null)
 
   // State for chapters
   const [chapters, setChapters] = useState<{ id: number; title: string }[]>([])
@@ -110,7 +123,7 @@ export const Page: NextPageWithLayout = () => {
 
     try {
       // Insert new lecture
-      const { error } = await supabaseClient
+      const { data, error } = await supabaseClient
         .from('content_lectures')
         .insert([
           {
@@ -124,12 +137,37 @@ export const Page: NextPageWithLayout = () => {
 
       if (error) throw error
 
+      // Store the lecture ID for quiz question creation
+      if (data && data.length > 0) {
+        lectureIdRef.current = data[0].id
+      }
+
       // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({
         queryKey: ['all-chapters-and-lectures', mode],
       })
 
       setSuccess(true)
+
+      // If there are quiz questions, save them and then redirect
+      if (quizQuestions.length > 0 && lectureIdRef.current) {
+        try {
+          // Save all quiz questions
+          const savePromises = quizQuestions.map((question) =>
+            addQuizQuestion(supabaseClient, lectureIdRef.current!, question)
+          )
+
+          await Promise.all(savePromises)
+          console.log('All quiz questions saved successfully')
+        } catch (err) {
+          console.error('Error saving quiz questions:', err)
+          setError(
+            'Lektion wurde erstellt, aber es gab ein Problem beim Speichern der Quiz-Fragen.'
+          )
+        } finally {
+          setIsSubmitting(false)
+        }
+      }
 
       // Reset form
       setTitle('')
@@ -296,6 +334,82 @@ export const Page: NextPageWithLayout = () => {
                           Lektion erfolgreich erstellt! Sie werden weitergeleitet...
                         </Text>
                       )}
+
+                      {/* Quiz Questions Section */}
+                      <YStack gap="$2">
+                        <Text fontWeight="bold">Quiz Fragen</Text>
+                        <Accordion
+                          type="multiple"
+                          value={accordionValue}
+                          onValueChange={setAccordionValue}
+                        >
+                          <Accordion.Item value="quiz-questions">
+                            <Accordion.Trigger flexDirection="row" justifyContent="space-between">
+                              <SizableText>Quiz Fragen hinzufügen</SizableText>
+                              <Pen size={16} />
+                            </Accordion.Trigger>
+                            <Accordion.Content>
+                              <YStack gap="$4" pt="$2">
+                                <Text fontSize="$2" color="$gray10">
+                                  Fügen Sie Quiz-Fragen zu dieser Lektion hinzu. Sie können
+                                  Multiple-Choice-Fragen oder offene Fragen erstellen.
+                                </Text>
+
+                                {/* Show quiz questions that have been added */}
+                                {quizQuestions.length > 0 && (
+                                  <YStack gap="$4" pb="$4">
+                                    <Text fontWeight="bold">Erstellte Fragen:</Text>
+                                    {quizQuestions.map((question, index) => (
+                                      <YStack
+                                        key={index}
+                                        p="$3"
+                                        borderWidth={1}
+                                        borderColor="$gray3"
+                                        borderRadius="$2"
+                                      >
+                                        <Text fontWeight="bold">{question.question_text}</Text>
+                                        <Text fontSize="$2" color="$gray10">
+                                          {question.question_type === 'MULTIPLE_CHOICE'
+                                            ? 'Multiple Choice'
+                                            : 'Offene Frage'}
+                                        </Text>
+                                      </YStack>
+                                    ))}
+                                  </YStack>
+                                )}
+
+                                {/* Button to add a new quiz question */}
+                                {showQuizForm ? (
+                                  <YStack gap="$4">
+                                    <QuizQuestionForm
+                                      onSubmitSuccess={(questionData) => {
+                                        if (questionData) {
+                                          setQuizQuestions([...quizQuestions, questionData])
+                                        }
+                                        setShowQuizForm(false)
+                                      }}
+                                      tempQuestion
+                                    />
+                                    <Button themeShallow onPress={() => setShowQuizForm(false)}>
+                                      <Button.Text>Abbrechen</Button.Text>
+                                    </Button>
+                                  </YStack>
+                                ) : (
+                                  <Button
+                                    themeShallow
+                                    icon={Plus}
+                                    onPress={() => setShowQuizForm(true)}
+                                  >
+                                    <Button.Text>Quiz Frage hinzufügen</Button.Text>
+                                  </Button>
+                                )}
+                              </YStack>
+                            </Accordion.Content>
+                          </Accordion.Item>
+                        </Accordion>
+                      </YStack>
+
+                      <Separator />
 
                       {/* Submit button */}
                       <Button

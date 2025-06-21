@@ -22,9 +22,10 @@ export interface QuizQuestionFormData {
 }
 
 interface QuizQuestionFormProps {
-  onSubmitSuccess: () => void
+  onSubmitSuccess: (questionData?: QuizQuestionFormData) => void
   lectureId?: number
   initialData?: QuizQuestionFormData
+  tempQuestion?: boolean
 }
 
 const questionTypes = [
@@ -62,6 +63,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   onSubmitSuccess,
   lectureId,
   initialData,
+  tempQuestion = false,
 }) => {
   const {
     control,
@@ -91,8 +93,16 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
 
   const submitForm = useCallback(
     async (data: QuizQuestionFormData) => {
-      if (!lectureId) return
       try {
+        // If this is a temporary question (during lecture creation), just pass the data back
+        if (tempQuestion) {
+          onSubmitSuccess(data)
+          reset()
+          return
+        }
+        
+        // Otherwise, save to the database if we have a lectureId
+        if (!lectureId) return
         await addQuizQuestion(supabase, lectureId, data)
         reset()
         console.log('submitted to lectureID: ', lectureId)
@@ -101,7 +111,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         console.error('Failed to add quiz question:', error)
       }
     },
-    [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess]
+    [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess, tempQuestion]
   )
 
   // reset options on question type change
