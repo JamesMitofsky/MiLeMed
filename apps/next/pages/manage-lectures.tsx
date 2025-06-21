@@ -57,9 +57,17 @@ export const Page: NextPageWithLayout = () => {
   // Store fetched chapters
   const allChapters = (chapters as ChapterType[]) || []
 
+  // Log chapters data when it loads
+  useEffect(() => {
+    if (chapters) {
+      console.log('Chapters data loaded:', chapters)
+    }
+  }, [chapters])
+
   // When lectures data changes for the selected chapter, update our collection
   useEffect(() => {
     if (selectedChapterId && lectures) {
+      console.log(`Lectures for chapter ${selectedChapterId} loaded:`, lectures)
       setAllLectures((prev) => ({
         ...prev,
         [selectedChapterId]: lectures as LectureType[],
@@ -88,12 +96,22 @@ export const Page: NextPageWithLayout = () => {
       // Find current chapter index
       const currentIndex = allChapters.findIndex((c) => c.id === selectedChapterId)
 
+      // Log progress
+      console.log(
+        `Finished loading lectures for chapter ${selectedChapterId} (${currentIndex + 1}/${
+          allChapters.length
+        })`
+      )
+
       // If there's a next chapter, select it
       if (currentIndex >= 0 && currentIndex < allChapters.length - 1) {
         setSelectedChapterId(allChapters[currentIndex + 1].id)
+      } else if (currentIndex === allChapters.length - 1) {
+        // This was the last chapter
+        console.log('All lectures loaded. Final data collection:', allLectures)
       }
     }
-  }, [isLoadingLectures, selectedChapterId, allChapters])
+  }, [isLoadingLectures, selectedChapterId, allChapters, allLectures])
 
   const isLoading =
     isLoadingChapters ||
@@ -124,15 +142,25 @@ export const Page: NextPageWithLayout = () => {
                 <Paragraph>This page is currently under development.</Paragraph>
               </Card>
               
-              {/* Data is being fetched but not displayed in the UI */}
-              <YStack gap="$3">
-                {isLoading ? <FullscreenSpinner /> : <Text>Data loaded successfully.</Text>}
-              </YStack>
-              
-              {/* Debug information - can be removed in production */}
-              <YStack opacity={0} height={0} overflow="hidden">
-                <Text>Chapters loaded: {allChapters.length}</Text>
-                <Text>Lectures loaded: {Object.values(allLectures).flat().length}</Text>
+              {/* Debug info */}
+              <YStack p="$4" space="$4">
+                <YStack>
+                  <Text>Chapters: {allChapters.length}</Text>
+                  <Text>Lectures: {Object.values(allLectures).flat().length}</Text>
+                  <Text>Loading: {isLoading ? 'Yes' : 'No'}</Text>
+                  <Text>Current chapter ID: {selectedChapterId || 'None'}</Text>
+                  <Button
+                    onPress={() => {
+                      console.log('All chapters:', allChapters)
+                      console.log('All lectures by chapter:', allLectures)
+                      console.log('Total lectures:', Object.values(allLectures).flat().length)
+                    }}
+                  >
+                    Log Data to Console
+                  </Button>
+                </YStack>
+
+                {isLoading && <FullscreenSpinner />}
               </YStack>
             </YStack>
           </ScrollToTopTabBarContainer>
