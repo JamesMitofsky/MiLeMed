@@ -15,7 +15,7 @@ import {
   SizableText,
   Accordion,
 } from '@my/ui'
-import { ArrowLeft, BookOpen, Check, Pen, Plus, Save, Stethoscope } from '@tamagui/lucide-icons'
+import { ArrowLeft, BookOpen, Check, Pen, Plus, Save, Stethoscope, X } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
@@ -384,7 +384,11 @@ export const Page: NextPageWithLayout = () => {
                                               </Text>
                                               {question.options.map((option, optIndex) => (
                                                 <XStack key={optIndex} gap="$2" alignItems="center">
-                                                  {option.is_correct && <Check color="$green9" />}
+                                                  {option.is_correct ? (
+                                                    <Check color="$green9" />
+                                                  ) : (
+                                                    <X color="$gray9" />
+                                                  )}
                                                   <Text
                                                     fontSize="$2"
                                                     color={
