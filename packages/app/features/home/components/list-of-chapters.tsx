@@ -3,17 +3,18 @@ import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLecture
 import { Text, Theme } from 'tamagui'
 
 import { colors } from '../../../utils/constants/colors'
-import { useFetchChapterWithLectureCount } from '../../../utils/react-query/useFetchChapterWithLectureCount'
-import { ModeType } from '../../../utils/supabase/databaseTypes'
+import { useChapters } from '../../../utils/hooks/queryHooks'
+import { Chapter } from '../../../utils/supabase/databaseTypes'
 
 type ListOfChaptersProps = {
   limit?: number
   lockCardWidth?: boolean
-  mode?: ModeType
+  mode?: Chapter['mode']
 }
 
 const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => {
-  const { data: chapters, isLoading } = useFetchChapterWithLectureCount(limit, mode)
+  const { getChapterSummary } = useChapters()
+  const { data: chapters, isLoading } = getChapterSummary(mode)
 
   if (isLoading) {
     return (
@@ -27,10 +28,10 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
 
   return (
     <>
-      {chapters?.length === 0 ? (
+      {!chapters || chapters.length === 0 ? (
         <Text>Keine Kapitel gefunden.</Text>
       ) : (
-        chapters?.map((chapter, index) => (
+        chapters.map((chapter, index) => (
           <Theme
             key={chapter.id}
             name={mode === 'PRACTICAL' ? colors[colors.length - 1 - index] : colors[index]}
@@ -39,8 +40,8 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
               w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}
               progress={{
-                current: chapter.completed_lectures,
-                full: chapter.total_lectures,
+                current: chapter.lectures_completed,
+                full: chapter.lecture_count,
                 label: 'Lektionen',
               }}
               action={{

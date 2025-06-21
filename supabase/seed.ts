@@ -1,6 +1,6 @@
 import { createSeedClient } from '@snaplet/seed'
 
-type LecturesType = {
+type ContentLecturesType = {
   chapter_id: number
   content: string
   created_at: string | null
@@ -10,7 +10,7 @@ type LecturesType = {
   updated_at: string | null
 }
 
-type ChaptersType = {
+type ContentChaptersType = {
   created_at: string | null
   description: string | null
   id: number
@@ -29,16 +29,14 @@ type QuizQuestionsType = {
   updated_at: string | null
 }
 
-type QuizQuestionOptionsType = {
+type QuizOptionsType = {
   id: number
-  is_correct: boolean | null
   option_text: string
   question_id: number
-  updated_at: string | null
 }
 
-async function generateFakeChapters(count: number): Promise<ChaptersType[]> {
-  const chapters: ChaptersType[] = []
+async function generateFakeChapters(count: number): Promise<ContentChaptersType[]> {
+  const chapters: ContentChaptersType[] = []
   for (let i = 1; i <= count; i++) {
     chapters.push({
       id: i,
@@ -54,10 +52,10 @@ async function generateFakeChapters(count: number): Promise<ChaptersType[]> {
 }
 
 async function generateFakeLectures(
-  chapters: ChaptersType[],
+  chapters: ContentChaptersType[],
   lecturesPerChapter: number
-): Promise<LecturesType[]> {
-  const lectures: LecturesType[] = []
+): Promise<ContentLecturesType[]> {
+  const lectures: ContentLecturesType[] = []
 
   for (const chapter of chapters) {
     for (let i = 1; i <= lecturesPerChapter; i++) {
@@ -93,7 +91,7 @@ This lecture concludes with a summary of the key points and actionable insights.
 }
 
 async function generateFakeQuizQuestions(
-  lectures: LecturesType[],
+  lectures: ContentLecturesType[],
   questionsPerLecture: number
 ): Promise<QuizQuestionsType[]> {
   const quizQuestions: QuizQuestionsType[] = []
@@ -116,32 +114,28 @@ async function generateFakeQuizQuestions(
 async function generateFakeQuizQuestionOptions(
   quizQuestions: QuizQuestionsType[],
   optionsPerQuestion: number
-): Promise<QuizQuestionOptionsType[]> {
-  const quizQuestionOptions: QuizQuestionOptionsType[] = []
+): Promise<QuizOptionsType[]> {
+  const quizOptions: QuizOptionsType[] = []
   for (const question of quizQuestions) {
     if (question.question_type === 'MULTIPLE_CHOICE') {
       const correctAnswerIndex = Math.floor(Math.random() * optionsPerQuestion) // Ensure one correct answer
       for (let i = 1; i <= optionsPerQuestion; i++) {
-        quizQuestionOptions.push({
-          id: quizQuestionOptions.length + 1,
+        quizOptions.push({
+          id: quizOptions.length + 1,
           question_id: question.id,
           option_text: `Option ${i} for ${question.question_text}`,
-          is_correct: i === correctAnswerIndex + 1, // Mark the correct answer
-          updated_at: null,
         })
       }
     } else {
       // For OPEN questions, add a single correct answer as a text-based option
-      quizQuestionOptions.push({
-        id: quizQuestionOptions.length + 1,
+      quizOptions.push({
+        id: quizOptions.length + 1,
         question_id: question.id,
         option_text: `The correct long answer for ${question.question_text}`, // Provide a detailed answer
-        is_correct: true, // OPEN questions have one correct answer by default
-        updated_at: null,
       })
     }
   }
-  return quizQuestionOptions
+  return quizOptions
 }
 
 async function run() {
@@ -159,7 +153,7 @@ async function run() {
   const quizQuestionOptions = await generateFakeQuizQuestionOptions(quizQuestions, 4) // Adjust the number of options per question
 
   // Seed chapters
-  await seed.chapters((x) =>
+  await seed.content_chapters((x) =>
     chapters.map((chapter) => ({
       ...chapter,
       created_at: chapter.created_at || new Date().toISOString(),
@@ -168,7 +162,7 @@ async function run() {
   )
 
   // Seed lectures
-  await seed.lectures((x) =>
+  await seed.content_lectures((x) =>
     lectures.map((lecture) => ({
       ...lecture,
       created_at: lecture.created_at || new Date().toISOString(),
@@ -185,11 +179,10 @@ async function run() {
     }))
   )
 
-  // Seed quiz question options
-  await seed.quiz_question_options((x) =>
+  // Seed quiz options
+  await seed.quiz_options((x) =>
     quizQuestionOptions.map((option) => ({
-      ...option,
-      updated_at: option.updated_at || null,
+      ...option
     }))
   )
 

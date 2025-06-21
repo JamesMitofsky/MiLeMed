@@ -1,118 +1,271 @@
 import {
   H2,
-  isWeb,
   ScrollView,
   XStack,
   YStack,
   Text,
   FullscreenSpinner,
-  View,
-  styled,
-  Button,
-  Input,
-  SizableText,
+  Card,
+  H3,
   Switch,
+  Label,
+  Button,
+  Theme,
 } from '@my/ui'
-import { Eye } from '@tamagui/lucide-icons'
-import { parseMarkdown } from 'app/features/general/markdownParser'
+import { BookOpen, Stethoscope, Info, List, Loader2, Plus, Search } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
-import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
-import { NativeSyntheticEvent, TextInputChangeEventData } from 'react-native'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
-import { useFetchAllLecturesWithExtraData } from '../../../packages/app/utils/react-query/useFetchAllLecturesWithExtraData'
+import { useAllChaptersAndLectures } from '../../../packages/app/utils/hooks/queryHooks'
+import { Input } from '@my/ui/src/components/forms/inputs/components/inputsParts'
 
-// Step 1: Define the type for the return value of useLecturesQuery
-type UseLecturesQueryReturnType = ReturnType<typeof useFetchAllLecturesWithExtraData>
+// Define types for the data structure returned by useAllChaptersAndLectures
+type ChapterData = {
+  id: number
+  title: string
+  chapter_mode: 'THEORETICAL' | 'PRACTICAL'
+  [key: string]: unknown
+}
 
-// Step 2: Define the type for the data property
-type SingleLectureDataType = NonNullable<UseLecturesQueryReturnType['data']>[number]
-
-const truncateContent = (content: string, sentenceCount: number = 2): string => {
-  const sentences = content.match(/[^\.!\?]+[\.!\?]+/g)
-  if (!sentences || sentences.length <= sentenceCount) {
-    return content
-  }
-  return sentences.slice(0, sentenceCount).join(' ') + '...'
+type LectureData = {
+  id: number
+  title: string
+  content: string
+  chapter_id: number
+  [key: string]: unknown
 }
 
 export const Page: NextPageWithLayout = () => {
-  const [searchQuery, setSearchQuery] = useState('')
+  const router = useRouter()
+
+  // State for mode filter (THEORETICAL or PRACTICAL)
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
-  const { data } = useFetchAllLecturesWithExtraData()
 
-  const toggleMode = () => {
-    setMode(mode === 'THEORETICAL' ? 'PRACTICAL' : 'THEORETICAL')
+  // State for search term
+  const [searchTerm, setSearchTerm] = useState('')
+
+  // Get all chapters and lectures using the new hook
+  const { data, isLoading } = useAllChaptersAndLectures(mode)
+
+  // Extract chapters and lectures from the data
+  const allChapters = (data?.chapters || []) as ChapterData[]
+  const allLecturesByChapter = (data?.lecturesByChapter || {}) as Record<number, LectureData[]>
+
+  // Filter chapters and lectures based on search term
+  const chapters = searchTerm
+    ? allChapters.filter((chapter) => {
+        // Check if chapter title matches search
+        const chapterMatches = chapter.title.toLowerCase().includes(searchTerm.toLowerCase())
+
+        // Check if any lectures in this chapter match search
+        const hasMatchingLectures = allLecturesByChapter[chapter.id]?.some((lecture) =>
+          lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+
+        return chapterMatches || hasMatchingLectures
+      })
+    : allChapters
+
+  // Filter lectures for each chapter
+  const lecturesByChapter = chapters.reduce((filtered, chapter) => {
+    const chapterLectures = allLecturesByChapter[chapter.id] || []
+
+    filtered[chapter.id] = searchTerm
+      ? chapterLectures.filter((lecture) =>
+          lecture.title.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : chapterLectures
+
+    return filtered
+  }, {} as Record<number, LectureData[]>)
+
+  // Toggle between THEORETICAL and PRACTICAL modes
+  const handleModeToggle = (checked: boolean) => {
+    const newMode = checked ? 'PRACTICAL' : 'THEORETICAL'
+    console.log('🔄 Mode toggle switched to:', newMode)
+    setMode(newMode)
   }
 
-  const handleSearchChange = (e: NativeSyntheticEvent<TextInputChangeEventData>) => {
-    // @ts-ignore
-    setSearchQuery(e.target.value)
-  }
-
-  const lecturesFilteredBySearchAndMode = data?.filter(
-    (item) =>
-      item.lecture_title.toLowerCase().includes(searchQuery.toLowerCase()) &&
-      item.chapter_mode === mode
-  )
+  // Log when data or loading state changes
+  useEffect(() => {
+    console.log('📊 Data updated:', {
+      isLoading,
+      chaptersCount: chapters.length,
+      lecturesCount: Object.values(lecturesByChapter).flat().length,
+    })
+  }, [data, isLoading, chapters, lecturesByChapter])
 
   return (
     <>
       <Head>
-        <title>Manage Lectures</title>
+        <title>Lektionen verwalten</title>
       </Head>
+
       <XStack maw={1480} width={800} m="auto" f={1}>
         <ScrollView f={4} fb={0}>
           <ScrollToTopTabBarContainer>
             <YStack gap="$7" pb="$10" pt="$5">
-              {isWeb && <H2>Manage Lectures</H2>}
-              <Input
-                mx="$1"
-                placeholder="Search"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-              <XStack
-                hoverStyle={{
-                  cursor: 'pointer',
-                }}
-                mx="$2"
-                mt="$3"
-                mb="$5"
-                gap="$4"
-                onPress={toggleMode}
-              >
-                <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
-                  <Switch.Thumb borderColor="$color1" animation="200ms" />
-                </Switch>
-                <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}</SizableText>
-              </XStack>
-              <YStack gap="$3">
-                {lecturesFilteredBySearchAndMode ? (
-                  lecturesFilteredBySearchAndMode.map((item, index) => {
-                    const isLastItem = index === lecturesFilteredBySearchAndMode.length - 1
-                    const isNotFirstItem = index > 0
-                    const isFirstOccurrence =
-                      index === 0 ||
-                      lecturesFilteredBySearchAndMode[index - 1].chapter_title !==
-                        item.chapter_title
+              {/* <XStack>
+                <Button icon={ArrowLeft} chromeless onPress={() => router.back()}>
+                  <Button.Text>Zurück</Button.Text>
+                </Button>
+              </XStack> */}
 
-                    return (
-                      <React.Fragment key={index}>
-                        {isFirstOccurrence && (
-                          <H2 mt={isNotFirstItem && '$12'}>{item.chapter_title}</H2>
-                        )}
-                        <Row isLastItem={isLastItem} lecture={item} />
-                      </React.Fragment>
-                    )
-                  })
-                ) : (
-                  <FullscreenSpinner />
-                )}
+              {/* Mode toggle switch */}
+              <YStack gap="$3">
+                <XStack jc="space-between" ai="center" mt="$3">
+                  <XStack ai="center" gap="$2" ml="$3">
+                    <List size="$3" color="$gray11" />
+                    <H2 color="$gray11">Lektionen verwalten</H2>
+                  </XStack>
+                  <XStack alignItems="center" gap="$4">
+                    <XStack flex={1} gap="$2" ai="center">
+                      <Label htmlFor="mode-switch" size="$6" fontWeight="bold">
+                        {mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}
+                      </Label>
+                      {mode === 'THEORETICAL' ? (
+                        <BookOpen size="$1" color="$blue10" />
+                      ) : (
+                        <Stethoscope size="$1" color="$green10" />
+                      )}
+                    </XStack>
+
+                    <Theme name={mode === 'PRACTICAL' ? 'green' : 'light_blue_active'}>
+                      <Switch
+                        id="mode-switch"
+                        checked={mode === 'PRACTICAL'}
+                        onCheckedChange={handleModeToggle}
+                        size="$4"
+                        theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                      >
+                        <Switch.Thumb animation="quick" />
+                      </Switch>
+                    </Theme>
+                  </XStack>
+                </XStack>
+                <XStack ml="$3" gap="$4">
+                  <Button
+                    size="$2"
+                    alignSelf="flex-start"
+                    theme="orange"
+                    icon={<Plus color="$gray12" />}
+                    onPress={() => router.push('/create-lecture')}
+                  >
+                    <Button.Text color="$gray12">Neue Lektion</Button.Text>
+                  </Button>
+                  <Button
+                    size="$2"
+                    alignSelf="flex-start"
+                    theme="orange"
+                    variant="outlined"
+                    icon={<Plus color="orange" />}
+                    onPress={() => router.push('/create-chapter')}
+                  >
+                    <Button.Text color="orange">Neues Kapitel</Button.Text>
+                  </Button>
+                </XStack>
+
+                {/* Search bar */}
+                <XStack ml="$3" mr="$3" mt="$4">
+                  <Input size="$3" minWidth="100%">
+                    <Input.Box>
+                      <Input.Icon>
+                        <Search size="$1" color="$gray10" />
+                      </Input.Icon>
+                      <Input.Area
+                        paddingLeft={0}
+                        flex={1}
+                        placeholder="Suche nach Kapiteln oder Lektionen..."
+                        value={searchTerm}
+                        onChangeText={setSearchTerm}
+                        size="$3"
+                        borderColor="$gray8"
+                        clearButtonMode="while-editing"
+                      />
+                    </Input.Box>
+                  </Input>
+                </XStack>
               </YStack>
+
+              {isLoading ? (
+                <YStack p="$4" gap="$4" ai="center">
+                  <XStack ai="center" gap="$2">
+                    <Loader2 size="$1" color="$blue10" />
+                    <H3>Loading chapters and lectures...</H3>
+                  </XStack>
+                  <FullscreenSpinner />
+                </YStack>
+              ) : (
+                <YStack p="$4" gap="$6">
+                  {/* Display chapters and their lectures */}
+                  {chapters.map((chapter) => (
+                    <YStack key={chapter.id} gap="$2">
+                      <XStack ai="center" gap="$2">
+                        {mode === 'THEORETICAL' ? (
+                          <BookOpen size="$2" color="$blue10" />
+                        ) : (
+                          <Stethoscope size="$2" color="$green10" />
+                        )}
+                        <H2>{chapter.title}</H2>
+                      </XStack>
+                      <XStack pl="$4" ai="center" gap="$1">
+                        {/* <Info size="$1" color="$gray10" /> */}
+                        <Text color="$gray10">{chapter.chapter_mode}</Text>
+                      </XStack>
+
+                      {/* Display lectures for this chapter */}
+                      <YStack pl="$4" gap="$4">
+                        {lecturesByChapter[chapter.id]?.length > 0 ? (
+                          lecturesByChapter[chapter.id].map((lecture: LectureData) => (
+                            <Card key={lecture.id} bordered padding="$3" mb="$2">
+                              <XStack ai="center" gap="$2">
+                                <H3>{lecture.title}</H3>
+                              </XStack>
+                            </Card>
+                          ))
+                        ) : (
+                          <XStack ai="center" gap="$2" opacity={0.7}>
+                            <Info size="$1" color="$gray9" />
+                            <Text color="$gray9">
+                              Für dieses Kapitel wurden keine Vorlesungen gefunden
+                            </Text>
+                          </XStack>
+                        )}
+                      </YStack>
+                    </YStack>
+                  ))}
+                </YStack>
+              )}
+
+              {/* Debug info */}
+              {/* <YStack p="$4" gap="$4" opacity={0.7} borderTopWidth={1} borderColor="$gray5" mt="$4">
+                <XStack ai="center" gap="$2">
+                  <Info size="$1" color="$gray10" />
+                  <H3>Debug Information</H3>
+                </XStack>
+                <YStack>
+                  <Text>Current Mode: {mode || 'All'}</Text>
+                  <Text>Chapters: {chapters.length}</Text>
+                  <Text>Lectures: {Object.values(lecturesByChapter).flat().length}</Text>
+                  <Text>Loading: {isLoading ? 'Yes' : 'No'}</Text>
+                  <Button
+                    onPress={() => {
+                      console.log('Current mode:', mode)
+                      console.log('All chapters:', chapters)
+                      console.log('All lectures by chapter:', lecturesByChapter)
+                      console.log('Total lectures:', Object.values(lecturesByChapter).flat().length)
+                    }}
+                    mt="$2"
+                    icon={RefreshCw}
+                  >
+                    <Button.Text>Log Data to Console</Button.Text>
+                  </Button>
+                </YStack>
+              </YStack> */}
             </YStack>
           </ScrollToTopTabBarContainer>
         </ScrollView>
@@ -120,57 +273,9 @@ export const Page: NextPageWithLayout = () => {
     </>
   )
 }
+
+// No row component needed for the work in progress version
+
 Page.getLayout = (page) => <HomeLayout>{page}</HomeLayout>
 
 export default Page
-
-const SizeableText = styled(Text, {
-  variants: {
-    size: {
-      '...fontSize': (val, { font }) => {
-        if (!font) return {}
-        return {
-          fontSize: font.size[val],
-          lineHeight: font.lineHeight[val],
-          fontWeight: font.weight[val],
-        }
-      },
-    },
-  },
-})
-
-const Row = ({ lecture, isLastItem }: { lecture: SingleLectureDataType; isLastItem: boolean }) => {
-  const router = useRouter()
-  return (
-    <View
-      justifyContent="space-between"
-      paddingVertical="$4"
-      alignItems="flex-start"
-      flexDirection="column"
-      borderTopWidth={3}
-      borderColor={isLastItem ? 'transparent' : '$borderColor'}
-      $xs={{
-        flexDirection: 'column',
-        alignItems: 'flex-start',
-      }}
-    >
-      <XStack w="100%" justifyContent="space-between" alignItems="center">
-        <SizeableText
-          size="$6"
-          $xs={{
-            color: '$gray5',
-          }}
-        >
-          {lecture.lecture_title}
-        </SizeableText>
-        <Button size="$3" circular onPress={() => router.push(`lecture/${lecture.lecture_id}`)}>
-          <Button.Icon>
-            <Eye />
-          </Button.Icon>
-        </Button>
-      </XStack>
-
-      {parseMarkdown(truncateContent(lecture.lecture_content ?? ''), 14)}
-    </View>
-  )
-}

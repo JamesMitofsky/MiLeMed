@@ -1,10 +1,11 @@
+import { defaultConfig } from '@tamagui/config/v4'
 import { shorthands } from '@tamagui/shorthands'
 import { createTokens, createTamagui, setupDev } from 'tamagui'
 
 import { animations } from './config/animations'
 import { bodyFont, headingFont } from './config/fonts'
 import { media, mediaQueryDefaultActive } from './config/media'
-import * as themesIn from './themes/theme-generated'
+import { themes as themesIn } from './themes/theme-generated'
 import { color } from './themes/token-colors'
 import { radius } from './themes/token-radius'
 import { size } from './themes/token-size'
@@ -26,6 +27,7 @@ const themes =
     : ({} as typeof themesIn)
 
 export const config = createTamagui({
+  ...defaultConfig,
   themes,
   defaultFont: 'body',
   animations,
@@ -36,7 +38,7 @@ export const config = createTamagui({
     backgroundColor: theme.color5,
     color: theme.color11,
   }),
-  onlyAllowShorthands: false,
+  onlyAllowShorthaxnds: false,
   shorthands,
   fonts: {
     heading: headingFont,

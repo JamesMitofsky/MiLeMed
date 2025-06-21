@@ -1,13 +1,13 @@
-import { Avatar, Paragraph, Settings, XStack, YStack, getTokens, useWindowDimensions } from '@my/ui'
+import { Settings, YStack, useWindowDimensions } from '@my/ui'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
-import { Cog, User } from '@tamagui/lucide-icons'
+import { Cog, Home, User } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'app/utils/useSafeAreaInsets'
 import { useUser } from 'app/utils/useUser'
-import { SolitoImage } from 'solito/image'
 import { useLink } from 'solito/link'
 
+// used in expo
 export function SidebarDrawer(props) {
-  const { profile, avatarUrl } = useUser()
+  const { profile } = useUser()
   const name = profile?.name
   const insets = useSafeAreaInsets()
   const height = useWindowDimensions().height
@@ -26,6 +26,9 @@ export function SidebarDrawer(props) {
         <Settings>
           <Settings.Items>
             <Settings.Group>
+              <Settings.Item icon={Home} {...useLink({ href: '/' })} accentTheme="blue">
+                Home
+              </Settings.Item>
               <Settings.Item icon={User} {...useLink({ href: '/profile' })} accentTheme="pink">
                 Profil bearbeiten
               </Settings.Item>
@@ -48,19 +51,12 @@ export function SidebarDrawer(props) {
           </Settings.Items>
         </Settings>
 
-        <XStack gap="$4" mb="$7" mt="auto" ai="center" px="$4">
-          <Avatar circular size="$3">
-            <SolitoImage
-              src={avatarUrl}
-              alt="your avatar"
-              width={getTokens().size['3'].val}
-              height={getTokens().size['3'].val}
-            />
-          </Avatar>
+        {/* <XStack gap="$4" mb="$7" mt="auto" ai="center" px="$4">
+          <User size={30} color="$color" />
           <Paragraph ta="center" ml="$-1.5">
             {name ?? ''}
           </Paragraph>
-        </XStack>
+        </XStack> */}
       </YStack>
     </DrawerContentScrollView>
   )

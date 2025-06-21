@@ -1,34 +1,33 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Database } from '@my/supabase/types'
 import {
-  ScrollView,
-  YStack,
-  useToastController,
-  XStack,
-  SizableText,
   Button,
-  H1,
-  Input,
-  Text,
   Checkbox,
   FullscreenSpinner,
+  H1,
+  Input,
+  ScrollView,
+  SizableText,
+  Text,
+  XStack,
+  YStack,
+  useToastController,
 } from '@my/ui'
 import { Check } from '@tamagui/lucide-icons'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { MinimalDatePicker } from './MinimalDatePicker'
-import { ProfilesType, UserRoleType, GenderType } from '../../../utils/supabase/databaseTypes'
-import { useSupabase } from '../../../utils/supabase/useSupabase'
-import { useUser } from '../../../utils/useUser'
-import { z } from '../../../utils/zod-de'
+import { useUserProfile } from 'app/utils/hooks/queryHooks'
+import { useSupabase } from 'app/utils/supabase/useSupabase'
+import { useUser } from 'app/utils/useUser'
+import { UserProfile } from 'app/utils/supabase/databaseTypes'
 import { CustomSelect } from '../../general/CustomSelect'
+import { MinimalDatePicker } from './MinimalDatePicker'
 
-type ProfileFormType = Pick<
-  ProfilesType,
-  'name' | 'gender' | 'clinical_semester' | 'overall_semester' | 'birthdate' | 'role'
->
+type ProfileFormType = Partial<UserProfile>
 
-const getRoleByEmailEnding = (email: string): UserRoleType => {
+const getRoleByEmailEnding = (email: string): Database['public']['Enums']['user_role'] => {
   if (email.endsWith('@uni-bonn.de')) {
     return 'STUDENT'
   }
@@ -37,7 +36,7 @@ const getRoleByEmailEnding = (email: string): UserRoleType => {
 
 interface GenderOption {
   label: string
-  value: GenderType
+  value: Database['public']['Enums']['gender']
 }
 
 const genderOptions: GenderOption[] = [
@@ -94,7 +93,8 @@ interface FinishRegistrationFormProps {
 
 export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ onSuccess }) => {
   const supabase = useSupabase()
-  const { profile, updateProfile, user } = useUser()
+  const { user } = useUser()
+  const userProfile = useUserProfile()
   const toast = useToastController()
   const [isPendingUpdate, setIsPendingUpdate] = useState(false)
 
@@ -118,7 +118,7 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
   })
 
   const onSubmit = async ({ hasDoneClinicalSemester, ...data }: ProfileInputType) => {
-    if (!profile) {
+    if (!user?.id) {
       toast.show('Beim Aktualisieren des Profils ist ein Fehler aufgetreten.', { type: 'error' })
       return
     }
@@ -136,13 +136,40 @@ export const FinishRegistrationForm: React.FC<FinishRegistrationFormProps> = ({ 
       role,
     }
 
-    const { error } = await supabase.from('profiles').update(transformedData).eq('id', profile.id)
+    // Try to update first, if that fails (no profile exists), then create one
+    const { error: updateError } = await supabase
+      .from('users_profiles')
+      .update(transformedData)
+      .eq('id', user.id)
 
-    if (error) {
+    if (updateError?.code === 'PGRST116') {
+      // No rows updated
+      // Create new profile
+      const { error: insertError } = await supabase
+        .from('users_profiles')
+        .insert({ ...transformedData, id: user.id })
+        .select()
+        .single()
+
+      if (insertError) {
+        toast.show('Beim Erstellen des Profils ist ein Fehler aufgetreten.', { type: 'error' })
+        setIsPendingUpdate(false)
+        return
+      }
+    } else if (updateError) {
       toast.show('Beim Aktualisieren des Profils ist ein Fehler aufgetreten.', { type: 'error' })
-    } else {
-      updateProfile()
+      setIsPendingUpdate(false)
+      return
+    }
+
+    try {
+      await userProfile.updateProfile.mutateAsync(transformedData)
       if (onSuccess) onSuccess()
+    } catch (error) {
+      console.error('Error updating profile:', error)
+      toast.show('Beim Aktualisieren des Profils ist ein Fehler aufgetreten.', { type: 'error' })
+    } finally {
+      setIsPendingUpdate(false)
     }
   }
 

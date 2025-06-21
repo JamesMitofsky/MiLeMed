@@ -47,16 +47,17 @@
     "get-local-ip-mac": "ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{ print $2 }'"
   },
   "resolutions": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-test-renderer": "19.0.0",
     "react-refresh": "^0.14.0",
-    "react-native-svg": "15.2.0",
+    "react-native-svg": "15.10.1",
     "react-native-web": "~0.19.10",
     "@babel/core": "^7.24",
     "babel-loader": "^8.3.0"
   },
   "packageManager": "yarn@4.1.0",
-  "dependencies": {
+  "devDependencies": {
     "@babel/runtime": "^7.18.9",
     "@manypkg/cli": "^0.19.1",
     "@nderscore/tamagui-typescript-plugin": "^0.6.0",
@@ -65,19 +66,22 @@
     "@svgr/plugin-jsx": "^8.1.0",
     "@svgr/plugin-prettier": "^8.1.0",
     "@svgr/plugin-svgo": "^8.1.0",
-    "@tamagui/cli": "^1.121.7",
-    "@turbo/gen": "^1.10.12",
+    "@tamagui/cli": "^1.127.1",
+    "@tamagui/config": "^1.127.1",
+    "@turbo/gen": "^2.4.0",
     "@types/fs-extra": "^11",
     "axios": "^1.7.2",
     "check-dependency-version-consistency": "^3.0.3",
-    "dotenv": "^16.0.3",
-    "dotenv-cli": "^6.0.0",
+    "dotenv": "^16.4.7",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^8.46.0",
     "fs-extra": "^11.2.0",
     "node-gyp": "^9.3.1",
+    "npm-run-all": "^4.1.5",
     "prettier": "^2.7.1",
     "promise-throttle-all": "^1.1.1",
-    "turbo": "^1.10.14",
-    "typescript": "^5.3.3"
+    "turbo": "^2.4.0",
+    "typescript": "^5.3.3",
+    "ultra-runner": "^3.10.5"
   }
 }

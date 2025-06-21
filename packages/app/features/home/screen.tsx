@@ -1,29 +1,29 @@
-import { ScrollView, YStack, XStack, FullscreenSpinner, useToastController } from '@my/ui'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
+import { ScrollView, YStack, XStack, useToastController, FullscreenSpinner } from '@my/ui'
+import { useEffect, useState, useCallback } from 'react'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+// import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 
 import { FinishRegistrationForm } from './components/FinishRegistrationForm'
-import { StatisticsPreviewList } from './components/StatisticsPreviewList'
+import StatisticsPreviewList from './components/StatisticsPreviewList'
 import { ChaptersPreviewList } from './components/achievements-section'
 import { FeedbackSection } from './components/feedback-section'
 import { useUser } from '../../utils/useUser'
 
 export function HomeScreen() {
   const { profile } = useUser()
-  const confettiRef = useRef<ConfettiMethods>(null)
+  // const confettiRef = useRef<ConfettiMethods>(null)
   const toast = useToastController()
   const [isMainPageVisible, setIsMainPageVisible] = useState(false)
 
-  const triggerConfetti = useCallback(() => {
-    confettiRef.current?.restart()
-  }, [confettiRef])
+  // const triggerConfetti = useCallback(() => {
+  //   confettiRef.current?.restart()
+  // }, [confettiRef])
 
   const handleRegistrationSuccess = useCallback(() => {
-    triggerConfetti()
+    // triggerConfetti()
     toast.show('Profil erfolgreich eingerichtet.')
     setIsMainPageVisible(true)
-  }, [confettiRef, triggerConfetti, toast, setIsMainPageVisible])
+  }, [toast])
 
   useEffect(() => {
     if (profile?.role) {
@@ -31,11 +31,7 @@ export function HomeScreen() {
     } else {
       setIsMainPageVisible(false)
     }
-  }, [profile?.role, setIsMainPageVisible])
-
-  const onFeedbackSubmitSucccess = useCallback(() => {
-    triggerConfetti()
-  }, [triggerConfetti])
+  }, [profile?.role])
 
   return (
     <KeyboardAwareScrollView
@@ -45,7 +41,7 @@ export function HomeScreen() {
       keyboardShouldPersistTaps="handled"
     >
       <XStack als="center" ai="flex-start" f={1}>
-        <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} />
+        {/* <Confetti autoplay={false} fadeOutOnEnd fallDuration={5500} ref={confettiRef} /> */}
         <ScrollView keyboardShouldPersistTaps="handled" f={1} fb={0}>
           <YStack gap="$9" pb="$10" pt="$5" f={1}>
             {!profile ? (
@@ -54,7 +50,9 @@ export function HomeScreen() {
               <>
                 <ChaptersPreviewList />
                 <StatisticsPreviewList />
-                <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
+                <FeedbackSection onSubmitSuccess={() => console.log('Feedback submitted')} />
+                {/*                 <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
+                 */}
               </>
             ) : (
               <FinishRegistrationForm onSuccess={handleRegistrationSuccess} />

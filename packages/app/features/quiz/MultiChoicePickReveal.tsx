@@ -1,62 +1,73 @@
-import { YStack, XStack, Label, RadioGroup } from '@my/ui' // Adjust the import based on your UI library
+import { YStack, XStack, Label, RadioGroup } from '@my/ui'
 import React from 'react'
-import { Control, Controller } from 'react-hook-form'
 
-import { QuizQuestionsWithOptionsType } from '../../utils/react-query/useFetchQuizQuestions'
-import { QuizAnswersType } from '../../utils/supabase/databaseTypes'
 import { Chip } from '../general/chipParts'
 
+interface QuizQuestion {
+  question_id: number
+  question_text: string
+  question_type: 'OPEN' | 'MULTIPLE_CHOICE'
+  answer_text: string | null
+  chosen_option_ids: number[]
+  correct_option_ids: number[]
+  correct_answer_text: string | null
+  is_correct: boolean | null
+  answered_at: string | null
+  options?: {
+    id: number
+    text: string
+    is_correct: boolean
+  }[]
+}
+
 interface MultiChoicePickRevealProps {
-  q: QuizQuestionsWithOptionsType
-  index: number
-  control: Control<{
-    answers: QuizAnswersType[]
-  }>
-  answerIds: number[]
-  areAnswersVisible: boolean
+  question: QuizQuestion
+  onAnswerSelected: (selectedIds: number[]) => void
+  onAnswerSubmitted: (isCorrect: boolean) => void
+  showAnswers: boolean
 }
 
 const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
-  q,
-  index,
-  control,
-  answerIds,
-  areAnswersVisible,
+  question,
+  onAnswerSelected,
+  onAnswerSubmitted,
+  showAnswers,
 }) => {
+  const handleAnswerSelect = (selectedIds: number[]) => {
+    onAnswerSelected(selectedIds)
+    if (showAnswers) {
+      const isCorrect =
+        selectedIds.length === question.correct_option_ids.length &&
+        selectedIds.every((id) => question.correct_option_ids.includes(id))
+      onAnswerSubmitted(isCorrect)
+    }
+  }
+
   return (
-    <Controller
-      name={`answers.${index}.chosen_option_ids`}
-      control={control}
-      render={({ field: { onChange, value } }) => (
-        <RadioGroup
-          name={`answers.${index}.chosen_option_ids`}
-          value={value?.toString()}
-          onValueChange={(selectedValue) => !areAnswersVisible && onChange(Number(selectedValue))}
-        >
-          <YStack gap="$3" ml="$5">
-            {q.quiz_question_options.map((o) => (
-              <XStack key={o.id} ai="center" gap="$4">
-                <RadioGroup.Item size="$5" value={o.id.toString()} id={`option-${index}-${o.id}`}>
-                  <RadioGroup.Indicator />
-                </RadioGroup.Item>
-                {areAnswersVisible && o.is_correct ? (
-                  <Chip
-                    rounded
-                    // @ts-ignore
-                    theme={o.is_correct ? 'green' : 'default'}
-                    key={o.option_text}
-                  >
-                    <Chip.Text size="$3">{o.option_text}</Chip.Text>
-                  </Chip>
-                ) : (
-                  <Label htmlFor={`option-${index}-${o.id}`}>{o.option_text}</Label>
-                )}
-              </XStack>
-            ))}
-          </YStack>
-        </RadioGroup>
-      )}
-    />
+    <YStack gap="$4">
+      <Label size="$6" mb="$2">
+        {question.question_text}
+      </Label>
+      <RadioGroup
+        onValueChange={(value) => handleAnswerSelect([parseInt(value, 10)])}
+        value={question.chosen_option_ids?.[0]?.toString()}
+      >
+        <XStack fw="wrap" gap="$2">
+          {question.options?.map((option) => (
+            <RadioGroup.Item
+              key={option.id}
+              value={option.id.toString()}
+              size="$4"
+              disabled={showAnswers}
+            >
+              <Chip rounded unstyled={false} size="$3">
+                <Chip.Text>{option.text}</Chip.Text>
+              </Chip>
+            </RadioGroup.Item>
+          ))}
+        </XStack>
+      </RadioGroup>
+    </YStack>
   )
 }
 

@@ -47,7 +47,14 @@
       ],
       "expo-apple-authentication",
       "expo-router",
-      "expo-build-properties",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.1"
+          }
+        }
+      ],
       "expo-font",
       "expo-secure-store"
     ],
@@ -65,6 +72,7 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
+    "newArchEnabled": true,
     "owner": "jamesmit"
   }
 }
