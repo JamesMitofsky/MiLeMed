@@ -22,6 +22,7 @@ const plugins = [
     outputCSS: process.env.NODE_ENV === 'production' ? './public/tamagui.css' : null,
     logTimings: true,
     disableExtraction,
+    disableThemesBundleOptimize: true,
     shouldExtract: (path) => {
       if (path.includes(join('packages', 'app'))) {
         return true
