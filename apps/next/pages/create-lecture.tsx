@@ -12,10 +12,10 @@ import {
   Spinner,
   Card,
   Separator,
-  Accordion,
   SizableText,
+  Accordion,
 } from '@my/ui'
-import { ArrowLeft, BookOpen, Stethoscope, Save, Plus, Pen } from '@tamagui/lucide-icons'
+import { ArrowLeft, BookOpen, Check, Pen, Plus, Save, Stethoscope } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
@@ -366,6 +366,7 @@ export const Page: NextPageWithLayout = () => {
                                         borderWidth={1}
                                         borderColor="$gray3"
                                         borderRadius="$2"
+                                        gap="$2"
                                       >
                                         <Text fontWeight="bold">{question.question_text}</Text>
                                         <Text fontSize="$2" color="$gray10">
@@ -373,36 +374,74 @@ export const Page: NextPageWithLayout = () => {
                                             ? 'Multiple Choice'
                                             : 'Offene Frage'}
                                         </Text>
+
+                                        {/* Display options for multiple choice questions */}
+                                        {question.question_type === 'MULTIPLE_CHOICE' &&
+                                          question.options && (
+                                            <YStack gap="$1">
+                                              <Text fontSize="$2" fontWeight="bold">
+                                                Optionen:
+                                              </Text>
+                                              {question.options.map((option, optIndex) => (
+                                                <XStack key={optIndex} gap="$2" alignItems="center">
+                                                  {option.is_correct && <Check color="$green9" />}
+                                                  <Text
+                                                    fontSize="$2"
+                                                    color={
+                                                      option.is_correct ? '$green9' : '$gray10'
+                                                    }
+                                                  >
+                                                    {option.option_text}
+                                                  </Text>
+                                                </XStack>
+                                              ))}
+                                            </YStack>
+                                          )}
+
+                                        {/* Display reference answer for open questions */}
+                                        {question.question_type === 'OPEN' && (
+                                          <YStack gap="$1">
+                                            <Text fontSize="$2" fontWeight="bold">
+                                              Referenzantwort:
+                                            </Text>
+                                            <Text fontSize="$2" color="$green9">
+                                              {question.reference_answer ||
+                                                'Keine Referenzantwort angegeben'}
+                                            </Text>
+                                          </YStack>
+                                        )}
                                       </YStack>
                                     ))}
                                   </YStack>
                                 )}
 
-                                {/* Button to add a new quiz question */}
-                                {showQuizForm ? (
-                                  <YStack gap="$4">
-                                    <QuizQuestionForm
-                                      onSubmitSuccess={(questionData) => {
-                                        if (questionData) {
-                                          setQuizQuestions([...quizQuestions, questionData])
-                                        }
-                                        setShowQuizForm(false)
-                                      }}
-                                      tempQuestion
-                                    />
-                                    <Button themeShallow onPress={() => setShowQuizForm(false)}>
-                                      <Button.Text>Abbrechen</Button.Text>
+                                {/* Button to add a new quiz question or show quiz form */}
+                                <YStack gap="$4" mt="$4">
+                                  {showQuizForm ? (
+                                    <YStack gap="$4">
+                                      <QuizQuestionForm
+                                        onSubmitSuccess={(questionData) => {
+                                          if (questionData) {
+                                            setQuizQuestions([...quizQuestions, questionData])
+                                          }
+                                          setShowQuizForm(false)
+                                        }}
+                                        tempQuestion
+                                      />
+                                      <Button themeShallow onPress={() => setShowQuizForm(false)}>
+                                        <Button.Text>Abbrechen</Button.Text>
+                                      </Button>
+                                    </YStack>
+                                  ) : (
+                                    <Button
+                                      themeShallow
+                                      icon={Plus}
+                                      onPress={() => setShowQuizForm(true)}
+                                    >
+                                      <Button.Text>Quiz Frage hinzufügen</Button.Text>
                                     </Button>
-                                  </YStack>
-                                ) : (
-                                  <Button
-                                    themeShallow
-                                    icon={Plus}
-                                    onPress={() => setShowQuizForm(true)}
-                                  >
-                                    <Button.Text>Quiz Frage hinzufügen</Button.Text>
-                                  </Button>
-                                )}
+                                  )}
+                                </YStack>
                               </YStack>
                             </Accordion.Content>
                           </Accordion.Item>
@@ -434,6 +473,6 @@ export const Page: NextPageWithLayout = () => {
   )
 }
 
-Page.getLayout = (page) => <HomeLayout>{page}</HomeLayout>
+Page.getLayout = (page: React.ReactElement) => <HomeLayout>{page}</HomeLayout>
 
 export default Page
