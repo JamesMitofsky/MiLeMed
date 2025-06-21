@@ -409,8 +409,11 @@ export const Page: NextPageWithLayout = () => {
                                               Referenzantwort:
                                             </Text>
                                             <Text fontSize="$2" color="$green9">
-                                              {question.reference_answer ||
-                                                'Keine Referenzantwort angegeben'}
+                                              {question.options &&
+                                              question.options[0] &&
+                                              question.options[0].option_text
+                                                ? question.options[0].option_text
+                                                : 'Keine Referenzantwort angegeben'}
                                             </Text>
                                           </YStack>
                                         )}
