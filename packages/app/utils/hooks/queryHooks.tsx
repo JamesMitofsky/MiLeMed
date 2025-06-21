@@ -17,7 +17,7 @@ export const useChapters = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
     queryKey: getChapterSummaryKey(mode),
     queryFn: async () => {
       const { data, error } = await supabaseClient.rpc('chapter_get_summary', {
-        chapter_mode: mode,
+        mode: mode,
       })
 
       if (error) throw error
@@ -327,6 +327,116 @@ export const useUserEvents = () => {
       return data
     },
   })
+}
+
+export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
+  const { supabaseClient } = useSessionContext()
+
+  console.log('🔍 useAllChaptersAndLectures called with mode:', mode)
+
+  // Define query keys as constants
+  const getAllChaptersAndLecturesKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
+    ['all-chapters-and-lectures', chapterMode] as const
+
+  // Get all chapters and their lectures without completion status
+  const chaptersAndLecturesQuery = useQuery({
+    queryKey: getAllChaptersAndLecturesKey(mode),
+    queryFn: async () => {
+      console.log('🔄 Query function executing with mode:', mode)
+
+      // First get all chapters based on mode filter
+      let chaptersQuery = supabaseClient
+        .from('content_chapters')
+        .select('*')
+        .order('sort_order', { ascending: true })
+
+      // Only apply the filter if mode is specified
+      if (mode) {
+        console.log(`🔍 Filtering chapters by mode: ${mode}`)
+        chaptersQuery = chaptersQuery.eq('mode', mode)
+      } else {
+        console.log('🔍 No mode filter applied, fetching all chapters')
+      }
+
+      const { data: chapters, error: chaptersError } = await chaptersQuery
+
+      console.log(`📊 Chapters query result: ${chapters?.length || 0} chapters found`)
+
+      if (chaptersError) {
+        console.error('❌ Error fetching chapters:', chaptersError)
+        throw chaptersError
+      }
+
+      if (!chapters || chapters.length === 0) {
+        console.log('⚠️ No chapters found, returning empty result')
+        return { chapters: [], lecturesByChapter: {} }
+      }
+
+      // Then get all lectures for these chapters
+      const lecturesByChapter: Record<number, unknown[]> = {}
+
+      // Get lectures for all chapters at once
+      console.log(
+        '🔍 Fetching lectures for chapter IDs:',
+        chapters.map((chapter) => chapter.id)
+      )
+
+      const { data: allLectures, error: lecturesError } = await supabaseClient
+        .from('content_lectures')
+        .select('*')
+        .in(
+          'chapter_id',
+          chapters.map((chapter) => chapter.id)
+        )
+        .order('sort_order', { ascending: true })
+
+      console.log(`📊 Lectures query result: ${allLectures?.length || 0} lectures found`)
+
+      if (lecturesError) {
+        console.error('❌ Error fetching lectures:', lecturesError)
+        throw lecturesError
+      }
+
+      // Organize lectures by chapter
+      if (allLectures) {
+        allLectures.forEach((lecture) => {
+          if (!lecturesByChapter[lecture.chapter_id]) {
+            lecturesByChapter[lecture.chapter_id] = []
+          }
+          lecturesByChapter[lecture.chapter_id].push(lecture)
+        })
+
+        console.log(
+          '📊 Organized lectures by chapter:',
+          Object.keys(lecturesByChapter).length,
+          'chapters with lectures'
+        )
+      } else {
+        console.log('⚠️ No lectures found')
+      }
+
+      const result = {
+        chapters,
+        lecturesByChapter,
+      }
+
+      console.log('✅ Query function completed successfully')
+      return result
+    },
+  })
+
+  console.log('🔄 Hook state:', {
+    isLoading: chaptersAndLecturesQuery.isLoading,
+    isError: !!chaptersAndLecturesQuery.error,
+    dataAvailable: !!chaptersAndLecturesQuery.data,
+  })
+
+  return {
+    data: chaptersAndLecturesQuery.data,
+    isLoading: chaptersAndLecturesQuery.isLoading,
+    error: chaptersAndLecturesQuery.error,
+    refetch: chaptersAndLecturesQuery.refetch,
+  }
 }
 
 export const useSystemEvents = () => {

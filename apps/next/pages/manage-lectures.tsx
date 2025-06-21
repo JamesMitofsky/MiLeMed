@@ -8,115 +8,64 @@ import {
   FullscreenSpinner,
   Card,
   H3,
-  Paragraph,
   Button,
+  Switch,
+  Label,
 } from '@my/ui'
 import { ArrowLeft } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import Head from 'next/head'
-import React, { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
-import { useChapters, useLectures } from '../../../packages/app/utils/hooks/queryHooks'
+import { useAllChaptersAndLectures } from '../../../packages/app/utils/hooks/queryHooks'
 
-// Define types for the chapter and lecture data
-type ChapterType = {
+// Define types for the data structure returned by useAllChaptersAndLectures
+type ChapterData = {
   id: number
   title: string
   chapter_mode: 'THEORETICAL' | 'PRACTICAL'
-  completion_percentage: number
-  total_lectures: number
-  completed_lectures: number
+  [key: string]: unknown
 }
 
-type LectureType = {
+type LectureData = {
   id: number
   title: string
   content: string
-  is_completed: boolean
   chapter_id: number
+  [key: string]: unknown
 }
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
-  // State for tracking the selected chapter ID (if we need to fetch lectures for a specific chapter)
-  const [selectedChapterId, setSelectedChapterId] = useState<number | undefined>(undefined)
+  // State for mode filter (THEORETICAL or PRACTICAL)
+  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
 
-  // Get all chapters
-  const { data: chapters, isLoading: isLoadingChapters } = useChapters()
+  // Get all chapters and lectures using the new hook
+  const { data, isLoading } = useAllChaptersAndLectures(mode)
 
-  // Get lectures for the selected chapter (if any)
-  const { data: lectures, isLoading: isLoadingLectures } = useLectures(selectedChapterId)
+  // Extract chapters and lectures from the data
+  const chapters = (data?.chapters || []) as ChapterData[]
+  const lecturesByChapter = (data?.lecturesByChapter || {}) as Record<number, LectureData[]>
 
-  // Track all fetched lectures
-  const [allLectures, setAllLectures] = useState<Record<number, LectureType[]>>({})
+  // Toggle between THEORETICAL and PRACTICAL modes
+  const handleModeToggle = (checked: boolean) => {
+    const newMode = checked ? 'PRACTICAL' : 'THEORETICAL'
+    console.log('🔄 Mode toggle switched to:', newMode)
+    setMode(newMode)
+  }
 
-  // Store fetched chapters
-  const allChapters = (chapters as ChapterType[]) || []
-
-  // Log chapters data when it loads
+  // Log when data or loading state changes
   useEffect(() => {
-    if (chapters) {
-      console.log('Chapters data loaded:', chapters)
-    }
-  }, [chapters])
-
-  // When lectures data changes for the selected chapter, update our collection
-  useEffect(() => {
-    if (selectedChapterId && lectures) {
-      console.log(`Lectures for chapter ${selectedChapterId} loaded:`, lectures)
-      setAllLectures((prev) => ({
-        ...prev,
-        [selectedChapterId]: lectures as LectureType[],
-      }))
-    }
-  }, [selectedChapterId, lectures])
-
-  // When chapters change, set up a way to fetch all lectures
-  useEffect(() => {
-    const fetchAllLectures = async () => {
-      if (!allChapters || allChapters.length === 0) return
-
-      // Process one chapter at a time
-      if (allChapters.length > 0) {
-        // Start with the first chapter
-        setSelectedChapterId(allChapters[0].id)
-      }
-    }
-
-    fetchAllLectures()
-  }, [allChapters])
-
-  // When a chapter's lectures are loaded, move to the next chapter
-  useEffect(() => {
-    if (!isLoadingLectures && selectedChapterId && allChapters.length > 0) {
-      // Find current chapter index
-      const currentIndex = allChapters.findIndex((c) => c.id === selectedChapterId)
-
-      // Log progress
-      console.log(
-        `Finished loading lectures for chapter ${selectedChapterId} (${currentIndex + 1}/${
-          allChapters.length
-        })`
-      )
-
-      // If there's a next chapter, select it
-      if (currentIndex >= 0 && currentIndex < allChapters.length - 1) {
-        setSelectedChapterId(allChapters[currentIndex + 1].id)
-      } else if (currentIndex === allChapters.length - 1) {
-        // This was the last chapter
-        console.log('All lectures loaded. Final data collection:', allLectures)
-      }
-    }
-  }, [isLoadingLectures, selectedChapterId, allChapters, allLectures])
-
-  const isLoading =
-    isLoadingChapters ||
-    isLoadingLectures ||
-    (allChapters.length > 0 && Object.keys(allLectures).length < allChapters.length)
+    console.log('📊 Data updated:', {
+      isLoading,
+      chaptersCount: chapters.length,
+      lecturesCount: Object.values(lecturesByChapter).flat().length,
+    })
+  }, [data, isLoading, chapters, lecturesByChapter])
 
   return (
     <>
@@ -133,34 +82,74 @@ export const Page: NextPageWithLayout = () => {
                   <Button.Text>Zurück</Button.Text>
                 </Button>
               </XStack>
-              
+
               {isWeb && <H2>Lektionen verwalten</H2>}
-              
-              {/* Work in Progress Message */}
-              <Card elevate bordered padding="$4" margin="$4">
-                <H3>Work in Progress</H3>
-                <Paragraph>This page is currently under development.</Paragraph>
-              </Card>
-              
+
+              {/* Mode toggle switch */}
+              <XStack alignItems="center" space="$4" p="$4">
+                <Label htmlFor="mode-switch" flex={1}>
+                  {mode === 'PRACTICAL' ? 'Praktisch' : 'Theoretisch'}
+                </Label>
+                <Switch
+                  id="mode-switch"
+                  checked={mode === 'PRACTICAL'}
+                  onCheckedChange={handleModeToggle}
+                  size="$4"
+                >
+                  <Switch.Thumb animation="quick" />
+                </Switch>
+              </XStack>
+
+              {isLoading ? (
+                <YStack p="$4" gap="$4" ai="center">
+                  <H3>Loading chapters and lectures...</H3>
+                  <FullscreenSpinner />
+                </YStack>
+              ) : (
+                <YStack p="$4" gap="$6">
+                  {/* Display chapters and their lectures */}
+                  {chapters.map((chapter) => (
+                    <YStack key={chapter.id} gap="$2">
+                      <H2>{chapter.title}</H2>
+                      <Text color="$gray10">{chapter.chapter_mode}</Text>
+
+                      {/* Display lectures for this chapter */}
+                      <YStack pl="$4" gap="$4">
+                        {lecturesByChapter[chapter.id]?.length > 0 ? (
+                          lecturesByChapter[chapter.id].map((lecture: LectureData) => (
+                            <Card key={lecture.id} bordered padding="$3" mb="$2">
+                              <H3>{lecture.title}</H3>
+                            </Card>
+                          ))
+                        ) : (
+                          <Text color="$gray9">No lectures found for this chapter</Text>
+                        )}
+                      </YStack>
+                    </YStack>
+                  ))}
+                </YStack>
+              )}
+
               {/* Debug info */}
-              <YStack p="$4" space="$4">
+              <YStack p="$4" gap="$4" opacity={0.7} borderTopWidth={1} borderColor="$gray5" mt="$4">
+                <H3>Debug Information</H3>
                 <YStack>
-                  <Text>Chapters: {allChapters.length}</Text>
-                  <Text>Lectures: {Object.values(allLectures).flat().length}</Text>
+                  <Text>Current Mode: {mode || 'All'}</Text>
+                  <Text>Chapters: {chapters.length}</Text>
+                  <Text>Lectures: {Object.values(lecturesByChapter).flat().length}</Text>
                   <Text>Loading: {isLoading ? 'Yes' : 'No'}</Text>
-                  <Text>Current chapter ID: {selectedChapterId || 'None'}</Text>
                   <Button
                     onPress={() => {
-                      console.log('All chapters:', allChapters)
-                      console.log('All lectures by chapter:', allLectures)
-                      console.log('Total lectures:', Object.values(allLectures).flat().length)
+                      console.log('Current mode:', mode)
+                      console.log('All chapters:', chapters)
+                      console.log('All lectures by chapter:', lecturesByChapter)
+                      console.log('Total lectures:', Object.values(lecturesByChapter).flat().length)
                     }}
+                    mt="$2"
                   >
                     Log Data to Console
                   </Button>
                 </YStack>
-
-                {isLoading && <FullscreenSpinner />}
               </YStack>
             </YStack>
           </ScrollToTopTabBarContainer>
