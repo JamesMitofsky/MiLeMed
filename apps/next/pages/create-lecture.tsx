@@ -32,7 +32,7 @@ export const Page: NextPageWithLayout = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [chapterId, setChapterId] = useState<number | null>(null)
-  const [sortOrder, setSortOrder] = useState(1) // Default to 1 as the starting sort order
+  const [sortOrder, setSortOrder] = useState<number>() // Default to 1 as the starting sort order
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
 
   // State for chapters
@@ -263,7 +263,7 @@ export const Page: NextPageWithLayout = () => {
                         <Text fontWeight="bold">Sortierreihenfolge</Text>
                         <Input
                           placeholder="Sortierreihenfolge (z.B. 1, 2, 3)"
-                          value={sortOrder.toString()}
+                          value={sortOrder?.toString() || ''}
                           editable={false}
                           opacity={0.7}
                         />

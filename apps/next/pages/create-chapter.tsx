@@ -201,7 +201,7 @@ export const Page: NextPageWithLayout = () => {
                             isLoadingSortOrder ? 'Wird geladen...' : 'Sortierreihenfolge'
                           }
                           value={sortOrder.toString()}
-                          disabled={true}
+                          editable={false}
                           opacity={0.7}
                         />
                         <SizableText size="$2" color="$gray10">
