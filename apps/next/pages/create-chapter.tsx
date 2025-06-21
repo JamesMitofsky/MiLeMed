@@ -3,7 +3,7 @@ import {
   ScrollView,
   XStack,
   YStack,
-  Text,
+  SizableText,
   Button,
   Input,
   TextArea,
@@ -20,7 +20,7 @@ import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
 import { useSessionContext } from 'app/utils/supabase/useSessionContext'
 import Head from 'next/head'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
@@ -35,11 +35,41 @@ export const Page: NextPageWithLayout = () => {
   const [description, setDescription] = useState('')
   const [sortOrder, setSortOrder] = useState(0)
   const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+  const [isLoadingSortOrder, setIsLoadingSortOrder] = useState(true)
 
   // State for form submission
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+
+  // Fetch the highest sort order when the component loads or mode changes
+  useEffect(() => {
+    const fetchHighestSortOrder = async () => {
+      setIsLoadingSortOrder(true)
+      try {
+        // Get the highest sort order from existing chapters with the same mode
+        const { data, error } = await supabaseClient
+          .from('content_chapters')
+          .select('sort_order')
+          .order('sort_order', { ascending: false })
+          .limit(1)
+
+        if (error) throw error
+
+        // Set the sort order to one more than the highest, or 1 if no chapters exist
+        const highestSortOrder = data && data.length > 0 ? data[0].sort_order : 0
+        setSortOrder(highestSortOrder + 1)
+      } catch (err) {
+        console.error('Error fetching highest sort order:', err)
+        // Default to 1 if there's an error
+        setSortOrder(1)
+      } finally {
+        setIsLoadingSortOrder(false)
+      }
+    }
+
+    fetchHighestSortOrder()
+  }, [mode, supabaseClient])
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -125,7 +155,7 @@ export const Page: NextPageWithLayout = () => {
                     <YStack gap="$4">
                       {/* Mode selection */}
                       <YStack gap="$2">
-                        <Text fontWeight="bold">Modus</Text>
+                        <SizableText fontWeight="bold">Modus</SizableText>
                         <XStack alignItems="center" gap="$4">
                           <Theme name={mode === 'PRACTICAL' ? 'green' : 'light_blue_active'}>
                             <Switch
@@ -153,7 +183,7 @@ export const Page: NextPageWithLayout = () => {
 
                       {/* Title input */}
                       <YStack gap="$2">
-                        <Text fontWeight="bold">Titel</Text>
+                        <SizableText fontWeight="bold">Titel</SizableText>
                         <Input
                           placeholder="Titel des Kapitels"
                           value={title}
@@ -161,20 +191,27 @@ export const Page: NextPageWithLayout = () => {
                         />
                       </YStack>
 
-                      {/* Sort order input */}
+                      {/* Sort order input - non-editable */}
                       <YStack gap="$2">
-                        <Text fontWeight="bold">Sortierreihenfolge</Text>
+                        <SizableText fontWeight="bold">
+                          Sortierreihenfolge (automatisch festgelegt)
+                        </SizableText>
                         <Input
-                          placeholder="Sortierreihenfolge (z.B. 1, 2, 3)"
+                          placeholder={
+                            isLoadingSortOrder ? 'Wird geladen...' : 'Sortierreihenfolge'
+                          }
                           value={sortOrder.toString()}
-                          onChangeText={(text) => setSortOrder(parseInt(text, 10) || 0)}
-                          keyboardType="numeric"
+                          disabled={true}
+                          opacity={0.7}
                         />
+                        <SizableText size="$2" color="$gray10">
+                          Die Sortierreihenfolge wird automatisch festgelegt
+                        </SizableText>
                       </YStack>
 
                       {/* Description textarea */}
                       <YStack gap="$2">
-                        <Text fontWeight="bold">Beschreibung (optional)</Text>
+                        <SizableText fontWeight="bold">Beschreibung (optional)</SizableText>
                         <TextArea
                           placeholder="Beschreibung des Kapitels"
                           value={description}
@@ -185,16 +222,16 @@ export const Page: NextPageWithLayout = () => {
 
                       {/* Error message */}
                       {error && (
-                        <Text color="$red10" textAlign="center">
+                        <SizableText color="$red10" textAlign="center">
                           {error}
-                        </Text>
+                        </SizableText>
                       )}
 
                       {/* Success message */}
                       {success && (
-                        <Text color="$green10" textAlign="center">
+                        <SizableText color="$green10" textAlign="center">
                           Kapitel erfolgreich erstellt! Sie werden weitergeleitet...
-                        </Text>
+                        </SizableText>
                       )}
 
                       {/* Submit button */}
