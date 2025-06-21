@@ -10,6 +10,7 @@ import {
   Switch,
   Label,
   Button,
+  Theme,
 } from '@my/ui'
 import { BookOpen, Beaker, Info, List, Loader2, Plus } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
@@ -99,26 +100,38 @@ export const Page: NextPageWithLayout = () => {
                       <Beaker size="$1" color="$green10" />
                     )}
                   </XStack>
-                  <Switch
-                    id="mode-switch"
-                    checked={mode === 'PRACTICAL'}
-                    onCheckedChange={handleModeToggle}
-                    size="$4"
-                    theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
-                  >
-                    <Switch.Thumb animation="quick" />
-                  </Switch>
+
+                  <Theme name={mode === 'PRACTICAL' ? 'green' : 'light_blue_active'}>
+                    <Switch
+                      id="mode-switch"
+                      checked={mode === 'PRACTICAL'}
+                      onCheckedChange={handleModeToggle}
+                      size="$4"
+                      theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                    >
+                      <Switch.Thumb animation="quick" />
+                    </Switch>
+                  </Theme>
                 </XStack>
               </XStack>
-              <XStack ml="$3" mt="$4">
+              <XStack ml="$3" mt="$4" gap="$4">
                 <Button
                   size="$3"
                   alignSelf="flex-start"
-                  theme={mode === 'PRACTICAL' ? 'green' : 'blue'}
+                  theme="orange"
                   icon={Plus}
                   onPress={() => router.push('/create-lecture')}
                 >
                   <Button.Text>Neue Lektion erstellen</Button.Text>
+                </Button>
+                <Button
+                  size="$3"
+                  alignSelf="flex-start"
+                  theme="purple"
+                  icon={Plus}
+                  onPress={() => router.push('/create-chapter')}
+                >
+                  <Button.Text>Neues Kapitel erstellen</Button.Text>
                 </Button>
               </XStack>
 
