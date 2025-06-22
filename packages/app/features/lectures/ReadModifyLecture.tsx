@@ -10,7 +10,7 @@ import {
   H1,
   useToast,
 } from '@my/ui'
-import { Save, Pencil, Eye, Info } from '@tamagui/lucide-icons'
+import { Save, Info } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -57,7 +57,7 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
 
     try {
       const { error } = await supabase
-        .from('lectures') // Replace 'lectures' with your actual table name
+        .from('content_lectures') // Replace 'lectures' with your actual table name
         .update({ title: data.title, content: data.content })
         .eq('id', lectureId)
 
@@ -80,14 +80,14 @@ const ReadModifyLecture = ({ lecture, lectureId }: { lecture: any; lectureId: an
             <SizableText size="$5" fontWeight="500">
               Lecture Details
             </SizableText>
-            <Button
+            {/* <Button TODO add this back in
               size="$3"
               // backgroundColor={isEditMode ? '$red12' : undefined} //TODO determine why these colors don't work
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
             >
               <Button.Text>{isEditMode ? 'Cancel' : 'Modify'}</Button.Text>
-            </Button>
+            </Button> */}
           </XStack>
           {isEditMode ? (
             <Controller
