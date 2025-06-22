@@ -40,7 +40,7 @@ const ShowExistingQuizQuestions: React.FC<ShowExistingQuizQuestionsProps> = ({
                 </Button.Icon>
               </Button>
             </XStack>
-            {question.question_type === 'MULTIPLE_CHOICE' && (
+            {question.question_type === 'MULTIPLE_CHOICE' && question.quiz_question_options && (
               <YStack gap="$2" pl="$4">
                 {question.quiz_question_options.map((option) => (
                   <Chip
