@@ -7,14 +7,15 @@ import { useSupabase } from 'app/utils/supabase/useSupabase'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 
-import { useQuizSystem } from '../../../../packages/app/utils/hooks/queryHooks'
+import ReadModifyLecture from '../../../../packages/app/features/lectures/ReadModifyLecture'
+import { useLectures, useQuizSystem } from '../../../../packages/app/utils/hooks/queryHooks'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
-  // const { getLectureById } = useLectures()
-  // const { data: lecture } = getLectureById(parseInt(router.query.id as string, 10))
+  const { useLectureById } = useLectures()
+  const { data: lecture } = useLectureById(parseInt(router.query.id as string, 10))
 
   const { getQuizResults } = useQuizSystem()
   const {
@@ -36,7 +37,7 @@ export const Page: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Lecture</title>
+        <title>{lecture ? `Lecture: ${lecture.title}` : 'Lecture'}</title>
       </Head>
       <XStack maw={1480} width={800} m="auto" f={1}>
         <ScrollView f={4} fb={0}>
@@ -52,16 +53,13 @@ export const Page: NextPageWithLayout = () => {
               Back
             </Button>
             <YStack gap="$12">
-              {/* <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
-              <ShowExistingQuizQuestions
+              <ReadModifyLecture
+                lecture={lecture}
+                lectureId={router.query.id as string}
                 quizQuestions={quizQuestions}
-                areQuestionsLoading={areQuestionsLoading}
-                error={error}
-                onDelete={(questionId) => {
-                  handleQuestionDelete(questionId)
-                }}
+                isQuizLoading={areQuestionsLoading}
+                onDeleteQuestion={handleQuestionDelete}
               />
-              <QuizQuestionForm onSubmitSuccess={() => {}} lectureId={lecture?.id} /> */}
             </YStack>
           </YStack>
         </ScrollView>

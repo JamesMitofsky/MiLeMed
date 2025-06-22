@@ -12,6 +12,7 @@ import {
   Button,
   Theme,
 } from '@my/ui'
+import { Input } from '@my/ui/src/components/forms/inputs/components/inputsParts'
 import { BookOpen, Stethoscope, Info, List, Loader2, Plus, Search } from '@tamagui/lucide-icons'
 import { HomeLayout } from 'app/features/home/layout.web'
 import ScrollToTopTabBarContainer from 'app/utils/NativeScreenContainer'
@@ -21,7 +22,6 @@ import { useRouter } from 'solito/navigation'
 
 import { NextPageWithLayout } from './_app'
 import { useAllChaptersAndLectures } from '../../../packages/app/utils/hooks/queryHooks'
-import { Input } from '@my/ui/src/components/forms/inputs/components/inputsParts'
 
 // Define types for the data structure returned by useAllChaptersAndLectures
 type ChapterData = {
@@ -221,7 +221,16 @@ export const Page: NextPageWithLayout = () => {
                       <YStack pl="$4" gap="$4">
                         {lecturesByChapter[chapter.id]?.length > 0 ? (
                           lecturesByChapter[chapter.id].map((lecture: LectureData) => (
-                            <Card key={lecture.id} bordered padding="$3" mb="$2">
+                            <Card
+                              key={lecture.id}
+                              bordered
+                              padding="$3"
+                              mb="$2"
+                              pressStyle={{ opacity: 0.8, scale: 0.98 }}
+                              animation="bouncy"
+                              cursor="pointer"
+                              onPress={() => router.push(`/lecture/${lecture.id}`)}
+                            >
                               <XStack ai="center" gap="$2">
                                 <H3>{lecture.title}</H3>
                               </XStack>

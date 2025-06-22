@@ -100,7 +100,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
           reset()
           return
         }
-        
+
         // Otherwise, save to the database if we have a lectureId
         if (!lectureId) return
         await addQuizQuestion(supabase, lectureId, data)
