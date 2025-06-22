@@ -157,13 +157,13 @@ export const Page: NextPageWithLayout = () => {
       if (quizQuestions.length > 0 && lectureId) {
         try {
           console.log('Saving quiz questions for lecture ID:', lectureId)
-          
+
           // Save questions one by one to make debugging easier
           for (const question of quizQuestions) {
             console.log('Saving question:', question)
             await addQuizQuestion(supabaseClient, lectureId, question)
           }
-          
+
           console.log('All quiz questions saved successfully')
         } catch (err) {
           console.error('Error saving quiz questions:', err)

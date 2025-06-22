@@ -53,7 +53,13 @@ export const Page: NextPageWithLayout = () => {
               Back
             </Button>
             <YStack gap="$12">
-              <ReadModifyLecture lecture={lecture} lectureId={router.query.id as string} />
+              <ReadModifyLecture
+                lecture={lecture}
+                lectureId={router.query.id as string}
+                quizQuestions={quizQuestions}
+                isQuizLoading={areQuestionsLoading}
+                onDeleteQuestion={handleQuestionDelete}
+              />
             </YStack>
           </YStack>
         </ScrollView>
