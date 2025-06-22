@@ -138,8 +138,12 @@ export const Page: NextPageWithLayout = () => {
       if (error) throw error
 
       // Store the lecture ID for quiz question creation
+      let lectureId = null
       if (data && data.length > 0) {
-        lectureIdRef.current = data[0].id
+        lectureId = data[0].id
+        lectureIdRef.current = lectureId
+      } else {
+        throw new Error('No lecture ID was returned after creation')
       }
 
       // Invalidate relevant queries to refresh data
@@ -150,23 +154,25 @@ export const Page: NextPageWithLayout = () => {
       setSuccess(true)
 
       // If there are quiz questions, save them and then redirect
-      if (quizQuestions.length > 0 && lectureIdRef.current) {
+      if (quizQuestions.length > 0 && lectureId) {
         try {
-          // Save all quiz questions
-          const savePromises = quizQuestions.map((question) =>
-            addQuizQuestion(supabaseClient, lectureIdRef.current!, question)
-          )
-
-          await Promise.all(savePromises)
+          console.log('Saving quiz questions for lecture ID:', lectureId)
+          
+          // Save questions one by one to make debugging easier
+          for (const question of quizQuestions) {
+            console.log('Saving question:', question)
+            await addQuizQuestion(supabaseClient, lectureId, question)
+          }
+          
           console.log('All quiz questions saved successfully')
         } catch (err) {
           console.error('Error saving quiz questions:', err)
           setError(
             'Lektion wurde erstellt, aber es gab ein Problem beim Speichern der Quiz-Fragen.'
           )
-        } finally {
-          setIsSubmitting(false)
         }
+      } else {
+        console.log('No quiz questions to save or missing lecture ID')
       }
 
       // Reset form
@@ -174,6 +180,7 @@ export const Page: NextPageWithLayout = () => {
       setContent('')
       setChapterId(null)
       setSortOrder(1) // Reset to default sort order of 1
+      setQuizQuestions([]) // Clear quiz questions
 
       // Redirect after short delay
       setTimeout(() => {
