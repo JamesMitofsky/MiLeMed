@@ -221,7 +221,16 @@ export const Page: NextPageWithLayout = () => {
                       <YStack pl="$4" gap="$4">
                         {lecturesByChapter[chapter.id]?.length > 0 ? (
                           lecturesByChapter[chapter.id].map((lecture: LectureData) => (
-                            <Card key={lecture.id} bordered padding="$3" mb="$2">
+                            <Card 
+                              key={lecture.id} 
+                              bordered 
+                              padding="$3" 
+                              mb="$2"
+                              pressStyle={{ opacity: 0.8, scale: 0.98 }}
+                              animation="bouncy"
+                              cursor="pointer"
+                              onPress={() => router.push(`/lecture/${lecture.id}`)}
+                            >
                               <XStack ai="center" gap="$2">
                                 <H3>{lecture.title}</H3>
                               </XStack>
