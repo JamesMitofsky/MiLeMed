@@ -9,12 +9,11 @@ import {
   XStack,
   H1,
   useToast,
-  Accordion,
   Card,
   Text,
   Separator,
 } from '@my/ui'
-import { Save, Info, Check, X, Edit3, Trash } from '@tamagui/lucide-icons'
+import { Save, Info, Check, X, Trash } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -76,6 +75,11 @@ const ReadModifyLecture = ({
       setValue('content', lecture.content)
     }
   }, [lecture, setValue])
+  
+  // Debug statements to check quiz questions data
+  useEffect(() => {
+    console.log('Quiz Questions:', JSON.stringify(quizQuestions, null, 2))
+  }, [quizQuestions])
 
   useEffect(() => {
     // Check if there are changes compared to the original lecture values
@@ -209,29 +213,33 @@ const ReadModifyLecture = ({
                 <Text>Loading quiz questions...</Text>
               </XStack>
             ) : quizQuestions && quizQuestions.length > 0 ? (
-              <Accordion type="multiple" defaultValue={[]}>
-                {quizQuestions.map((question, index) => (
-                  <Accordion.Item key={question.id} value={`question-${question.id}`}>
-                    <Accordion.Trigger flexDirection="row" justifyContent="space-between">
-                      <SizableText>{question.question_text}</SizableText>
-                      <Edit3 size={16} />
-                    </Accordion.Trigger>
-                    <Accordion.Content>
-                      <Card bordered padding="$3" mt="$2">
-                        <YStack gap="$3">
-                          <YStack>
+              <YStack gap="$3">
+                {quizQuestions.map((question, index) => {
+                  console.log(`Question ${index}:`, question);
+                  console.log(`Question ${index} type:`, question.question_type);
+                  console.log(`Question ${index} options:`, question.options);
+                  
+                  return (
+                    <Card key={question.id} bordered padding="$3" mb="$3">
+                      <YStack gap="$3">
+                        <SizableText fontWeight="bold">{question.question_text}</SizableText>
+                        
+                        <YStack gap="$1">
+                          <XStack gap="$2" alignItems="center">
                             <Text fontWeight="bold">Type:</Text>
                             <Text>
                               {question.question_type === 'MULTIPLE_CHOICE'
                                 ? 'Multiple Choice'
                                 : 'Open Ended'}
                             </Text>
-                          </YStack>
-                          
-                          {question.question_type === 'MULTIPLE_CHOICE' && question.options && (
-                            <YStack gap="$2">
-                              <Text fontWeight="bold">Options:</Text>
-                              {question.options.map((option, optIndex) => (
+                          </XStack>
+                        </YStack>
+                        
+                        {question.question_type === 'MULTIPLE_CHOICE' && (
+                          <YStack gap="$2">
+                            <Text fontWeight="bold">Options:</Text>
+                            {Array.isArray(question.options) && question.options.length > 0 ? (
+                              question.options.map((option, optIndex) => (
                                 <XStack key={optIndex} gap="$2" alignItems="center">
                                   {option.is_correct ? (
                                     <Check color="$green9" />
@@ -240,35 +248,37 @@ const ReadModifyLecture = ({
                                   )}
                                   <Text>{option.option_text}</Text>
                                 </XStack>
-                              ))}
-                            </YStack>
-                          )}
-                          
-                          {question.question_type === 'OPEN_ENDED' && question.correct_answer && (
-                            <YStack gap="$2">
-                              <Text fontWeight="bold">Correct Answer:</Text>
-                              <Text>{question.correct_answer}</Text>
-                            </YStack>
-                          )}
-                          
-                          <XStack gap="$2">
-                            {onDeleteQuestion && (
-                              <Button
-                                icon={Trash}
-                                theme="red"
-                                size="$2"
-                                onPress={() => onDeleteQuestion(question.id)}
-                              >
-                                Delete
-                              </Button>
+                              ))
+                            ) : (
+                              <Text color="$orange9">No options available</Text>
                             )}
-                          </XStack>
-                        </YStack>
-                      </Card>
-                    </Accordion.Content>
-                  </Accordion.Item>
-                ))}
-              </Accordion>
+                          </YStack>
+                        )}
+                        
+                        {question.question_type === 'OPEN_ENDED' && question.correct_answer && (
+                          <YStack gap="$2">
+                            <Text fontWeight="bold">Correct Answer:</Text>
+                            <Text>{question.correct_answer}</Text>
+                          </YStack>
+                        )}
+                        
+                        <XStack gap="$2">
+                          {onDeleteQuestion && (
+                            <Button
+                              icon={Trash}
+                              theme="red"
+                              size="$2"
+                              onPress={() => onDeleteQuestion(question.id)}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </XStack>
+                      </YStack>
+                    </Card>
+                  );
+                })}
+              </YStack>
             ) : (
               <Text>No quiz questions available for this lecture.</Text>
             )}
