@@ -467,6 +467,51 @@ export const useSystemEvents = () => {
   return { recordSystemEvent }
 }
 
+export const useQuizOptions = (questionIds?: number[]) => {
+  const { supabaseClient } = useSessionContext()
+
+  // Define query key as a constant
+  const quizOptionsKey = questionIds ? ['quiz-options', questionIds] : ['quiz-options'] as const
+
+  // Get quiz options filtered by question IDs if provided
+  const quizOptionsQuery = useQuery({
+    queryKey: quizOptionsKey,
+    queryFn: async () => {
+      // Start with the base query
+      let query = supabaseClient
+        .from('quiz_options')
+        .select('*')
+      
+      // Apply filter for specific question IDs if provided
+      if (questionIds && questionIds.length > 0) {
+        query = query.in('question_id', questionIds)
+      }
+      
+      // Execute the query with ordering
+      const { data, error } = await query.order('id', { ascending: true })
+
+      if (error) throw error
+      return data
+    },
+    // Enable the query if questionIds is undefined or has elements
+    enabled: !questionIds || questionIds.length > 0,
+  })
+
+  // Get options for a specific question
+  const getOptionsForQuestion = (questionId: number) => {
+    if (!quizOptionsQuery.data) return []
+    return quizOptionsQuery.data.filter((option) => option.question_id === questionId)
+  }
+
+  return {
+    data: quizOptionsQuery.data,
+    isLoading: quizOptionsQuery.isLoading,
+    error: quizOptionsQuery.error,
+    refetch: quizOptionsQuery.refetch,
+    getOptionsForQuestion,
+  }
+}
+
 export const useFeedback = () => {
   const { supabaseClient } = useSessionContext()
   const queryClient = useQueryClient()

@@ -1,25 +1,11 @@
-import {
-  Button,
-  Input,
-  SizableText,
-  TextArea,
-  FullscreenSpinner,
-  Spinner,
-  YStack,
-  XStack,
-  H1,
-  useToast,
-  Card,
-  Text,
-  Separator,
-} from '@my/ui'
-import { Save, Info, Check, X, Trash, Eye, Pencil, Plus } from '@tamagui/lucide-icons'
+import { Button, Card, FullscreenSpinner, H1, Input, Separator, SizableText, Spinner, Text, TextArea, XStack, YStack, useToast } from '@my/ui'
+import { Check, Eye, Info, Pencil, Plus, Save, Trash, X } from '@tamagui/lucide-icons'
+import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
-import { useForm, Controller } from 'react-hook-form'
 
+import QuizQuestionForm from './QuizQuestionForm'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
-import QuizQuestionForm from './QuizQuestionForm'
 
 interface QuizQuestion {
   question_id: number
@@ -36,6 +22,13 @@ interface QuizQuestion {
 
 // Removed unused type
 
+interface QuizOption {
+  id: number
+  question_id: number
+  option_text: string
+  // Add other properties as needed
+}
+
 interface ReadModifyLectureProps {
   lecture: {
     id: number
@@ -46,6 +39,8 @@ interface ReadModifyLectureProps {
   } | null
   lectureId: string
   quizQuestions?: QuizQuestion[]
+  quizOptions?: QuizOption[] // Quiz options from the database with proper type
+  getOptionsForQuestion?: (questionId: number) => QuizOption[] // Function to get options for a specific question
   isQuizLoading?: boolean
   onDeleteQuestion?: (questionId: number) => void
   onSaveSuccess?: () => void
@@ -55,6 +50,8 @@ const ReadModifyLecture = ({
   lecture,
   lectureId,
   quizQuestions = [],
+  quizOptions = [],
+  getOptionsForQuestion,
   isQuizLoading = false,
   onDeleteQuestion,
   onSaveSuccess,
@@ -70,12 +67,9 @@ const ReadModifyLecture = ({
   const [loading, setLoading] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
-  // Map to track which questions have been edited and saved
-  const [savedQuestions, setSavedQuestions] = useState<{ [id: number]: boolean }>({})
-  // Local state to track questions that are displayed (for immediate UI updates on deletion)
-  const [localQuestions, setLocalQuestions] = useState<QuizQuestion[]>([])
-  // State to track if we're showing the new question form
+  const [localQuestions, setLocalQuestions] = useState<QuizQuestion[]>(quizQuestions || [])
   const [showNewQuestionForm, setShowNewQuestionForm] = useState(false)
+  const [savedQuestions, setSavedQuestions] = useState<Record<number, boolean>>({})
 
   // Watch for changes in form values
   const watchedValues = watch(['title', 'content'])
@@ -377,7 +371,30 @@ const ReadModifyLecture = ({
                         {question.question_type === 'MULTIPLE_CHOICE' && (
                           <YStack gap="$2">
                             <Text fontWeight="bold">Options:</Text>
-                            {Array.isArray(question.options) && question.options.length > 0 ? (
+                            {/* Use the getOptionsForQuestion function to fetch options from the database */}
+                            {getOptionsForQuestion && (
+                              <>
+                                {/* Display options from the quiz_options table */}
+                                {(() => {
+                                  const options = getOptionsForQuestion(question.question_id)
+                                  return options && options.length > 0 ? (
+                                    options.map((option, optIndex) => (
+                                      <XStack key={optIndex} gap="$2" alignItems="center">
+                                        {/* This part would need additional logic to determine if an option is correct */}
+                                        {/* For now, display all options without indicating correctness */}
+                                        <Text>{option.option_text}</Text>
+                                      </XStack>
+                                    ))
+                                  ) : (
+                                    <Text color="$orange9">No options available</Text>
+                                  )
+                                })()}
+                              </>
+                            )}
+                            {/* Fallback to original options if getOptionsForQuestion is not available */}
+                            {!getOptionsForQuestion &&
+                              Array.isArray(question.options) &&
+                              question.options.length > 0 &&
                               question.options.map((option, optIndex) => (
                                 <XStack key={optIndex} gap="$2" alignItems="center">
                                   {option.is_correct ? (
@@ -388,9 +405,13 @@ const ReadModifyLecture = ({
                                   <Text>{option.option_text}</Text>
                                 </XStack>
                               ))
-                            ) : (
-                              <Text color="$orange9">No options available</Text>
-                            )}
+                            }
+                            {!getOptionsForQuestion &&
+                              (!Array.isArray(question.options) ||
+                                question.options.length === 0) && (
+                                <Text color="$orange9">No options available</Text>
+                              )
+                            }
                           </YStack>
                         )}
 
