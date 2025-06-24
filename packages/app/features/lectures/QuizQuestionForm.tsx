@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
 import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Checkbox, TextArea } from 'tamagui'
 
@@ -65,6 +65,8 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   initialData,
   tempQuestion = false,
 }) => {
+  console.log('QuizQuestionForm initialData:', initialData);
+  
   const {
     control,
     handleSubmit,
@@ -82,6 +84,8 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
 
   const supabase = useSupabase()
   const { fields: options, append, remove } = useFieldArray({ control, name: 'options' })
+  console.log('Field array options:', options);
+  
   const questionType = watch('question_type')
 
   const handleAddOption = useCallback(
@@ -114,10 +118,28 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess, tempQuestion]
   )
 
-  // reset options on question type change
+  // Store initial question type to detect actual changes
+  const [initialQuestionType, setInitialQuestionType] = useState<string | null>(null);
+  
+  // Set initial question type on first render
   useEffect(() => {
-    reset({ ...watch(), options: [{ option_text: '', is_correct: false }] })
-  }, [questionType, reset, watch])
+    if (initialQuestionType === null) {
+      setInitialQuestionType(questionType);
+      console.log('Setting initial question type:', questionType);
+    }
+  }, [questionType, initialQuestionType]);
+  
+  // Only reset options when question type changes from its initial value
+  useEffect(() => {
+    // Skip if we don't have initialQuestionType yet
+    if (initialQuestionType === null) return;
+    
+    // Skip on first render or if question type hasn't changed
+    if (questionType === initialQuestionType) return;
+    
+    console.log('Question type changed from', initialQuestionType, 'to', questionType, '- resetting options');
+    reset({ ...watch(), options: [{ option_text: '', is_correct: false }] });
+  }, [questionType, initialQuestionType, reset, watch])
 
   return (
     <>

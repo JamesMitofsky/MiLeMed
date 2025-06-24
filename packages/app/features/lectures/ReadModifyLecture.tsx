@@ -292,12 +292,38 @@ const ReadModifyLecture = ({
                                 question.question_type === 'OPEN_ENDED'
                                   ? 'OPEN'
                                   : 'MULTIPLE_CHOICE',
-                              options: question.options || [
-                                {
-                                  option_text: question.correct_answer || '',
-                                  is_correct: true,
-                                },
-                              ],
+                              options: (() => {
+                                // Debugging: log the question we're trying to edit
+                                console.log('Editing question:', question.question_id, question);
+
+                                // If we have the getOptionsForQuestion function, use it to get the latest options from the database
+                                if (getOptionsForQuestion) {
+                                  const dbOptions = getOptionsForQuestion(question.question_id);
+                                  console.log('DB Options found for question:', dbOptions);
+                                  
+                                  // Convert database options to the expected format for the form
+                                  if (dbOptions && dbOptions.length > 0) {
+                                    const formattedOptions = dbOptions.map(option => ({
+                                      option_text: option.option_text,
+                                      // We don't have is_correct info in the database yet, 
+                                      // so default to false unless it matches the correct answer
+                                      is_correct: question.correct_answer === option.option_text
+                                    }));
+                                    console.log('Formatted options for form:', formattedOptions);
+                                    return formattedOptions;
+                                  }
+                                }
+                                
+                                // Fallback to existing options or create a default one
+                                const fallbackOptions = question.options || [
+                                  {
+                                    option_text: question.correct_answer || '',
+                                    is_correct: true,
+                                  },
+                                ];
+                                console.log('Using fallback options:', fallbackOptions);
+                                return fallbackOptions;
+                              })(),
                             }}
                           />
 
