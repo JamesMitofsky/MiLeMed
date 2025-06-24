@@ -17,7 +17,7 @@ export const addQuizQuestion = async (
         {
           lecture_id: lectureId,
           question_text: questionData.question_text,
-          question_type: questionData.question_type,
+          question_type: questionData.question_type === 'OPEN' ? 'OPEN_ENDED' : 'MULTIPLE_CHOICE',
         },
       ])
       .select()
@@ -48,31 +48,35 @@ export const addQuizQuestion = async (
 
       // 3. Handle reference answers based on question type
       if (questionData.question_type === 'MULTIPLE_CHOICE') {
-        // For multiple choice, add reference answers for correct options
-        const correctOptionPromises = questionData.options
-          .filter(option => option.is_correct)
-          .map((option, index) => {
-            // Find the corresponding inserted option ID
-            const insertedOption = insertedOptions[index]
-            if (!insertedOption) {
-              console.error('Could not find inserted option for correct answer')
-              return null
-            }
-            
-            return supabase
+        // For multiple choice, create reference answers for correct options
+        // We need to map each original option to its inserted option ID
+        for (let i = 0; i < questionData.options.length; i++) {
+          const originalOption = questionData.options[i];
+          const insertedOption = insertedOptions[i];
+          
+          if (!insertedOption) {
+            console.error(`Could not find inserted option at index ${i}`);
+            continue;
+          }
+          
+          // Only create reference answers for the options marked as correct
+          if (originalOption.is_correct) {
+            const { error } = await supabase
               .from('quiz_reference_answers')
               .insert({
                 question_id: question.id,
                 answer_type: 'OPTION',
                 option_id: insertedOption.id,
                 answer_text: null,
-              })
-          })
+              });
+              
+            if (error) {
+              console.error(`Error creating reference answer for option ${insertedOption.id}:`, error);
+            }
+          }
+        }
         
-        const correctAnswerResults = await Promise.all(
-          correctOptionPromises.filter(Boolean)
-        )
-        console.log('Added reference answers for correct options')
+        console.log('Added reference answers for correct options');
       } else if (questionData.question_type === 'OPEN' && questionData.options[0]) {
         // For open questions, add the reference answer text
         const { error: refAnswerError } = await supabase
