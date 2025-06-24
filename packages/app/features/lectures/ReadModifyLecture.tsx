@@ -13,15 +13,16 @@ import {
   Text,
   Separator,
 } from '@my/ui'
-import { Save, Info, Check, X, Trash, Eye, Pencil } from '@tamagui/lucide-icons'
+import { Save, Info, Check, X, Trash, Eye, Pencil, Plus } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
+import QuizQuestionForm from './QuizQuestionForm'
 
 interface QuizQuestion {
-  id: number
+  question_id: number
   question_text: string
   question_type: 'MULTIPLE_CHOICE' | 'OPEN_ENDED'
   options?: {
@@ -29,7 +30,11 @@ interface QuizQuestion {
     is_correct: boolean
   }[]
   correct_answer?: string
+  // Additional fields from quiz_get_results
+  correct_answer_text?: string
 }
+
+// Removed unused type
 
 interface ReadModifyLectureProps {
   lecture: {
@@ -65,6 +70,12 @@ const ReadModifyLecture = ({
   const [loading, setLoading] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
+  // Map to track which questions have been edited and saved
+  const [savedQuestions, setSavedQuestions] = useState<{ [id: number]: boolean }>({})
+  // Local state to track questions that are displayed (for immediate UI updates on deletion)
+  const [localQuestions, setLocalQuestions] = useState<QuizQuestion[]>([])
+  // State to track if we're showing the new question form
+  const [showNewQuestionForm, setShowNewQuestionForm] = useState(false)
 
   // Watch for changes in form values
   const watchedValues = watch(['title', 'content'])
@@ -77,10 +88,12 @@ const ReadModifyLecture = ({
       setValue('content', lecture.content)
     }
   }, [lecture, setValue])
-  
+
   // Debug statements to check quiz questions data
   useEffect(() => {
     console.log('Quiz Questions:', JSON.stringify(quizQuestions, null, 2))
+    // Update local questions when quiz questions change
+    setLocalQuestions(quizQuestions || [])
   }, [quizQuestions])
 
   useEffect(() => {
@@ -105,7 +118,7 @@ const ReadModifyLecture = ({
       if (error) throw error
       toast.show('Lecture updated successfully!', { appearance: 'success' })
       setIsEditMode(false)
-      
+
       // Refetch lecture data to update the display
       if (onSaveSuccess) {
         onSaveSuccess()
@@ -210,27 +223,146 @@ const ReadModifyLecture = ({
           {/* Quiz Questions Section */}
           <YStack gap="$4" mt="$6">
             <Separator />
-            <SizableText size="$5" fontWeight="500">
-              Quiz Questions
-            </SizableText>
-            
+            <XStack justifyContent="space-between" alignItems="center">
+              <SizableText size="$5" fontWeight="500">
+                Quiz Questions
+              </SizableText>
+              {isEditMode && (
+                <Button
+                  size="$3"
+                  themeShallow
+                  theme="green"
+                  icon={Plus}
+                  onPress={() => setShowNewQuestionForm(true)}
+                >
+                  Add Question
+                </Button>
+              )}
+            </XStack>
+
+            {/* New Question Form */}
+            {isEditMode && showNewQuestionForm && (
+              <Card bordered padding="$3" mb="$3">
+                <YStack gap="$3">
+                  <QuizQuestionForm
+                    onSubmitSuccess={(questionData) => {
+                      // Hide the form
+                      setShowNewQuestionForm(false)
+
+                      // Refetch quiz questions to get the newly created question
+                      if (onSaveSuccess) {
+                        onSaveSuccess()
+                      }
+                    }}
+                    lectureId={parseInt(lectureId, 10)}
+                  />
+
+                  <Button theme="red" size="$2" onPress={() => setShowNewQuestionForm(false)}>
+                    Cancel
+                  </Button>
+                </YStack>
+              </Card>
+            )}
+
             {isQuizLoading ? (
               <XStack ai="center" gap="$2">
                 <Spinner size="small" />
                 <Text>Loading quiz questions...</Text>
               </XStack>
-            ) : quizQuestions && quizQuestions.length > 0 ? (
+            ) : localQuestions && localQuestions.length > 0 ? (
               <YStack gap="$3">
-                {quizQuestions.map((question, index) => {
-                  console.log(`Question ${index}:`, question);
-                  console.log(`Question ${index} type:`, question.question_type);
-                  console.log(`Question ${index} options:`, question.options);
-                  
+                {localQuestions.map((question, index) => {
+                  // In edit mode, show all questions as editable forms
+                  if (isEditMode) {
+                    return (
+                      <Card key={`edit-${question.question_id}`} bordered padding="$3" mb="$3">
+                        <YStack gap="$3">
+                          <QuizQuestionForm
+                            onSubmitSuccess={(questionData) => {
+                              // Mark this question as saved
+                              setSavedQuestions((prev) => ({
+                                ...prev,
+                                [question.question_id]: true,
+                              }))
+
+                              // Refetch quiz questions
+                              if (onSaveSuccess) {
+                                onSaveSuccess()
+                              }
+                            }}
+                            lectureId={parseInt(lectureId, 10)}
+                            initialData={{
+                              question_text: question.question_text,
+                              // Convert OPEN_ENDED to OPEN for the form
+                              question_type:
+                                question.question_type === 'OPEN_ENDED'
+                                  ? 'OPEN'
+                                  : 'MULTIPLE_CHOICE',
+                              options: question.options || [
+                                {
+                                  option_text: question.correct_answer || '',
+                                  is_correct: true,
+                                },
+                              ],
+                            }}
+                          />
+
+                          {/* Delete button still available in edit mode */}
+                          {onDeleteQuestion && (
+                            <Button
+                              icon={Trash}
+                              theme="red"
+                              size="$2"
+                              onPress={() => {
+                                console.log(
+                                  'Delete button clicked for question ID:',
+                                  question.question_id
+                                )
+                                console.log('Delete handler exists:', !!onDeleteQuestion)
+                                console.log('Full question data:', question)
+
+                                // Call the delete handler function
+                                try {
+                                  console.log('Attempting to delete question...')
+                                  // Remove from local state immediately for instant UI feedback
+                                  setLocalQuestions((prev) =>
+                                    prev.filter((q) => q.question_id !== question.question_id)
+                                  )
+                                  // Call the actual delete handler
+                                  onDeleteQuestion(question.question_id)
+                                  console.log('Delete handler called successfully')
+                                } catch (error) {
+                                  console.error('Error in delete handler:', error)
+                                }
+
+                                // Refetch quiz questions after deleting
+                                try {
+                                  console.log('Attempting to trigger refetch...')
+                                  if (onSaveSuccess) {
+                                    onSaveSuccess()
+                                    console.log('Refetch triggered successfully')
+                                  } else {
+                                    console.warn('onSaveSuccess callback is not available')
+                                  }
+                                } catch (error) {
+                                  console.error('Error triggering refetch:', error)
+                                }
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </YStack>
+                      </Card>
+                    )
+                  }
+
+                  // In view mode, show the normal question card
                   return (
-                    <Card key={question.id} bordered padding="$3" mb="$3">
+                    <Card key={question.question_id} bordered padding="$3" mb="$3">
                       <YStack gap="$3">
                         <SizableText fontWeight="bold">{question.question_text}</SizableText>
-                        
+
                         <YStack gap="$1">
                           <XStack gap="$2" alignItems="center">
                             <Text fontWeight="bold">Type:</Text>
@@ -241,7 +373,7 @@ const ReadModifyLecture = ({
                             </Text>
                           </XStack>
                         </YStack>
-                        
+
                         {question.question_type === 'MULTIPLE_CHOICE' && (
                           <YStack gap="$2">
                             <Text fontWeight="bold">Options:</Text>
@@ -261,29 +393,16 @@ const ReadModifyLecture = ({
                             )}
                           </YStack>
                         )}
-                        
+
                         {question.question_type === 'OPEN_ENDED' && question.correct_answer && (
                           <YStack gap="$2">
                             <Text fontWeight="bold">Correct Answer:</Text>
                             <Text>{question.correct_answer}</Text>
                           </YStack>
                         )}
-                        
-                        <XStack gap="$2">
-                          {onDeleteQuestion && (
-                            <Button
-                              icon={Trash}
-                              theme="red"
-                              size="$2"
-                              onPress={() => onDeleteQuestion(question.id)}
-                            >
-                              Delete
-                            </Button>
-                          )}
-                        </XStack>
                       </YStack>
                     </Card>
-                  );
+                  )
                 })}
               </YStack>
             ) : (
