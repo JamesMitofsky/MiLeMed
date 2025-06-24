@@ -15,7 +15,7 @@ export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
   const { useLectureById } = useLectures()
-  const { data: lecture } = useLectureById(parseInt(router.query.id as string, 10))
+  const { data: lecture, refetch: refetchLecture } = useLectureById(parseInt(router.query.id as string, 10))
 
   const { getQuizResults } = useQuizSystem()
   const {
@@ -59,6 +59,7 @@ export const Page: NextPageWithLayout = () => {
                 quizQuestions={quizQuestions}
                 isQuizLoading={areQuestionsLoading}
                 onDeleteQuestion={handleQuestionDelete}
+                onSaveSuccess={refetchLecture}
               />
             </YStack>
           </YStack>

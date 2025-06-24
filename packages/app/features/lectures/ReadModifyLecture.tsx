@@ -13,7 +13,7 @@ import {
   Text,
   Separator,
 } from '@my/ui'
-import { Save, Info, Check, X, Trash } from '@tamagui/lucide-icons'
+import { Save, Info, Check, X, Trash, Eye, Pencil } from '@tamagui/lucide-icons'
 import { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 
@@ -43,6 +43,7 @@ interface ReadModifyLectureProps {
   quizQuestions?: QuizQuestion[]
   isQuizLoading?: boolean
   onDeleteQuestion?: (questionId: number) => void
+  onSaveSuccess?: () => void
 }
 
 const ReadModifyLecture = ({
@@ -51,6 +52,7 @@ const ReadModifyLecture = ({
   quizQuestions = [],
   isQuizLoading = false,
   onDeleteQuestion,
+  onSaveSuccess,
 }: ReadModifyLectureProps) => {
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
@@ -103,6 +105,11 @@ const ReadModifyLecture = ({
       if (error) throw error
       toast.show('Lecture updated successfully!', { appearance: 'success' })
       setIsEditMode(false)
+      
+      // Refetch lecture data to update the display
+      if (onSaveSuccess) {
+        onSaveSuccess()
+      }
     } catch (error) {
       console.error('Error updating lecture:', error)
       alert('An error occurred while updating the lecture. Please try again.')
@@ -119,14 +126,14 @@ const ReadModifyLecture = ({
             <SizableText size="$5" fontWeight="500">
               Lecture Details
             </SizableText>
-            {/* <Button TODO add this back in
+            <Button
               size="$3"
-              // backgroundColor={isEditMode ? '$red12' : undefined} //TODO determine why these colors don't work
+              theme={isEditMode ? 'red' : 'blue'}
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
             >
-              <Button.Text>{isEditMode ? 'Cancel' : 'Modify'}</Button.Text>
-            </Button> */}
+              <Button.Text>{isEditMode ? 'View' : 'Modify'}</Button.Text>
+            </Button>
           </XStack>
           {isEditMode ? (
             <Controller
