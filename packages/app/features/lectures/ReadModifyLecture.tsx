@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import QuizQuestionForm from './QuizQuestionForm'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
+import { useQuizReferenceAnswers } from '../../utils/hooks/useQuizReferenceAnswers'
 
 interface QuizQuestion {
   question_id: number
@@ -56,6 +57,10 @@ const ReadModifyLecture = ({
   onDeleteQuestion,
   onSaveSuccess,
 }: ReadModifyLectureProps) => {
+  // Extract question IDs for fetching reference answers
+  const questionIds = quizQuestions.map(q => q.question_id)
+  // Use the hook to get reference answers
+  const { getCorrectOptionIdForQuestion, isLoading: isLoadingReferenceAnswers } = useQuizReferenceAnswers(questionIds)
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
@@ -285,6 +290,7 @@ const ReadModifyLecture = ({
                               }
                             }}
                             lectureId={parseInt(lectureId, 10)}
+                            questionId={question.question_id} // Pass the question ID for updating
                             initialData={{
                               question_text: question.question_text,
                               // Convert OPEN_ENDED to OPEN for the form
@@ -303,13 +309,16 @@ const ReadModifyLecture = ({
                                   
                                   // Convert database options to the expected format for the form
                                   if (dbOptions && dbOptions.length > 0) {
+                                    // Get the correct option ID from reference answers
+                                    const correctOptionId = getCorrectOptionIdForQuestion(question.question_id);
+                                    console.log('Correct option ID for question', question.question_id, ':', correctOptionId);
+                                    
                                     const formattedOptions = dbOptions.map(option => ({
                                       option_text: option.option_text,
-                                      // We don't have is_correct info in the database yet, 
-                                      // so default to false unless it matches the correct answer
-                                      is_correct: question.correct_answer === option.option_text
+                                      // Mark as correct if this option ID matches the correct reference answer option ID
+                                      is_correct: correctOptionId === option.id
                                     }));
-                                    console.log('Formatted options for form:', formattedOptions);
+                                    console.log('Formatted options for form with reference answers:', formattedOptions);
                                     return formattedOptions;
                                   }
                                 }

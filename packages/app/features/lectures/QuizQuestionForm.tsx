@@ -6,11 +6,12 @@ import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Checkbox, TextArea } from 'tamagui'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
+import { updateQuizQuestion } from '../../utils/supabase/simpleQueries/updateQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { z } from '../../utils/zod-de'
 import { CustomSelect } from '../general/CustomSelect'
 
-interface QuizQuestionOption {
+export interface QuizQuestionOption {
   option_text: string
   is_correct: boolean
 }
@@ -25,6 +26,7 @@ interface QuizQuestionFormProps {
   onSubmitSuccess: (questionData?: QuizQuestionFormData) => void
   lectureId?: number
   initialData?: QuizQuestionFormData
+  questionId?: number // Add questionId for existing questions
   tempQuestion?: boolean
 }
 
@@ -63,6 +65,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   onSubmitSuccess,
   lectureId,
   initialData,
+  questionId, // Add questionId
   tempQuestion = false,
 }) => {
   console.log('QuizQuestionForm initialData:', initialData);
@@ -100,22 +103,36 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
       try {
         // If this is a temporary question (during lecture creation), just pass the data back
         if (tempQuestion) {
+          console.log('Temporary question - passing data back', data)
           onSubmitSuccess(data)
           reset()
           return
         }
 
-        // Otherwise, save to the database if we have a lectureId
-        if (!lectureId) return
-        await addQuizQuestion(supabase, lectureId, data)
+        // For database operations, we need a lectureId
+        if (!lectureId) {
+          console.error('No lectureId provided')
+          return
+        }
+        
+        // Check if this is an edit or a new question
+        if (questionId) {
+          console.log('UPDATING existing question ID:', questionId, 'with data:', data)
+          await updateQuizQuestion(supabase, questionId, data)
+          console.log('Question updated successfully')
+        } else {
+          console.log('ADDING new question to lectureID:', lectureId, 'with data:', data)
+          await addQuizQuestion(supabase, lectureId, data)
+          console.log('Question added successfully')
+        }
+        
         reset()
-        console.log('submitted to lectureID: ', lectureId)
         onSubmitSuccess()
       } catch (error) {
-        console.error('Failed to add quiz question:', error)
+        console.error('Failed to save quiz question:', error)
       }
     },
-    [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess, tempQuestion]
+    [lectureId, questionId, addQuizQuestion, updateQuizQuestion, supabase, reset, onSubmitSuccess, tempQuestion]
   )
 
   // Store initial question type to detect actual changes
