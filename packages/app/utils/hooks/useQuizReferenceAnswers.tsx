@@ -6,24 +6,22 @@ export const useQuizReferenceAnswers = (questionIds?: number[]) => {
   const { supabaseClient } = useSessionContext()
 
   // Define query key as a constant
-  const refAnswersKey = questionIds 
-    ? ['quiz-reference-answers', questionIds] 
-    : ['quiz-reference-answers'] as const
+  const refAnswersKey = questionIds
+    ? ['quiz-reference-answers', questionIds]
+    : (['quiz-reference-answers'] as const)
 
   // Get reference answers filtered by question IDs if provided
   const refAnswersQuery = useQuery({
     queryKey: refAnswersKey,
     queryFn: async () => {
       // Start with the base query
-      let query = supabaseClient
-        .from('quiz_reference_answers')
-        .select('*')
-      
+      let query = supabaseClient.from('quiz_reference_answers').select('*')
+
       // Apply filter for specific question IDs if provided
       if (questionIds && questionIds.length > 0) {
         query = query.in('question_id', questionIds)
       }
-      
+
       // Execute the query with ordering
       const { data, error } = await query.order('id', { ascending: true })
 
@@ -47,21 +45,22 @@ export const useQuizReferenceAnswers = (questionIds?: number[]) => {
     const answers = refAnswersQuery.data.filter(
       (answer) => answer.question_id === questionId && answer.answer_type === 'OPTION'
     )
-    
+
     // Return the option_id if found
     if (answers.length > 0 && answers[0].option_id) {
       return answers[0].option_id
     }
-    
+
     return null
   }
 
   return {
     data: refAnswersQuery.data,
     isLoading: refAnswersQuery.isLoading,
+    isPending: refAnswersQuery.isPending,
     error: refAnswersQuery.error,
     refetch: refAnswersQuery.refetch,
     getReferenceAnswersForQuestion,
-    getCorrectOptionIdForQuestion
+    getCorrectOptionIdForQuestion,
   }
 }

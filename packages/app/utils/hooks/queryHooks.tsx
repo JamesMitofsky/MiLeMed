@@ -3,14 +3,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { UserProfile, SystemEvent } from '../supabase/databaseTypes'
 import { useSessionContext } from '../supabase/useSessionContext'
+import { useSupabase } from '../supabase/useSupabase'
 
 // Comprehensive Hooks Collection
 export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
-  const { supabaseClient } = useSessionContext()
+  const supabase = useSupabase()
 
   // Define query key as a constant
   const getChapterSummaryKey = (chapterMode?: Database['public']['Enums']['mode']) =>
-    ['chapters', chapterMode] as const
+    chapterMode ? (['chapters', chapterMode] as const) : (['chapters'] as const)
 
   // Get chapter summary with completion status
   const chapterQuery = useQuery<Database['public']['Functions']['chapter_get_summary']['Returns']>({
@@ -22,16 +23,17 @@ export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
         chapter_mode: mode,
       }
 
-      const { data, error } = await supabaseClient.rpc(rpcName, args)
+      const { data, error } = await supabase.rpc(rpcName, args)
 
       if (error) throw error
-      return data
+      return data as Database['public']['Functions']['chapter_get_summary']['Returns']
     },
   })
 
   return {
     data: chapterQuery.data,
     isLoading: chapterQuery.isLoading,
+    isPending: chapterQuery.isPending,
     error: chapterQuery.error,
     refetch: chapterQuery.refetch,
   }
@@ -62,7 +64,7 @@ export const useLectures = (chapterId?: number) => {
     },
     enabled: !!chapterId, // Only run the query if chapterId is provided
   })
-  // Function to get a single lecture by ID
+  // Custom hook to get a single lecture by ID
   const useLectureById = (lectureId: number) => {
     return useQuery({
       queryKey: getLectureByIdKey(lectureId),
@@ -131,6 +133,7 @@ export const useLectures = (chapterId?: number) => {
   return {
     data: lecturesQuery.data,
     isLoading: lecturesQuery.isLoading,
+    isPending: lecturesQuery.isPending,
     error: lecturesQuery.error,
     refetch: lecturesQuery.refetch,
     useLectureById,
@@ -147,6 +150,7 @@ export const useUserProfile = () => {
 
   const {
     data: profile,
+    isPending,
     isLoading,
     refetch,
   } = useQuery({
@@ -195,7 +199,7 @@ export const useUserProfile = () => {
   })
 
   // Get user completion statistics
-  const getCompletionStats = () => {
+  const useCompletionStats = () => {
     return useQuery({
       queryKey: statsKey,
       queryFn: async () => {
@@ -211,9 +215,10 @@ export const useUserProfile = () => {
 
   return {
     profile,
+    isPending,
     isLoading,
     updateProfile,
-    getCompletionStats,
+    useCompletionStats,
     refetch,
   }
 }
@@ -261,8 +266,8 @@ export const useQuizSystem = () => {
     },
   })
 
-  // Get quiz results for a lecture
-  const getQuizResults = (lectureId: number) => {
+  // Custom hook to get quiz results for a lecture
+  const useQuizResults = (lectureId: number) => {
     return useQuery({
       queryKey: quizResultsKey(lectureId),
       queryFn: async () => {
@@ -278,8 +283,8 @@ export const useQuizSystem = () => {
     })
   }
 
-  // Check if all questions in a lecture quiz are answered
-  const checkQuizCompletion = (lectureId: number) => {
+  // Custom hook to check if all questions in a lecture quiz are answered
+  const useQuizCompletion = (lectureId: number) => {
     return useQuery({
       queryKey: quizCompletionKey(lectureId),
       queryFn: async () => {
@@ -322,8 +327,8 @@ export const useQuizSystem = () => {
 
   return {
     recordQuizAnswer,
-    getQuizResults,
-    checkQuizCompletion,
+    useQuizResults,
+    useQuizCompletion,
     markQuizCompleted,
   }
 }
@@ -557,7 +562,7 @@ export const useFeedback = () => {
   })
 
   // Optional: Get user's previous feedback (if needed)
-  const getUserFeedback = () => {
+  const useFeedbackHistory = () => {
     return useQuery({
       queryKey: userFeedbackKey,
       queryFn: async () => {
@@ -574,6 +579,6 @@ export const useFeedback = () => {
 
   return {
     submitFeedback,
-    getUserFeedback,
+    useFeedbackHistory,
   }
 }

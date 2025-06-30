@@ -12,10 +12,15 @@ export const IndividualChapter = () => {
 
   const supabase = useSupabase()
   // Use the ID to query specific module data
-  const { data: chapter, isLoading } = useQuery(['chapter', id], {
+  const { data: chapter, isPending } = useQuery({
+    queryKey: ['chapter', id],
     queryFn: async () => {
       if (!id) return null
-      const { data, error } = await supabase.from('chapters').select('*').eq('id', id).single()
+      const { data, error } = await supabase
+        .from('content_chapters')
+        .select('*')
+        .eq('id', parseInt(id, 10))
+        .single()
       if (error) {
         throw new Error(error.message)
       }
@@ -34,7 +39,7 @@ export const IndividualChapter = () => {
 
   return (
     <YStack padding="$4" flex={1} mb="$4">
-      {isLoading ? (
+      {isPending ? (
         <YStack o={0.5} gap="$2" pb="$4">
           <Skeleton height={16} width="100%" />
           <YStack gap="$2" mt="$3">

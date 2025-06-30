@@ -3974,7 +3974,7 @@ __metadata:
     "@supabase/auth-helpers-nextjs": "npm:^0.10.0"
     "@supabase/auth-helpers-react": "npm:^0.5.0"
     "@supabase/supabase-js": "npm:^2.50.0"
-    "@tanstack/react-query": "npm:4.18.0"
+    "@tanstack/react-query": "npm:^5.17.19"
     "@trpc/next": "npm:^10.45.2"
     "@trpc/server": "npm:^10.45.2"
     "@types/jsonwebtoken": "npm:^9.0.5"
@@ -9203,29 +9203,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/query-core@npm:4.18.0":
-  version: 4.18.0
-  resolution: "@tanstack/query-core@npm:4.18.0"
-  checksum: 10/2b0cb8e270fa0277ffae34c78a01cf1eec65882bffa0ed8f77181d32fc5b95820ecc556ba95ef2e2e1faa60a4fa996d9c7a7a7b882b1b199ada50816b1959556
+"@tanstack/query-core@npm:5.81.5":
+  version: 5.81.5
+  resolution: "@tanstack/query-core@npm:5.81.5"
+  checksum: 10/a324ab3380c1c282b95520de8b74af537cfe6b44ae06b6639b3e7a70757c81c2db03f765c27aa770d6c44ef8e1f7cbba243863021ded53fff965a522d1e5f698
   languageName: node
   linkType: hard
 
-"@tanstack/react-query@npm:4.18.0":
-  version: 4.18.0
-  resolution: "@tanstack/react-query@npm:4.18.0"
+"@tanstack/react-query@npm:^5.17.19":
+  version: 5.81.5
+  resolution: "@tanstack/react-query@npm:5.81.5"
   dependencies:
-    "@tanstack/query-core": "npm:4.18.0"
-    use-sync-external-store: "npm:^1.2.0"
+    "@tanstack/query-core": "npm:5.81.5"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-native: "*"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-    react-native:
-      optional: true
-  checksum: 10/fd2f3a95474752d65289f98750343224eef98706f3ecc484beb0f67a64df0961479652b420504429da3cac86441d23d19f716f84bcce7d5614993ebe8a6bb20a
+    react: ^18 || ^19
+  checksum: 10/35c75cf902938a76d468c0e1f08d738afc989ddc3728c4d2c00b16975870500da98aea21c1a682726abb3ef5f6348cb739335e3b940224ccc527b27dddc20fd4
   languageName: node
   linkType: hard
 
@@ -11357,7 +11349,7 @@ __metadata:
     "@tamagui/lucide-icons": "npm:^1.127.1"
     "@tamagui/shorthands": "npm:^1.127.1"
     "@tamagui/themes": "npm:^1.127.1"
-    "@tanstack/react-query": "npm:4.18.0"
+    "@tanstack/react-query": "npm:^5.17.19"
     "@trpc/client": "npm:^10.45.2"
     "@trpc/react-query": "npm:^10.45.2"
     "@types/react": "npm:^18"
@@ -22222,7 +22214,7 @@ __metadata:
     "@tamagui/next-plugin": "npm:^1.127.1"
     "@tamagui/next-theme": "npm:^1.127.1"
     "@tamagui/react-native-svg": "npm:^1.127.1"
-    "@tanstack/react-query": "npm:4.18.0"
+    "@tanstack/react-query": "npm:^5.17.19"
     "@trpc/server": "npm:^10.45.2"
     "@types/node": "npm:^18.6.4"
     app: "npm:*"
@@ -29419,7 +29411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.0, use-sync-external-store@npm:^1.5.0":
+"use-sync-external-store@npm:^1.5.0":
   version: 1.5.0
   resolution: "use-sync-external-store@npm:1.5.0"
   peerDependencies:
@@ -30149,22 +30141,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^8.12.1, ws@npm:^8.2.3":
-  version: 8.18.1
-  resolution: "ws@npm:8.18.1"
-  peerDependencies:
-    bufferutil: ^4.0.1
-    utf-8-validate: ">=5.0.2"
-  peerDependenciesMeta:
-    bufferutil:
-      optional: true
-    utf-8-validate:
-      optional: true
-  checksum: 10/3f38e9594f2af5b6324138e86b74df7d77bbb8e310bf8188679dd80bac0d1f47e51536a1923ac3365f31f3d8b25ea0b03e4ade466aa8292a86cd5defca64b19b
-  languageName: node
-  linkType: hard
-
-"ws@npm:^8.18.2":
+"ws@npm:^8.12.1, ws@npm:^8.18.2, ws@npm:^8.2.3":
   version: 8.18.3
   resolution: "ws@npm:8.18.3"
   peerDependencies:
