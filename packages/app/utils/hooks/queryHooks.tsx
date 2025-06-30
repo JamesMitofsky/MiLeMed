@@ -5,20 +5,24 @@ import { UserProfile, SystemEvent } from '../supabase/databaseTypes'
 import { useSessionContext } from '../supabase/useSessionContext'
 
 // Comprehensive Hooks Collection
-export const useChapters = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
+export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
   const { supabaseClient } = useSessionContext()
 
   // Define query key as a constant
-  const getChapterSummaryKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
+  const getChapterSummaryKey = (chapterMode?: Database['public']['Enums']['mode']) =>
     ['chapters', chapterMode] as const
 
   // Get chapter summary with completion status
-  const chapterQuery = useQuery({
+  const chapterQuery = useQuery<Database['public']['Functions']['chapter_get_summary']['Returns']>({
     queryKey: getChapterSummaryKey(mode),
     queryFn: async () => {
-      const { data, error } = await supabaseClient.rpc('chapter_get_summary', {
-        mode: mode,
-      })
+      // Type-safe RPC call with proper function name and args typing
+      const rpcName = 'chapter_get_summary' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['chapter_get_summary']['Args'] = {
+        chapter_mode: mode,
+      }
+
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -471,22 +475,20 @@ export const useQuizOptions = (questionIds?: number[]) => {
   const { supabaseClient } = useSessionContext()
 
   // Define query key as a constant
-  const quizOptionsKey = questionIds ? ['quiz-options', questionIds] : ['quiz-options'] as const
+  const quizOptionsKey = questionIds ? ['quiz-options', questionIds] : (['quiz-options'] as const)
 
   // Get quiz options filtered by question IDs if provided
   const quizOptionsQuery = useQuery({
     queryKey: quizOptionsKey,
     queryFn: async () => {
       // Start with the base query
-      let query = supabaseClient
-        .from('quiz_options')
-        .select('*')
-      
+      let query = supabaseClient.from('quiz_options').select('*')
+
       // Apply filter for specific question IDs if provided
       if (questionIds && questionIds.length > 0) {
         query = query.in('question_id', questionIds)
       }
-      
+
       // Execute the query with ordering
       const { data, error } = await query.order('id', { ascending: true })
 

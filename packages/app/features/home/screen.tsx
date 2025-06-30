@@ -4,7 +4,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 // import { Confetti, ConfettiMethods } from 'react-native-fast-confetti'
 
 import { FinishRegistrationForm } from './components/FinishRegistrationForm'
-import StatisticsPreviewList from './components/StatisticsPreviewList'
 import { ChaptersPreviewList } from './components/achievements-section'
 import { FeedbackSection } from './components/feedback-section'
 import { useUser } from '../../utils/useUser'
@@ -49,7 +48,7 @@ export function HomeScreen() {
             ) : isMainPageVisible ? (
               <>
                 <ChaptersPreviewList />
-                <StatisticsPreviewList />
+                {/* <StatisticsPreviewList /> */}
                 <FeedbackSection onSubmitSuccess={() => console.log('Feedback submitted')} />
                 {/*                 <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
                  */}

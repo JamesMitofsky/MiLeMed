@@ -13,8 +13,7 @@ type ListOfChaptersProps = {
 }
 
 const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => {
-  const { getChapterSummary } = useChapters()
-  const { data: chapters, isLoading } = getChapterSummary(mode)
+  const { data: chapters, isLoading } = useChapters(mode)
 
   if (isLoading) {
     return (
