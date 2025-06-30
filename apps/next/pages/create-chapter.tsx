@@ -34,7 +34,7 @@ export const Page: NextPageWithLayout = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [sortOrder, setSortOrder] = useState(0)
-  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('PRACTICAL')
   const [isLoadingSortOrder, setIsLoadingSortOrder] = useState(true)
 
   // State for form submission

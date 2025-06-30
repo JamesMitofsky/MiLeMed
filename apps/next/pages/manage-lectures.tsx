@@ -43,7 +43,7 @@ export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
   // State for mode filter (THEORETICAL or PRACTICAL)
-  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('PRACTICAL')
 
   // State for search term
   const [searchTerm, setSearchTerm] = useState('')
