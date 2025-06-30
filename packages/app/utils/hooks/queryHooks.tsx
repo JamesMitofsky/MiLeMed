@@ -39,13 +39,33 @@ export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
   }
 }
 
+// Custom hook to get a lecture by ID
+export const useLectureById = (lectureId: number) => {
+  const { supabaseClient } = useSessionContext()
+  const getLectureByIdKey = (id: number) => ['lecture', id] as const
+
+  return useQuery({
+    queryKey: getLectureByIdKey(lectureId),
+    queryFn: async () => {
+      const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
+        p_lecture_id: lectureId,
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
+
+      if (error) throw error
+      return data[0] // Returns the first (and only) result
+    },
+    enabled: !!lectureId,
+  })
+}
+
 export const useLectures = (chapterId?: number) => {
   const { supabaseClient } = useSessionContext()
   const queryClient = useQueryClient()
 
   // Define query keys as constants
   const getLecturesKey = (chapterId: number) => ['lectures', chapterId] as const
-  const getLectureByIdKey = (lectureId: number) => ['lecture', lectureId] as const
 
   // Get lectures with completion status for a specific chapter
   const lecturesQuery = useQuery({
@@ -64,25 +84,6 @@ export const useLectures = (chapterId?: number) => {
     },
     enabled: !!chapterId, // Only run the query if chapterId is provided
   })
-  
-  // Get a single lecture by ID
-  const getLectureById = (lectureId: number) => {
-    const lectureQuery = useQuery({
-      queryKey: getLectureByIdKey(lectureId),
-      queryFn: async () => {
-        const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
-        const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
-          p_lecture_id: lectureId,
-        }
-        const { data, error } = await supabaseClient.rpc(rpcName, args)
-
-        if (error) throw error
-        return data[0] // Returns the first (and only) result
-      },
-    })
-    
-    return lectureQuery
-  }
 
   // Mark lecture as completed
   const markLectureCompleted = useMutation({
@@ -104,7 +105,7 @@ export const useLectures = (chapterId?: number) => {
 
       // Attempt to get the lecture to invalidate its specific cache
       queryClient.invalidateQueries({
-        queryKey: getLectureByIdKey(lectureId),
+        queryKey: ['lecture', lectureId],
       })
 
       // If possible, try to get the associated chapter and invalidate lectures list
@@ -139,7 +140,6 @@ export const useLectures = (chapterId?: number) => {
     isPending: lecturesQuery.isPending,
     error: lecturesQuery.error,
     refetch: lecturesQuery.refetch,
-    getLectureById,
     markLectureCompleted,
   }
 }

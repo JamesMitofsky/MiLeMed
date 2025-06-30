@@ -1,23 +1,23 @@
 import { useContext } from 'react'
 import Markdown from 'react-native-markdown-display'
-import { createParam } from 'solito'
 import { useRouter } from 'solito/router'
 import { YStack, Text, ScrollView, SizableText } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
-import { useLectures } from '../../utils/hooks/queryHooks'
+import { useLectureById, useLectures } from '../../utils/hooks/queryHooks'
 import { Skeleton } from '../general/Skeleton'
 
-const { useParams } = createParam<{ id: string }>()
+interface IndividualLectureProps {
+  lectureId: string
+}
 
-const IndividualLecture = () => {
-  const {
-    params: { id },
-  } = useParams()
+const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
   const router = useRouter()
+  const id = parseInt(lectureId, 10)
 
-  const { getLectureById, markLectureCompleted } = useLectures()
-  const { data: lecture, isLoading } = getLectureById(parseInt(id, 10))
+  // Use the proper hook to fetch lecture data
+  const { data: lecture, isLoading } = useLectureById(id)
+  const { markLectureCompleted } = useLectures()
 
   const handleNavigateToQuiz = () => {
     router.push(`/lecture/${id}/quiz`)
