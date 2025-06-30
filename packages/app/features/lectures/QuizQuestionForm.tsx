@@ -1,16 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { YStack, XStack, Button, Input, SizableText } from '@my/ui'
+import { YStack, XStack, Button, Input, SizableText, useToastController } from '@my/ui'
 import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
-import React, { useCallback, useEffect } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { Checkbox, TextArea } from 'tamagui'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
+import { updateQuizQuestion } from '../../utils/supabase/simpleQueries/updateQuizQuestion'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { z } from '../../utils/zod-de'
 import { CustomSelect } from '../general/CustomSelect'
 
-interface QuizQuestionOption {
+export interface QuizQuestionOption {
   option_text: string
   is_correct: boolean
 }
@@ -19,12 +21,14 @@ export interface QuizQuestionFormData {
   question_text: string
   question_type: 'OPEN' | 'MULTIPLE_CHOICE'
   options: QuizQuestionOption[]
+  question_id?: number // Optional ID for existing questions
 }
 
 interface QuizQuestionFormProps {
   onSubmitSuccess: (questionData?: QuizQuestionFormData) => void
   lectureId?: number
   initialData?: QuizQuestionFormData
+  questionId?: number // Add questionId for existing questions
   tempQuestion?: boolean
 }
 
@@ -63,8 +67,11 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   onSubmitSuccess,
   lectureId,
   initialData,
+  questionId, // Add questionId
   tempQuestion = false,
 }) => {
+  console.log('QuizQuestionForm initialData:', initialData)
+
   const {
     control,
     handleSubmit,
@@ -81,7 +88,11 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   })
 
   const supabase = useSupabase()
+  const toast = useToastController()
+  const queryClient = useQueryClient()
   const { fields: options, append, remove } = useFieldArray({ control, name: 'options' })
+  console.log('Field array options:', options)
+
   const questionType = watch('question_type')
 
   const handleAddOption = useCallback(
@@ -96,28 +107,98 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
       try {
         // If this is a temporary question (during lecture creation), just pass the data back
         if (tempQuestion) {
+          console.log('Temporary question - passing data back', data)
           onSubmitSuccess(data)
           reset()
           return
         }
 
-        // Otherwise, save to the database if we have a lectureId
-        if (!lectureId) return
-        await addQuizQuestion(supabase, lectureId, data)
+        // For database operations, we need a lectureId
+        if (!lectureId) {
+          console.error('No lectureId provided')
+          return
+        }
+
+        // Check if this is an edit or a new question
+        if (questionId) {
+          console.log('UPDATING existing question ID:', questionId, 'with data:', data)
+          await updateQuizQuestion(supabase, questionId, data)
+          console.log('Question updated successfully')
+
+          // Invalidate relevant caches to update the UI
+          queryClient.invalidateQueries({ queryKey: ['quiz-options'] })
+          queryClient.invalidateQueries({ queryKey: ['quiz-reference-answers'] })
+          toast.show('Question updated successfully')
+          
+          // Pass updated data back to parent for immediate UI update
+          // Include the question ID so the parent knows which question was updated
+          const updatedData: QuizQuestionFormData = {
+            ...data,
+            question_id: questionId
+          }
+          onSubmitSuccess(updatedData)
+        } else {
+          console.log('ADDING new question to lectureID:', lectureId, 'with data:', data)
+          const result = await addQuizQuestion(supabase, lectureId, data)
+          console.log('Question added successfully', result)
+
+          // Invalidate relevant caches to update the UI
+          queryClient.invalidateQueries({ queryKey: ['quiz-options'] })
+          queryClient.invalidateQueries({ queryKey: ['quiz-reference-answers'] })
+          toast.show('Question added successfully')
+          
+          // Pass the newly created question data back to parent
+          onSubmitSuccess(data)
+        }
+
         reset()
-        console.log('submitted to lectureID: ', lectureId)
-        onSubmitSuccess()
       } catch (error) {
-        console.error('Failed to add quiz question:', error)
+        console.error('Failed to save quiz question:', error)
+        toast.show('Failed to save quiz question')
       }
     },
-    [lectureId, addQuizQuestion, supabase, reset, onSubmitSuccess, tempQuestion]
+    [
+      lectureId,
+      questionId,
+      addQuizQuestion,
+      updateQuizQuestion,
+      supabase,
+      reset,
+      onSubmitSuccess,
+      tempQuestion,
+      queryClient,
+      toast,
+    ]
   )
 
-  // reset options on question type change
+  // Store initial question type to detect actual changes
+  const [initialQuestionType, setInitialQuestionType] = useState<string | null>(null)
+
+  // Set initial question type on first render
   useEffect(() => {
+    if (initialQuestionType === null) {
+      setInitialQuestionType(questionType)
+      console.log('Setting initial question type:', questionType)
+    }
+  }, [questionType, initialQuestionType])
+
+  // Only reset options when question type changes from its initial value
+  useEffect(() => {
+    // Skip if we don't have initialQuestionType yet
+    if (initialQuestionType === null) return
+
+    // Skip on first render or if question type hasn't changed
+    if (questionType === initialQuestionType) return
+
+    console.log(
+      'Question type changed from',
+      initialQuestionType,
+      'to',
+      questionType,
+      '- resetting options'
+    )
     reset({ ...watch(), options: [{ option_text: '', is_correct: false }] })
-  }, [questionType, reset, watch])
+  }, [questionType, initialQuestionType, reset, watch])
 
   return (
     <>

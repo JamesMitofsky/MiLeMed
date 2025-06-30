@@ -8,14 +8,20 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 
 import ReadModifyLecture from '../../../../packages/app/features/lectures/ReadModifyLecture'
-import { useLectures, useQuizSystem } from '../../../../packages/app/utils/hooks/queryHooks'
+import {
+  useLectures,
+  useQuizSystem,
+  useQuizOptions,
+} from '../../../../packages/app/utils/hooks/queryHooks'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
   const { useLectureById } = useLectures()
-  const { data: lecture, refetch: refetchLecture } = useLectureById(parseInt(router.query.id as string, 10))
+  const { data: lecture, refetch: refetchLecture } = useLectureById(
+    parseInt(router.query.id as string, 10)
+  )
 
   const { getQuizResults } = useQuizSystem()
   const {
@@ -23,6 +29,15 @@ export const Page: NextPageWithLayout = () => {
     isLoading: areQuestionsLoading,
     error,
   } = getQuizResults(parseInt(router.query.id as string, 10))
+
+  console.log('Quiz questions:', quizQuestions)
+
+  // for every quiz question ID, there are also 0-N options.
+  // Extract question IDs from the quiz questions to fetch only relevant options
+  const questionIds = quizQuestions ? quizQuestions.map((q) => q.question_id) : []
+  const { data: quizOptions, getOptionsForQuestion } = useQuizOptions(questionIds)
+
+  console.log('Quiz options:', quizOptions, 'for question IDs:', questionIds)
 
   const supabase = useSupabase()
 
@@ -57,6 +72,8 @@ export const Page: NextPageWithLayout = () => {
                 lecture={lecture}
                 lectureId={router.query.id as string}
                 quizQuestions={quizQuestions}
+                quizOptions={quizOptions}
+                getOptionsForQuestion={getOptionsForQuestion}
                 isQuizLoading={areQuestionsLoading}
                 onDeleteQuestion={handleQuestionDelete}
                 onSaveSuccess={refetchLecture}
