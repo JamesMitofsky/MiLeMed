@@ -51,9 +51,11 @@ export const useLectures = (chapterId?: number) => {
     queryFn: async () => {
       if (!chapterId) return null
 
-      const { data, error } = await supabaseClient.rpc('lecture_get_with_completion', {
+      const rpcName = 'lecture_get_with_completion' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_get_with_completion']['Args'] = {
         p_chapter_id: chapterId,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -65,9 +67,11 @@ export const useLectures = (chapterId?: number) => {
     return useQuery({
       queryKey: getLectureByIdKey(lectureId),
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('lecture_get_by_id', {
+        const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
           p_lecture_id: lectureId,
-        })
+        }
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data[0] // Returns the first (and only) result
@@ -78,9 +82,11 @@ export const useLectures = (chapterId?: number) => {
   // Mark lecture as completed
   const markLectureCompleted = useMutation({
     mutationFn: async (lectureId: number) => {
-      const { data, error } = await supabaseClient.rpc('lecture_mark_completed', {
+      const rpcName = 'lecture_mark_completed' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_mark_completed']['Args'] = {
         p_lecture_id: lectureId,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -193,7 +199,9 @@ export const useUserProfile = () => {
     return useQuery({
       queryKey: statsKey,
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('user_get_completion_stats')
+        const rpcName = 'user_get_completion_stats' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['user_get_completion_stats']['Args'] = {}
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -227,11 +235,13 @@ export const useQuizSystem = () => {
       chosenOptionIds?: number[]
       lectureId?: number // Adding this to allow invalidation of the right keys
     }) => {
-      const { data, error } = await supabaseClient.rpc('quiz_record_user_answer', {
+      const rpcName = 'quiz_record_user_answer' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['quiz_record_user_answer']['Args'] = {
         p_question_id: params.questionId,
         p_answer_text: params.answerText,
         p_chosen_option_ids: params.chosenOptionIds,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -256,9 +266,11 @@ export const useQuizSystem = () => {
     return useQuery({
       queryKey: quizResultsKey(lectureId),
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('quiz_get_results', {
+        const rpcName = 'quiz_get_results' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['quiz_get_results']['Args'] = {
           p_lecture_id: lectureId,
-        })
+        }
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -271,9 +283,11 @@ export const useQuizSystem = () => {
     return useQuery({
       queryKey: quizCompletionKey(lectureId),
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('quiz_check_completion', {
+        const rpcName = 'quiz_check_completion' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['quiz_check_completion']['Args'] = {
           p_lecture_id: lectureId,
-        })
+        }
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -284,10 +298,12 @@ export const useQuizSystem = () => {
   // Mark quiz as completed (passed/failed)
   const markQuizCompleted = useMutation({
     mutationFn: async (params: { lectureId: number; passed: boolean }) => {
-      const { data, error } = await supabaseClient.rpc('quiz_mark_completed', {
+      const rpcName = 'quiz_mark_completed' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['quiz_mark_completed']['Args'] = {
         p_lecture_id: params.lectureId,
         p_passed: params.passed,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -455,13 +471,15 @@ export const useSystemEvents = () => {
       quizQuestionId?: number
       metadata?: Json
     }) => {
-      const { data, error } = await supabaseClient.rpc('system_record_event', {
+      const rpcName = 'system_record_event' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['system_record_event']['Args'] = {
         p_event_type: params.eventType,
         p_lecture_id: params.lectureId,
         p_chapter_id: params.chapterId,
         p_quiz_question_id: params.quizQuestionId,
         p_metadata: params.metadata || {},
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
