@@ -16,6 +16,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ]
 
+// https://github.com/supabase/supabase-js/issues/1400#issuecomment-2843653869
+config.resolver.unstable_enablePackageExports = false
+
 config.transformer = { ...config.transformer, unstable_allowRequireContext: true }
 config.transformer.minifierPath = require.resolve('metro-minify-terser')
 
