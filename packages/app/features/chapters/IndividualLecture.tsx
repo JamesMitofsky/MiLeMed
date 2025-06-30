@@ -24,7 +24,7 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
   }
 
   const handleMarkAsRead = () => {
-    markLectureCompleted.mutate(parseInt(id, 10))
+    markLectureCompleted.mutate(id)
     router.back()
   }
 
