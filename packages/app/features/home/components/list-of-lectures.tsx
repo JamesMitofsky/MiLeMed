@@ -11,8 +11,7 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
-  const { getLecturesWithCompletion } = useLectures()
-  const { data: lectures, isLoading } = getLecturesWithCompletion(parseInt(chapterId, 10))
+  const { data: lectures, isLoading } = useLectures(parseInt(chapterId, 10))
   const { md } = useMedia()
 
   if (isLoading || !lectures) {

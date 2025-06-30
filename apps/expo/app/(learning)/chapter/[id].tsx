@@ -4,7 +4,7 @@ import { Stack } from 'expo-router'
 export default function Screen() {
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: 'Lektionen' }} />
+      <Stack.Screen options={{ headerShown: true, title: 'Kapitel' }} />
       <IndividualChapter />
     </>
   )

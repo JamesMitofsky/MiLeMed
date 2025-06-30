@@ -64,9 +64,10 @@ export const useLectures = (chapterId?: number) => {
     },
     enabled: !!chapterId, // Only run the query if chapterId is provided
   })
-  // Custom hook to get a single lecture by ID
-  const useLectureById = (lectureId: number) => {
-    return useQuery({
+  
+  // Get a single lecture by ID
+  const getLectureById = (lectureId: number) => {
+    const lectureQuery = useQuery({
       queryKey: getLectureByIdKey(lectureId),
       queryFn: async () => {
         const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
@@ -79,6 +80,8 @@ export const useLectures = (chapterId?: number) => {
         return data[0] // Returns the first (and only) result
       },
     })
+    
+    return lectureQuery
   }
 
   // Mark lecture as completed
@@ -136,7 +139,7 @@ export const useLectures = (chapterId?: number) => {
     isPending: lecturesQuery.isPending,
     error: lecturesQuery.error,
     refetch: lecturesQuery.refetch,
-    useLectureById,
+    getLectureById,
     markLectureCompleted,
   }
 }
