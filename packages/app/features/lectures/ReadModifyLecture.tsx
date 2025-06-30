@@ -1,4 +1,18 @@
-import { Button, Card, FullscreenSpinner, H1, Input, Separator, SizableText, Spinner, Text, TextArea, XStack, YStack, useToast } from '@my/ui'
+import {
+  Button,
+  Card,
+  FullscreenSpinner,
+  H1,
+  Input,
+  Separator,
+  SizableText,
+  Spinner,
+  Text,
+  TextArea,
+  XStack,
+  YStack,
+  useToastController,
+} from '@my/ui'
 import { Check, Eye, Info, Pencil, Plus, Save, Trash, X } from '@tamagui/lucide-icons'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
@@ -11,7 +25,7 @@ import { useQuizReferenceAnswers } from '../../utils/hooks/useQuizReferenceAnswe
 interface QuizQuestion {
   question_id: number
   question_text: string
-  question_type: 'MULTIPLE_CHOICE' | 'OPEN_ENDED'
+  question_type: 'MULTIPLE_CHOICE' | 'OPEN'
   options?: {
     option_text: string
     is_correct: boolean
@@ -58,9 +72,10 @@ const ReadModifyLecture = ({
   onSaveSuccess,
 }: ReadModifyLectureProps) => {
   // Extract question IDs for fetching reference answers
-  const questionIds = quizQuestions.map(q => q.question_id)
+  const questionIds = quizQuestions.map((q) => q.question_id)
   // Use the hook to get reference answers
-  const { getCorrectOptionIdForQuestion, isLoading: isLoadingReferenceAnswers } = useQuizReferenceAnswers(questionIds)
+  const { getCorrectOptionIdForQuestion, isLoading: isLoadingReferenceAnswers } =
+    useQuizReferenceAnswers(questionIds)
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
@@ -79,7 +94,7 @@ const ReadModifyLecture = ({
   // Watch for changes in form values
   const watchedValues = watch(['title', 'content'])
 
-  const toast = useToast()
+  const toast = useToastController()
 
   useEffect(() => {
     if (lecture) {
@@ -293,45 +308,53 @@ const ReadModifyLecture = ({
                             questionId={question.question_id} // Pass the question ID for updating
                             initialData={{
                               question_text: question.question_text,
-                              // Convert OPEN_ENDED to OPEN for the form
+                              // Convert OPEN to OPEN for the form
                               question_type:
-                                question.question_type === 'OPEN_ENDED'
-                                  ? 'OPEN'
-                                  : 'MULTIPLE_CHOICE',
+                                question.question_type === 'OPEN' ? 'OPEN' : 'MULTIPLE_CHOICE',
                               options: (() => {
                                 // Debugging: log the question we're trying to edit
-                                console.log('Editing question:', question.question_id, question);
+                                console.log('Editing question:', question.question_id, question)
 
                                 // If we have the getOptionsForQuestion function, use it to get the latest options from the database
                                 if (getOptionsForQuestion) {
-                                  const dbOptions = getOptionsForQuestion(question.question_id);
-                                  console.log('DB Options found for question:', dbOptions);
-                                  
+                                  const dbOptions = getOptionsForQuestion(question.question_id)
+                                  console.log('DB Options found for question:', dbOptions)
+
                                   // Convert database options to the expected format for the form
                                   if (dbOptions && dbOptions.length > 0) {
                                     // Get the correct option ID from reference answers
-                                    const correctOptionId = getCorrectOptionIdForQuestion(question.question_id);
-                                    console.log('Correct option ID for question', question.question_id, ':', correctOptionId);
-                                    
-                                    const formattedOptions = dbOptions.map(option => ({
+                                    const correctOptionId = getCorrectOptionIdForQuestion(
+                                      question.question_id
+                                    )
+                                    console.log(
+                                      'Correct option ID for question',
+                                      question.question_id,
+                                      ':',
+                                      correctOptionId
+                                    )
+
+                                    const formattedOptions = dbOptions.map((option) => ({
                                       option_text: option.option_text,
                                       // Mark as correct if this option ID matches the correct reference answer option ID
-                                      is_correct: correctOptionId === option.id
-                                    }));
-                                    console.log('Formatted options for form with reference answers:', formattedOptions);
-                                    return formattedOptions;
+                                      is_correct: correctOptionId === option.id,
+                                    }))
+                                    console.log(
+                                      'Formatted options for form with reference answers:',
+                                      formattedOptions
+                                    )
+                                    return formattedOptions
                                   }
                                 }
-                                
+
                                 // Fallback to existing options or create a default one
                                 const fallbackOptions = question.options || [
                                   {
                                     option_text: question.correct_answer || '',
                                     is_correct: true,
                                   },
-                                ];
-                                console.log('Using fallback options:', fallbackOptions);
-                                return fallbackOptions;
+                                ]
+                                console.log('Using fallback options:', fallbackOptions)
+                                return fallbackOptions
                               })(),
                             }}
                           />
@@ -439,18 +462,16 @@ const ReadModifyLecture = ({
                                   )}
                                   <Text>{option.option_text}</Text>
                                 </XStack>
-                              ))
-                            }
+                              ))}
                             {!getOptionsForQuestion &&
                               (!Array.isArray(question.options) ||
                                 question.options.length === 0) && (
                                 <Text color="$orange9">No options available</Text>
-                              )
-                            }
+                              )}
                           </YStack>
                         )}
 
-                        {question.question_type === 'OPEN_ENDED' && question.correct_answer && (
+                        {question.question_type === 'OPEN' && question.correct_answer && (
                           <YStack gap="$2">
                             <Text fontWeight="bold">Correct Answer:</Text>
                             <Text>{question.correct_answer}</Text>
