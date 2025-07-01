@@ -47,7 +47,7 @@ export const ChaptersPreviewList = () => {
             checked={mode === 'PRACTICAL'}
             onCheckedChange={(checked) => setMode(checked ? 'PRACTICAL' : 'THEORETICAL')}
             size="$4"
-            theme={mode === 'PRACTICAL' ? 'light_brand' : 'dark_brand'}
+            theme={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}
           >
             <Switch.Thumb animation="quick" />
           </Switch>
