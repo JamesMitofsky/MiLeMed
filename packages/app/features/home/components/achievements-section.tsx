@@ -1,4 +1,4 @@
-import { Button, H2, SizableText, Switch, Theme, XStack, YStack } from '@my/ui'
+import { Button, SizableText, Switch, Theme, XStack, YStack } from '@my/ui'
 import { ArrowRight, BookOpen, Stethoscope } from '@tamagui/lucide-icons'
 import { useRouter } from 'solito/router'
 
@@ -17,27 +17,17 @@ export const ChaptersPreviewList = () => {
   return (
     <YStack>
       <XStack px="$4.5" ai="center" jc="space-between" mb="$5">
-        <XStack ai="center" gap="$2">
+        <XStack ai="center" gap="$3">
           {mode === 'PRACTICAL' ? (
             <Stethoscope size="$3" color="$brandPrimary" />
           ) : (
             <BookOpen size="$3" color="$brandSecondary" />
           )}
-          <H2 color="$accent0" fow="400">
-            {' '}
-            Kapitel
-          </H2>
+
+          <SizableText size="$8" color={mode === 'PRACTICAL' ? '$brandPrimary' : '$brandSecondary'}>
+            {mode === 'PRACTICAL' ? 'Blockpraktikum' : 'Vorlesung'}
+          </SizableText>
         </XStack>
-        <Button
-          size="$3"
-          chromeless
-          iconAfter={ArrowRight}
-          onPress={() => {
-            router.push('/chapters')
-          }}
-        >
-          Alle Kapitel ansehen
-        </Button>
       </XStack>
 
       <Theme name={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}>
@@ -51,9 +41,7 @@ export const ChaptersPreviewList = () => {
           >
             <Switch.Thumb animation="quick" />
           </Switch>
-          <SizableText color={mode === 'PRACTICAL' ? '$brandPrimary' : '$brandSecondary'}>
-            {mode === 'PRACTICAL' ? 'Blockpraktikum' : 'Vorlesung'}
-          </SizableText>
+          <SizableText color="$black8">Lernmodus</SizableText>
         </XStack>
       </Theme>
       <ScrollAdapt>
@@ -65,6 +53,18 @@ export const ChaptersPreviewList = () => {
           />
         </XStack>
       </ScrollAdapt>
+      <XStack mt="$6" mr="$3" ai="center" jc="flex-end">
+        <Button
+          size="$3"
+          chromeless
+          iconAfter={ArrowRight}
+          onPress={() => {
+            router.push('/chapters')
+          }}
+        >
+          Alle Kapitel
+        </Button>
+      </XStack>
     </YStack>
   )
 }
