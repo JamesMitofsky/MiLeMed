@@ -5,7 +5,7 @@ import { useRouter } from 'solito/router'
 const CustomHeader = () => {
   const router = useRouter()
   return (
-    <XStack ai="center" gap="$2" px="$4" pt="$7" bg="white" onPress={() => router.back()}>
+    <XStack ai="center" gap="$2" px="$4" bg="white" onPress={() => router.back()}>
       <ArrowLeft />
       <SizableText size="$5">Zurück</SizableText>
     </XStack>

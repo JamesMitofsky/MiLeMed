@@ -5,7 +5,7 @@ import { supabase } from 'app/utils/supabase/client.native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
-import { LogBox, View } from 'react-native'
+import { LogBox } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 SplashScreen.preventAutoHideAsync()
@@ -59,15 +59,25 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <Provider initialSession={initialSession}>
-          {/* <ExpoBugsnagProvider> */}
-          <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }} pt="$7">
-            <Stack screenOptions={{ headerShown: false }} />
-          </ScrollView>
-          {/* </ExpoBugsnagProvider> */}
-        </Provider>
-      </View>
+      <Provider initialSession={initialSession}>
+        {/* <View style={{ flex: 1 }}> */}
+        {/* <ExpoBugsnagProvider> */}
+        {/* <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }}> */}
+        <ScrollView
+          onLayout={onLayoutRootView}
+          contentInsetAdjustmentBehavior="automatic"
+          keyboardShouldPersistTaps="handled"
+          f={1}
+          fb={0}
+          contentContainerStyle={{ flexGrow: 1 }}
+          pt="$4"
+        >
+          <Stack screenOptions={{ headerShown: false }} />
+        </ScrollView>
+        {/* </ScrollView> */}
+        {/* </ExpoBugsnagProvider> */}
+        {/* </View> */}
+      </Provider>
     </GestureHandlerRootView>
   )
 }
