@@ -11,7 +11,7 @@ const ViewChaptersScreen = () => {
     setMode(mode === 'THEORETICAL' ? 'PRACTICAL' : 'THEORETICAL')
   }
   return (
-    <ScrollView snapToAlignment="start">
+    <ScrollView snapToAlignment="start" backgroundColor="white">
       <YStack padding="$4" gap="$3">
         <XStack mx="$2" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
           <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">

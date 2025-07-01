@@ -1,3 +1,3 @@
-import { HomeScreen } from 'app/features/home/screen'
+import { SizableText } from '@my/ui'
 
-export default HomeScreen
+export default <SizableText>this is old now</SizableText>
