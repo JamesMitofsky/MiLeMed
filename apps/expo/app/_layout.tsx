@@ -1,12 +1,14 @@
-import { ScrollView } from '@my/ui'
+import { SidebarDrawer } from '@my/app/features/profile/screen'
+import { DrawerToggleButton } from '@react-navigation/drawer'
 import type { Session } from '@supabase/supabase-js'
 import { Provider, loadThemePromise } from 'app/provider'
 import { supabase } from 'app/utils/supabase/client.native'
 import { useFonts } from 'expo-font'
 import { SplashScreen, Stack } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
-import { LogBox } from 'react-native'
+import { LogBox, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Drawer } from 'expo-router/drawer'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -57,27 +59,74 @@ export default function RootLayout() {
     return null
   }
 
+  // <GestureHandlerRootView style={{ flex: 1 }}>
+  //   <Provider initialSession={initialSession}>
+  //     {/* <View style={{ flex: 1 }}> */}
+  //     {/* <ExpoBugsnagProvider> */}
+  //     {/* <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }}> */}
+  //     <ScrollView
+  //       onLayout={onLayoutRootView}
+  //       contentInsetAdjustmentBehavior="automatic"
+  //       keyboardShouldPersistTaps="handled"
+  //       f={1}
+  //       fb={0}
+  //       contentContainerStyle={{ flexGrow: 1 }}
+  //       pt="$4"
+  //     >
+  //       <Stack screenOptions={{ headerShown: false }} />
+  //     </ScrollView>
+  //     {/* </ScrollView> */}
+  //     {/* </ExpoBugsnagProvider> */}
+  //     {/* </View> */}
+  //   </Provider>
+  // </GestureHandlerRootView>
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <Provider initialSession={initialSession}>
-        {/* <View style={{ flex: 1 }}> */}
-        {/* <ExpoBugsnagProvider> */}
-        {/* <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }}> */}
-        <ScrollView
-          onLayout={onLayoutRootView}
-          contentInsetAdjustmentBehavior="automatic"
-          keyboardShouldPersistTaps="handled"
-          f={1}
-          fb={0}
-          contentContainerStyle={{ flexGrow: 1 }}
-          pt="$4"
-        >
-          <Stack screenOptions={{ headerShown: false }} />
-        </ScrollView>
-        {/* </ScrollView> */}
-        {/* </ExpoBugsnagProvider> */}
-        {/* </View> */}
-      </Provider>
+      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+        <Provider initialSession={initialSession}>
+          <Drawer
+            screenOptions={{
+              title: '',
+              headerShown: ({ route }) => {
+                // Hide header on auth routes
+                return !route.name?.startsWith('(auth)')
+              },
+              headerLeft: () => (
+                <DrawerToggleButton tintColor="black" pressColor="rgba(0,0,0,0.1)" />
+              ),
+              // headerRight: () => <Image marginRight="$3" height="$1" width="$9" src={logoText} />,
+              sceneContainerStyle: { backgroundColor: 'white' },
+              drawerStyle: {
+                backgroundColor: 'white',
+                width: '80%',
+              },
+              drawerType: 'front',
+              overlayColor: 'rgba(0,0,0,0.5)',
+            }}
+            drawerContent={(props) => <SidebarDrawer {...props} />}
+          >
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: 'white' },
+              }}
+            >
+              <Stack.Screen
+                name="index"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              {/* <Stack.Screen
+                name="(auth)"
+                options={{
+                  headerShown: false,
+                }}
+              /> */}
+            </Stack>
+          </Drawer>
+        </Provider>
+      </View>
     </GestureHandlerRootView>
   )
 }
