@@ -26,7 +26,7 @@
       "associatedDomains": [
         "applinks:milemed.de"
       ],
-      "buildNumber": "31"
+      "buildNumber": "32"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -73,6 +73,9 @@
       "bugsnag": {
         "apiKey": "9e9dc2da58c109dd45a878f3bc16a8f1"
       }
+    },
+    "cli": {
+      "appVersionSource": "remote"
     },
     "runtimeVersion": {
       "policy": "appVersion"
