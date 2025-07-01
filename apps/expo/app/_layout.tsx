@@ -59,27 +59,6 @@ export default function RootLayout() {
     return null
   }
 
-  // <GestureHandlerRootView style={{ flex: 1 }}>
-  //   <Provider initialSession={initialSession}>
-  //     {/* <View style={{ flex: 1 }}> */}
-  //     {/* <ExpoBugsnagProvider> */}
-  //     {/* <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }}> */}
-  //     <ScrollView
-  //       onLayout={onLayoutRootView}
-  //       contentInsetAdjustmentBehavior="automatic"
-  //       keyboardShouldPersistTaps="handled"
-  //       f={1}
-  //       fb={0}
-  //       contentContainerStyle={{ flexGrow: 1 }}
-  //       pt="$4"
-  //     >
-  //       <Stack screenOptions={{ headerShown: false }} />
-  //     </ScrollView>
-  //     {/* </ScrollView> */}
-  //     {/* </ExpoBugsnagProvider> */}
-  //     {/* </View> */}
-  //   </Provider>
-  // </GestureHandlerRootView>
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
