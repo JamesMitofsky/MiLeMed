@@ -1,6 +1,5 @@
 import { SidebarDrawer } from '@my/app/features/profile/screen'
 import { Button, YStack } from '@my/ui'
-import { DrawerToggleButton } from '@react-navigation/drawer'
 import type { Session } from '@supabase/supabase-js'
 import { Provider, loadThemePromise, useVersion } from 'app/provider'
 import { supabase } from 'app/utils/supabase/client.native'
@@ -9,7 +8,7 @@ import { SplashScreen } from 'expo-router'
 import { Drawer } from 'expo-router/drawer'
 import * as WebBrowser from 'expo-web-browser'
 import { useCallback, useEffect, useState } from 'react'
-import { LogBox, Text, View } from 'react-native'
+import { LogBox, Text } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 SplashScreen.preventAutoHideAsync()
@@ -62,34 +61,27 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
-        <Provider initialSession={initialSession}>
-          <AppVersionCheck>
-            <Drawer
-              screenOptions={{
-                title: '',
-                headerShown: ({ route }) => {
-                  // Hide header on auth routes
-                  return !route.name?.startsWith('(auth)')
-                },
-                headerLeft: () => (
-                  <DrawerToggleButton tintColor="black" pressColor="rgba(0,0,0,0.1)" />
-                ),
-                // headerRight: () => <Image marginRight="$3" height="$1" width="$9" src={logoText} />,
-                sceneContainerStyle: { backgroundColor: 'white' },
-                drawerStyle: {
-                  backgroundColor: 'white',
-                  width: '80%',
-                },
-                drawerType: 'front',
-                overlayColor: 'rgba(0,0,0,0.5)',
-              }}
-              drawerContent={(props) => <SidebarDrawer {...props} />}
-            />
-          </AppVersionCheck>
-        </Provider>
-      </View>
+    <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <Provider initialSession={initialSession}>
+        <AppVersionCheck>
+          {/* <View style={{ flex: 1 }} onLayout={onLayoutRootView}> */}
+          <Drawer
+            screenOptions={{
+              title: '',
+              // headerRight: () => <Image marginRight="$3" height="$1" width="$9" src={logoText} />,
+              sceneContainerStyle: { backgroundColor: 'white' },
+              drawerStyle: {
+                backgroundColor: 'white',
+                width: '80%',
+              },
+              drawerType: 'front',
+              overlayColor: 'rgba(0,0,0,0.5)',
+            }}
+            drawerContent={(props) => <SidebarDrawer {...props} />}
+          />
+          {/* </View> */}
+        </AppVersionCheck>
+      </Provider>
     </GestureHandlerRootView>
   )
 }
