@@ -4,7 +4,7 @@ import type { Session } from '@supabase/supabase-js'
 import { Provider, loadThemePromise } from 'app/provider'
 import { supabase } from 'app/utils/supabase/client.native'
 import { useFonts } from 'expo-font'
-import { SplashScreen, Stack } from 'expo-router'
+import { SplashScreen } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import { LogBox, View } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -104,27 +104,7 @@ export default function RootLayout() {
               overlayColor: 'rgba(0,0,0,0.5)',
             }}
             drawerContent={(props) => <SidebarDrawer {...props} />}
-          >
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                contentStyle: { backgroundColor: 'white' },
-              }}
-            >
-              <Stack.Screen
-                name="index"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              {/* <Stack.Screen
-                name="(auth)"
-                options={{
-                  headerShown: false,
-                }}
-              /> */}
-            </Stack>
-          </Drawer>
+          />
         </Provider>
       </View>
     </GestureHandlerRootView>
