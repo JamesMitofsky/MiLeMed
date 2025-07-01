@@ -38,7 +38,7 @@ export const IndividualChapter = () => {
   }
 
   return (
-    <YStack padding="$4" flex={1} mb="$4">
+    <YStack padding="$4" flex={1} mb="$4" bg="white">
       {isPending ? (
         <YStack o={0.5} gap="$2" pb="$4">
           <Skeleton height={16} width="100%" />

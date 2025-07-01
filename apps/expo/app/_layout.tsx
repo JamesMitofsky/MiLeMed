@@ -62,7 +62,7 @@ export default function RootLayout() {
       <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
         <Provider initialSession={initialSession}>
           {/* <ExpoBugsnagProvider> */}
-          <ScrollView f={1} fb={0} pt="$1" contentContainerStyle={{ flexGrow: 1 }}>
+          <ScrollView f={1} fb={0} contentContainerStyle={{ flexGrow: 1 }} pt="$7">
             <Stack screenOptions={{ headerShown: false }} />
           </ScrollView>
           {/* </ExpoBugsnagProvider> */}

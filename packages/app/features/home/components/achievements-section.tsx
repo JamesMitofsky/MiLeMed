@@ -19,9 +19,9 @@ export const ChaptersPreviewList = () => {
       <XStack px="$4.5" ai="center" jc="space-between" mb="$5">
         <XStack ai="center" gap="$2">
           {mode === 'PRACTICAL' ? (
-            <Stethoscope size="$2" color="$brandPrimary" />
+            <Stethoscope size="$3" color="$brandPrimary" />
           ) : (
-            <BookOpen size="$2" color="$brandSecondary" />
+            <BookOpen size="$3" color="$brandSecondary" />
           )}
           <H2 color="$accent0" fow="400">
             {' '}
@@ -29,7 +29,7 @@ export const ChaptersPreviewList = () => {
           </H2>
         </XStack>
         <Button
-          size="$2"
+          size="$3"
           chromeless
           iconAfter={ArrowRight}
           onPress={() => {
@@ -40,13 +40,13 @@ export const ChaptersPreviewList = () => {
         </Button>
       </XStack>
 
-      <XStack mx="$5" mb="$5" gap="$4" ai="center" onPress={toggleMode}>
-        <Theme name={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}>
+      <Theme name={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}>
+        <XStack mx="$5" mb="$5" gap="$4" ai="center" onPress={toggleMode}>
           <Switch
             id="mode-switch"
             checked={mode === 'PRACTICAL'}
             onCheckedChange={(checked) => setMode(checked ? 'PRACTICAL' : 'THEORETICAL')}
-            size="$4"
+            size="$3"
             theme={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}
           >
             <Switch.Thumb animation="quick" />
@@ -54,8 +54,8 @@ export const ChaptersPreviewList = () => {
           <SizableText color={mode === 'PRACTICAL' ? '$brandPrimary' : '$brandSecondary'}>
             {mode === 'PRACTICAL' ? 'Blockpraktikum' : 'Vorlesung'}
           </SizableText>
-        </Theme>
-      </XStack>
+        </XStack>
+      </Theme>
       <ScrollAdapt>
         <XStack px="$4" fw="wrap" f={1} gap="$3">
           <ListOfChapters

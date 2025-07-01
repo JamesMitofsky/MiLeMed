@@ -2,7 +2,6 @@ import { ChapterLectureCard } from '@my/ui'
 import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
 import { Text, Theme } from 'tamagui'
 
-import { colors } from '../../../utils/constants/colors'
 import { useChapters } from '../../../utils/hooks/queryHooks'
 import { Chapter } from '../../../utils/supabase/databaseTypes'
 
@@ -31,10 +30,7 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
         <Text>Keine Kapitel gefunden.</Text>
       ) : (
         chapters.map((chapter, index) => (
-          <Theme
-            key={chapter.id}
-            name={mode === 'PRACTICAL' ? colors[colors.length - 1 - index] : colors[index]}
-          >
+          <Theme key={chapter.id} name={mode === 'PRACTICAL' ? 'dark' : 'light_accent'}>
             <ChapterLectureCard
               w={lockCardWidth ? 300 : '100%'}
               title={chapter.title}
@@ -45,7 +41,7 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
               }}
               action={{
                 text: 'Weiter',
-                href: `/chapter/${chapter.id}`,
+                href: `/chapters/${chapter.id}`,
               }}
             />
           </Theme>

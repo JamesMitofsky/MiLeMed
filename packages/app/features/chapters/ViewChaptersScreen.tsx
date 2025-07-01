@@ -1,5 +1,5 @@
 import { ScrollView } from '@my/ui'
-import { SizableText, Switch, XStack, YStack } from 'tamagui'
+import { SizableText, Switch, Theme, XStack, YStack } from 'tamagui'
 
 import { useMode } from '../../provider/modeProvider'
 import ListOfChapters from '../home/components/list-of-chapters'
@@ -13,12 +13,22 @@ const ViewChaptersScreen = () => {
   return (
     <ScrollView snapToAlignment="start" backgroundColor="white">
       <YStack padding="$4" gap="$3">
-        <XStack mx="$2" mt="$3" mb="$5" gap="$4" onPress={toggleMode}>
-          <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
-            <Switch.Thumb borderColor="$color1" animation="200ms" />
-          </Switch>
-          <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}</SizableText>
-        </XStack>
+        <Theme name={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}>
+          <XStack mx="$2" mt="$3" mb="$5" gap="$4" ai="center" onPress={toggleMode}>
+            <Switch
+              id="mode-switch"
+              checked={mode === 'PRACTICAL'}
+              onCheckedChange={(checked) => setMode(checked ? 'PRACTICAL' : 'THEORETICAL')}
+              size="$3"
+              theme={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}
+            >
+              <Switch.Thumb animation="quick" />
+            </Switch>
+            <SizableText color={mode === 'PRACTICAL' ? '$brandPrimary' : '$brandSecondary'}>
+              {mode === 'PRACTICAL' ? 'Blockpraktikum' : 'Vorlesung'}
+            </SizableText>
+          </XStack>
+        </Theme>
         <ListOfChapters mode={mode === 'THEORETICAL' ? 'THEORETICAL' : 'PRACTICAL'} />
       </YStack>
     </ScrollView>
