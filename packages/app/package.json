@@ -52,7 +52,7 @@
     "remark-parse": "^11.0.0",
     "remark-react": "^10.0.0",
     "remark-rehype": "^11.1.2",
-    "solito": "4.3.0",
+    "solito": "^4.4.1",
     "superjson": "^1.13.1",
     "zod": "^3.22.2",
     "zod-i18n-map": "^2.27.0",
