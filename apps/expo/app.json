@@ -17,11 +17,15 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/d7927c8c-9306-469b-804f-8fddf70fbe01"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
-      "associatedDomains": ["applinks:milemed.de"],
+      "associatedDomains": [
+        "applinks:milemed.de"
+      ],
       "buildNumber": "31"
     },
     "android": {
@@ -56,7 +60,8 @@
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "extra": {
       "router": {

@@ -77,6 +77,21 @@ export type Database = {
           },
         ]
       }
+      db_version: {
+        Row: {
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       quiz_options: {
         Row: {
           id: number

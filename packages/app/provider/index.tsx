@@ -9,8 +9,10 @@ import { SafeAreaProvider } from './safe-area'
 import { TamaguiProvider } from './tamagui'
 import { UniversalThemeProvider } from './theme'
 import { ToastProvider } from './toast'
+import { VersionProvider } from './versionProvider'
 
 export { loadThemePromise } from './theme/UniversalThemeProvider'
+export { useVersion } from './versionProvider'
 
 export function Provider({
   initialSession,
@@ -45,5 +47,6 @@ const Providers = compose([
   ToastProvider,
   QueryClientProvider,
   GlobalStoreProvider,
+  VersionProvider, // Add the new VersionProvider
   ModeProvider,
 ])
