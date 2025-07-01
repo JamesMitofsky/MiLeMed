@@ -101,7 +101,7 @@ function AppVersionCheck({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
-        <Text style={{ fontSize: 18 }}>Checking app version...</Text>
+        <Text style={{ fontSize: 18 }}>App-Version wird geprüft... 🔄</Text>
       </YStack>
     )
   }
