@@ -94,9 +94,9 @@ export default function RootLayout() {
   )
 }
 
-// Version check component that only renders children if versions match
+// Version check component that prompts for update when app version is less than remote version
 function AppVersionCheck({ children }: { children: React.ReactNode }) {
-  const { isLoading, versionsMatch } = useVersion()
+  const { isLoading, needsUpdate } = useVersion()
 
   if (isLoading) {
     return (
@@ -106,7 +106,7 @@ function AppVersionCheck({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!versionsMatch) {
+  if (needsUpdate) {
     return (
       <YStack flex={1} alignItems="center" justifyContent="center" padding="$6" gap="$4">
         <Text style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' }}>
