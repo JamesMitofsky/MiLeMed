@@ -10,6 +10,7 @@ import * as WebBrowser from 'expo-web-browser'
 import { useCallback, useEffect, useState } from 'react'
 import { LogBox, Text } from 'react-native'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { Menu } from '@tamagui/lucide-icons'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -26,8 +27,6 @@ export default function RootLayout() {
     Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   })
-
-  const { isLoading: isVersionCheckLoading } = useVersion()
 
   const [themeLoaded, setThemeLoaded] = useState(false)
   const [sessionLoadAttempted, setSessionLoadAttempted] = useState(false)
@@ -53,7 +52,7 @@ export default function RootLayout() {
   }, [])
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontLoaded && sessionLoadAttempted && !isVersionCheckLoading) {
+    if (fontLoaded && sessionLoadAttempted) {
       await SplashScreen.hideAsync()
     }
   }, [fontLoaded, sessionLoadAttempted])
@@ -66,11 +65,19 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <Provider initialSession={initialSession}>
         <AppVersionCheck>
-          {/* <View style={{ flex: 1 }} onLayout={onLayoutRootView}> */}
           <Drawer
-            screenOptions={{
+            screenOptions={({ navigation }) => ({
               title: '',
-              // headerRight: () => <Image marginRight="$3" height="$1" width="$9" src={logoText} />,
+              drawerHideStatusBarOnOpen: true,
+              headerLeft: () => (
+                <Menu
+                  size="$2"
+                  ml="$5"
+                  onPress={() => {
+                    navigation.toggleDrawer()
+                  }}
+                />
+              ),
               sceneContainerStyle: { backgroundColor: 'white' },
               drawerStyle: {
                 backgroundColor: 'white',
@@ -78,10 +85,9 @@ export default function RootLayout() {
               },
               drawerType: 'front',
               overlayColor: 'rgba(0,0,0,0.5)',
-            }}
+            })}
             drawerContent={(props) => <SidebarDrawer {...props} />}
           />
-          {/* </View> */}
         </AppVersionCheck>
       </Provider>
     </GestureHandlerRootView>
