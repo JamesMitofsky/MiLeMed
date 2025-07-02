@@ -27,6 +27,8 @@ export default function RootLayout() {
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   })
 
+  const { isLoading: isVersionCheckLoading } = useVersion()
+
   const [themeLoaded, setThemeLoaded] = useState(false)
   const [sessionLoadAttempted, setSessionLoadAttempted] = useState(false)
   const [initialSession, setInitialSession] = useState<Session | null>(null)
@@ -51,7 +53,7 @@ export default function RootLayout() {
   }, [])
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontLoaded && sessionLoadAttempted) {
+    if (fontLoaded && sessionLoadAttempted && !isVersionCheckLoading) {
       await SplashScreen.hideAsync()
     }
   }, [fontLoaded, sessionLoadAttempted])
@@ -88,15 +90,7 @@ export default function RootLayout() {
 
 // Version check component that prompts for update when app version is less than remote version
 function AppVersionCheck({ children }: { children: React.ReactNode }) {
-  const { isLoading, needsUpdate } = useVersion()
-
-  if (isLoading) {
-    return (
-      <YStack flex={1} alignItems="center" justifyContent="center" padding="$4">
-        <Text style={{ fontSize: 18 }}>App-Version wird geprüft... 🔄</Text>
-      </YStack>
-    )
-  }
+  const { needsUpdate } = useVersion()
 
   if (needsUpdate) {
     return (
