@@ -6,7 +6,7 @@ import { useUser } from 'app/utils/useUser'
 import { randomUUID } from 'expo-crypto'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState, useEffect, useCallback } from 'react'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
 
@@ -136,7 +136,7 @@ const QuizForm: React.FC = () => {
         }}
       />
       <Theme name="light">
-        <KeyboardAwareScrollView>
+        <KeyboardAvoidingView>
           <ScrollView>
             <YStack space="$4" p="$4">
               {questions.map((question) => (
@@ -182,7 +182,7 @@ const QuizForm: React.FC = () => {
               </Button>
             </YStack>
           </ScrollView>
-        </KeyboardAwareScrollView>
+        </KeyboardAvoidingView>
       </Theme>
     </>
   )
