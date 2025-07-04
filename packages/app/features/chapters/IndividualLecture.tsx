@@ -1,7 +1,9 @@
-import { useContext } from 'react'
-import Markdown from 'react-native-markdown-display'
+import { useContext, useEffect, useState } from 'react'
+import { useWindowDimensions } from 'react-native'
+import { marked } from 'marked'
+import RenderHtml from 'react-native-render-html'
 import { useRouter } from 'solito/router'
-import { YStack, Text, SizableText } from 'tamagui'
+import { YStack, Text, SizableText, ScrollView } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useLectureById, useLectures } from '../../utils/hooks/queryHooks'
@@ -11,14 +13,36 @@ interface IndividualLectureProps {
   lectureId: string
 }
 
+// Function to convert markdown to HTML using marked
+const markdownToHtml = async (markdown: string): Promise<string> => {
+  return marked.parse(markdown)
+}
+
 const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
+  // Keep router for potential future use with commented functions
   const router = useRouter()
   const id = parseInt(lectureId, 10)
+  const { width } = useWindowDimensions()
 
   // Use the proper hook to fetch lecture data
   const { data: lecture, isLoading } = useLectureById(id)
+  // Keep markLectureCompleted for potential future use with commented functions
   const { markLectureCompleted } = useLectures()
 
+  // Convert markdown to HTML
+  const [htmlContent, setHtmlContent] = useState<string>('')
+
+  useEffect(() => {
+    if (lecture?.content) {
+      markdownToHtml(lecture.content)
+        .then((html) => setHtmlContent(html))
+        .catch((error) => console.error('Error converting markdown to HTML:', error))
+    }
+  }, [lecture?.content])
+
+  // These handlers are commented out as they're not currently used,
+  // but keeping them for future functionality
+  /* 
   const handleNavigateToQuiz = () => {
     router.push(`/lecture/${id}/quiz`)
   }
@@ -27,6 +51,7 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
     markLectureCompleted.mutate(id)
     router.back()
   }
+  */
 
   const context = useContext(ThemeContext)
 
@@ -35,7 +60,7 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
       {isLoading ? (
         <Skeleton height={200} width="100%" />
       ) : lecture ? (
-        <>
+        <ScrollView>
           <YStack gap="$2">
             <SizableText size="$8" fontWeight="800">
               {lecture.title}
@@ -44,40 +69,40 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
                 <SizableText size="$3">{lecture.subtitle}</SizableText>
               </Theme> */}
           </YStack>
-          <Markdown
-            style={{
+          <RenderHtml
+            contentWidth={width - 32} // Accounting for padding
+            source={{ html: htmlContent }}
+            tagsStyles={{
               body: {
                 color: context?.current === 'dark' ? '#fff' : '#000',
                 fontSize: 16,
               },
-              heading1: {
+              h1: {
+                color: context?.current === 'dark' ? '#fff' : '#000',
+                fontSize: 26,
+                marginTop: 8,
+                marginBottom: 8,
+              },
+              h2: {
                 color: context?.current === 'dark' ? '#fff' : '#000',
                 fontSize: 24,
                 marginTop: 8,
                 marginBottom: 8,
               },
-              heading2: {
+              h3: {
+                color: context?.current === 'dark' ? '#fff' : '#000',
+                fontSize: 22,
+                marginTop: 8,
+                marginBottom: 8,
+              },
+              p: {
                 color: context?.current === 'dark' ? '#fff' : '#000',
                 fontSize: 20,
                 marginTop: 8,
                 marginBottom: 8,
               },
-              heading3: {
-                color: context?.current === 'dark' ? '#fff' : '#000',
-                fontSize: 18,
-                marginTop: 8,
-                marginBottom: 8,
-              },
-              image: {
-                maxHeight: 400,
-                width: '100%',
-                height: '100%',
-                resizeMode: 'contain',
-              },
             }}
-          >
-            {lecture.content}
-          </Markdown>
+          />
           {/* TODO: Important: check if quiz exists */}
           {/* {lecture.has_quiz ? (
               <Button size="$5" onPress={handleNavigateToQuiz}>
@@ -88,7 +113,7 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
                 Als gelesen markieren
               </Button>
             )} */}
-        </>
+        </ScrollView>
       ) : (
         <Text>Keine Vorlesung gefunden</Text>
       )}
