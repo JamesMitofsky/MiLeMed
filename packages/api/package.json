@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@my/supabase": "*",
-    "@tanstack/react-query": "^5.17.19",
+    "@tanstack/react-query": "4.40.1",
     "@trpc/next": "^10.45.2",
     "@trpc/server": "^10.45.2",
     "jose": "^5.2.1",
