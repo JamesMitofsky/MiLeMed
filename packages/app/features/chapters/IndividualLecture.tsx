@@ -3,7 +3,7 @@ import { useWindowDimensions } from 'react-native'
 import { marked } from 'marked'
 import RenderHtml from 'react-native-render-html'
 import { useRouter } from 'solito/router'
-import { YStack, Text, SizableText, ScrollView } from 'tamagui'
+import { YStack, Text, SizableText, ScrollView, Button } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useLectureById, useLectures } from '../../utils/hooks/queryHooks'
@@ -55,6 +55,10 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
 
   const context = useContext(ThemeContext)
 
+  function handleNavigateToQuiz() {
+    router.push(`/lectures/${id}/quiz`)
+  }
+
   return (
     <YStack p="$4" gap="$4" bg="white" flex={1}>
       {isLoading ? (
@@ -103,11 +107,11 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
               },
             }}
           />
+          <Button size="$5" onPress={handleNavigateToQuiz}>
+            Zum Quiz
+          </Button>
           {/* TODO: Important: check if quiz exists */}
           {/* {lecture.has_quiz ? (
-              <Button size="$5" onPress={handleNavigateToQuiz}>
-                Zum Quiz
-              </Button>
             ) : (
               <Button size="$5" onPress={handleMarkAsRead}>
                 Als gelesen markieren

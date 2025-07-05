@@ -1,11 +1,17 @@
+import OpenAnswerTypeReveal from '@my/app/features/quiz/OpenAnswerTypeReveal'
+import { QuestionForQuizComponent } from '@my/app/utils/supabase/databaseTypes'
 import { ScrollView, useToastController, View } from '@my/ui'
 import MultiChoicePickReveal from 'app/features/quiz/MultiChoicePickReveal'
-import OpenAnswerTypeReveal from 'app/features/quiz/OpenAnswerTypeReveal'
-import { useLectures, useQuizSystem } from 'app/utils/hooks/queryHooks'
+import {
+  useLectureById,
+  useQuizSystem,
+  useQuizOptions,
+  useQuizReferenceAnswers,
+} from 'app/utils/hooks/queryHooks'
 import { useUser } from 'app/utils/useUser'
 import { randomUUID } from 'expo-crypto'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
@@ -18,12 +24,52 @@ const QuizForm: React.FC = () => {
 
   const router = useRouter()
   const { user } = useUser()
-  const { getLectureById } = useLectures()
-  const { data: lecture } = getLectureById(lectureId)
-  const { getQuizResults, recordQuizAnswer, markQuizCompleted } = useQuizSystem()
-  const { data: questions } = getQuizResults(lectureId)
+  const { data: lecture } = useLectureById(lectureId)
+  const { useQuizResults, recordQuizAnswer, markQuizCompleted } = useQuizSystem()
+  const { data: quizQuestions } = useQuizResults(lectureId)
+
+  // Extract question IDs from the quiz questions
+  const questionIds = useMemo(() => {
+    return quizQuestions?.map((question: { question_id: any }) => question.question_id) || []
+  }, [quizQuestions])
+
+  // Fetch options for all questions
+  const { data: optionsData } = useQuizOptions(questionIds)
+
+  // Fetch reference answers for all questions
+  const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
+
+  // console.log('optionsData', optionsData)
+
+  // Define the Question type for proper type inference
+
+  // Combine questions with their options and reference answers
+  const questions: QuestionForQuizComponent[] | null = useMemo(() => {
+    if (!quizQuestions || !optionsData) return null
+
+    return quizQuestions.map((question: { question_id: any }) => {
+      // Find options for this question
+      const questionOptions = optionsData.filter(
+        (option) => option.question_id === question.question_id
+      )
+
+      // Find reference answers for this question
+      const referenceAnswerIds =
+        referenceAnswersData
+          ?.filter((answer) => answer.question_id === question.question_id)
+          .map((answer) => answer.id) || []
+
+      return {
+        ...question,
+        options: questionOptions,
+        reference_answer_ids: referenceAnswerIds,
+      }
+    })
+  }, [quizQuestions, optionsData, referenceAnswersData])
 
   const [hasEvaluatedMultipleChoice, setHasEvaluatedMultipleChoice] = useState(false)
+
+  // these are the answer ids for all questions
   const [answerIds, setAnswerIds] = useState<{ [key: number]: number[] }>({})
   const [areAnswersVisible, setAreAnswersVisible] = useState(false)
 
@@ -36,6 +82,32 @@ const QuizForm: React.FC = () => {
       setSessionId(newId)
     }
   }, [sessionId])
+
+  // IMPORTANT: the key is the question id and the value is the selected option id. It will contain the responses to all questions
+  const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
+
+  console.log('\n\n\nuserResponses', userResponses)
+
+  const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
+    // console.log('\n\n\n')
+    // console.log('Saving selected answer!')
+    // console.log('selectedOptionId', selectedOptionId)
+    // console.log('questionId', questionId)
+    // console.log('\n\n\n')
+    setUserResponses((prev) => ({
+      ...prev,
+      [questionId]: [selectedOptionId],
+    }))
+  }, [])
+
+  const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
+    // console.log('userSubmittedText', userSubmittedText)
+    // console.log('questionId', questionId)
+    setUserResponses((prev) => ({
+      ...prev,
+      [questionId]: userSubmittedText,
+    }))
+  }, [])
 
   const updateAnswerCorrectness = useCallback(
     async (
@@ -77,46 +149,43 @@ const QuizForm: React.FC = () => {
   )
 
   const onSubmit = useCallback(async () => {
-    if (!questions) return
-
-    const allCorrect = questions.every((question) => {
-      if (question.question_type === 'MULTIPLE_CHOICE') {
-        const selectedAnswers = answerIds[question.question_id] || []
-        const correctAnswers = question.correct_option_ids || []
-
-        return (
-          selectedAnswers.length === correctAnswers.length &&
-          selectedAnswers.every((id) => correctAnswers.includes(id))
-        )
-      }
-      return question.is_correct || false
-    })
-
-    try {
-      await markQuizCompleted.mutateAsync({
-        lectureId,
-        passed: allCorrect,
-      })
-
-      if (allCorrect) {
-        toast.show('Quiz abgeschlossen!', {
-          message: 'Sehr gut gemacht!',
-          duration: 2000,
-        })
-        router.push(`/lecture/${lectureId}`)
-      } else {
-        toast.show('Quiz nicht bestanden', {
-          message: 'Bitte versuche es noch einmal.',
-          duration: 2000,
-        })
-      }
-    } catch (error) {
-      console.error('Error submitting quiz:', error)
-      toast.show('Fehler', {
-        message: 'Fehler beim Abschließen des Quiz.',
-        duration: 2000,
-      })
-    }
+    // if (!questions) return
+    // const allCorrect = questions.every((question) => {
+    //   if (question.question_type === 'MULTIPLE_CHOICE') {
+    //     const selectedAnswers = userResponses[question.question_id] || null
+    //     // Use reference_answer_ids instead of correct_option_ids
+    //     const referenceAnswers = question.reference_answer_ids || []
+    //     // Check if the single submitted answerId matches any of the reference answer IDs
+    //     return (
+    //       selectedAnswers.length > 0 && selectedAnswers.some((id) => referenceAnswers.includes(id))
+    //     )
+    //   }
+    //   return question.is_correct || false
+    // })
+    // try {
+    //   await markQuizCompleted.mutateAsync({
+    //     lectureId,
+    //     passed: allCorrect,
+    //   })
+    //   if (allCorrect) {
+    //     toast.show('Quiz abgeschlossen!', {
+    //       message: 'Sehr gut gemacht!',
+    //       duration: 2000,
+    //     })
+    //     router.push(`/lecture/${lectureId}`)
+    //   } else {
+    //     toast.show('Quiz nicht bestanden', {
+    //       message: 'Bitte versuche es noch einmal.',
+    //       duration: 2000,
+    //     })
+    //   }
+    // } catch (error) {
+    //   console.error('Error submitting quiz:', error)
+    //   toast.show('Fehler', {
+    //     message: 'Fehler beim Abschließen des Quiz.',
+    //     duration: 2000,
+    //   })
+    // }
   }, [questions, answerIds, markQuizCompleted, lectureId, toast, router])
 
   if (!questions) {
@@ -138,45 +207,39 @@ const QuizForm: React.FC = () => {
       <Theme name="light">
         <KeyboardAvoidingView>
           <ScrollView>
-            <YStack space="$4" p="$4">
-              {questions.map((question) => (
-                <View key={question.question_id}>
-                  {question.question_type === 'MULTIPLE_CHOICE' ? (
-                    <MultiChoicePickReveal
-                      question={question}
-                      onAnswerSelected={(selectedIds) => {
-                        setAnswerIds((prev) => ({ ...prev, [question.question_id]: selectedIds }))
-                        setHasEvaluatedMultipleChoice(true)
-                      }}
-                      showAnswers={areAnswersVisible}
-                      onAnswerSubmitted={(isCorrect) =>
-                        updateAnswerCorrectness(
-                          question.question_id,
-                          isCorrect,
-                          undefined,
-                          answerIds[question.question_id]
-                        )
-                      }
-                    />
-                  ) : (
-                    <OpenAnswerTypeReveal
-                      question={question}
-                      onAnswerSubmitted={(isCorrect, answerText) =>
-                        updateAnswerCorrectness(question.question_id, isCorrect, answerText)
-                      }
-                      showAnswers={areAnswersVisible}
-                    />
-                  )}
-                </View>
-              ))}
+            <YStack gap="$4" p="$4">
+              {questions?.map((question) => {
+                // console.log('answerIds', answerIds)
+                // console.log('question.question_id', question.question_id)
 
+                return (
+                  <View key={question.question_id}>
+                    {question.question_type === 'MULTIPLE_CHOICE' ? (
+                      <MultiChoicePickReveal
+                        question={question}
+                        onSelectOption={(selectedOptionId, questionId) =>
+                          updateUserSelectedAnswers(selectedOptionId, questionId)
+                        }
+                      />
+                    ) : (
+                      <OpenAnswerTypeReveal
+                        question={question}
+                        onTextInput={(userSubmittedText, questionId) =>
+                          updateUserWrittenAnswers(userSubmittedText, questionId)
+                        }
+                        value={userResponses[question.question_id] as string}
+                      />
+                    )}
+                  </View>
+                )
+              })}
               <Button
                 onPress={() => {
                   setAreAnswersVisible(true)
                   onSubmit()
                 }}
                 disabled={!hasEvaluatedMultipleChoice}
-                theme={hasEvaluatedMultipleChoice ? 'active' : 'gray'}
+                themeInverse={hasEvaluatedMultipleChoice}
               >
                 Quiz abschließen
               </Button>

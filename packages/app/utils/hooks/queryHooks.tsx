@@ -540,6 +540,52 @@ export const useQuizOptions = (questionIds?: number[]) => {
   }
 }
 
+// Hook to fetch reference answers from quiz_reference_answers table
+export const useQuizReferenceAnswers = (questionIds?: number[]) => {
+  const { supabaseClient } = useSessionContext()
+
+  // Define query key as a constant
+  const quizReferenceAnswersKey = questionIds
+    ? ['quiz-reference-answers', questionIds]
+    : (['quiz-reference-answers'] as const)
+
+  // Get quiz reference answers filtered by question IDs if provided
+  const quizReferenceAnswersQuery = useQuery({
+    queryKey: quizReferenceAnswersKey,
+    queryFn: async () => {
+      // Start with the base query
+      let query = supabaseClient.from('quiz_reference_answers').select('*')
+
+      // Apply filter for specific question IDs if provided
+      if (questionIds && questionIds.length > 0) {
+        query = query.in('question_id', questionIds)
+      }
+
+      // Execute the query
+      const { data, error } = await query.order('id', { ascending: true })
+
+      if (error) throw error
+      return data
+    },
+    // Enable the query if questionIds is undefined or has elements
+    enabled: !questionIds || questionIds.length > 0,
+  })
+
+  // Get reference answers for a specific question
+  const getReferenceAnswersForQuestion = (questionId: number) => {
+    if (!quizReferenceAnswersQuery.data) return []
+    return quizReferenceAnswersQuery.data.filter((answer) => answer.question_id === questionId)
+  }
+
+  return {
+    data: quizReferenceAnswersQuery.data,
+    isLoading: quizReferenceAnswersQuery.isLoading,
+    error: quizReferenceAnswersQuery.error,
+    refetch: quizReferenceAnswersQuery.refetch,
+    getReferenceAnswersForQuestion,
+  }
+}
+
 export const useFeedback = () => {
   const { supabaseClient } = useSessionContext()
   const queryClient = useQueryClient()
