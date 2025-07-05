@@ -39,6 +39,8 @@ const QuizForm: React.FC = () => {
   // Fetch reference answers for all questions
   const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
 
+  console.log('reference answer data')
+
   // console.log('optionsData', optionsData)
 
   // Define the Question type for proper type inference
@@ -148,45 +150,14 @@ const QuizForm: React.FC = () => {
     [user, sessionId, recordQuizAnswer, lectureId, toast]
   )
 
-  const onSubmit = useCallback(async () => {
-    // if (!questions) return
-    // const allCorrect = questions.every((question) => {
-    //   if (question.question_type === 'MULTIPLE_CHOICE') {
-    //     const selectedAnswers = userResponses[question.question_id] || null
-    //     // Use reference_answer_ids instead of correct_option_ids
-    //     const referenceAnswers = question.reference_answer_ids || []
-    //     // Check if the single submitted answerId matches any of the reference answer IDs
-    //     return (
-    //       selectedAnswers.length > 0 && selectedAnswers.some((id) => referenceAnswers.includes(id))
-    //     )
-    //   }
-    //   return question.is_correct || false
-    // })
-    // try {
-    //   await markQuizCompleted.mutateAsync({
-    //     lectureId,
-    //     passed: allCorrect,
-    //   })
-    //   if (allCorrect) {
-    //     toast.show('Quiz abgeschlossen!', {
-    //       message: 'Sehr gut gemacht!',
-    //       duration: 2000,
-    //     })
-    //     router.push(`/lecture/${lectureId}`)
-    //   } else {
-    //     toast.show('Quiz nicht bestanden', {
-    //       message: 'Bitte versuche es noch einmal.',
-    //       duration: 2000,
-    //     })
-    //   }
-    // } catch (error) {
-    //   console.error('Error submitting quiz:', error)
-    //   toast.show('Fehler', {
-    //     message: 'Fehler beim Abschließen des Quiz.',
-    //     duration: 2000,
-    //   })
-    // }
-  }, [questions, answerIds, markQuizCompleted, lectureId, toast, router])
+  const initialSubmit = useCallback(async () => {
+    console.log('submitting quiz')
+  }, [])
+
+  // this is called when the user has decided whether their open choice answer is correct or not
+  const secondarySubmit = useCallback(async () => {
+    console.log('submitting quiz')
+  }, [])
 
   if (!questions) {
     return (
@@ -236,7 +207,7 @@ const QuizForm: React.FC = () => {
               <Button
                 onPress={() => {
                   setAreAnswersVisible(true)
-                  onSubmit()
+                  initialSubmit()
                 }}
                 disabled={!hasEvaluatedMultipleChoice}
                 themeInverse={hasEvaluatedMultipleChoice}

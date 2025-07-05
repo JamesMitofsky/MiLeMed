@@ -17,7 +17,8 @@ export type QuestionForQuizComponent = {
     option_text: string
     // Any other properties that might be in optionsData
   }[]
-  reference_answer_ids: number[]
+  // this appears to not exist
+  // reference_answer_ids: number[]
 }
 
 // Types based on the schema (you'd typically generate these)

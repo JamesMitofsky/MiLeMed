@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react'
 import QuizQuestionForm from './QuizQuestionForm'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
-import { useQuizReferenceAnswers } from '../../utils/hooks/useQuizReferenceAnswers'
+import { useQuizReferenceAnswers } from 'app/utils/hooks/queryHooks'
 
 interface QuizQuestion {
   question_id: number
@@ -74,8 +74,7 @@ const ReadModifyLecture = ({
   // Extract question IDs for fetching reference answers
   const questionIds = quizQuestions.map((q) => q.question_id)
   // Use the hook to get reference answers
-  const { getCorrectOptionIdForQuestion, isLoading: isLoadingReferenceAnswers } =
-    useQuizReferenceAnswers(questionIds)
+  const { isLoading: isLoadingReferenceAnswers } = useQuizReferenceAnswers(questionIds)
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
@@ -155,7 +154,7 @@ const ReadModifyLecture = ({
             </SizableText>
             <Button
               size="$3"
-              theme={isEditMode ? 'red' : 'blue'}
+              theme={isEditMode ? 'success' : 'warning'}
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
             >
@@ -245,7 +244,7 @@ const ReadModifyLecture = ({
                 <Button
                   size="$3"
                   themeShallow
-                  theme="green"
+                  theme="success"
                   icon={Plus}
                   onPress={() => setShowNewQuestionForm(true)}
                 >
@@ -271,7 +270,7 @@ const ReadModifyLecture = ({
                     lectureId={parseInt(lectureId, 10)}
                   />
 
-                  <Button theme="red" size="$2" onPress={() => setShowNewQuestionForm(false)}>
+                  <Button theme="warning" size="$2" onPress={() => setShowNewQuestionForm(false)}>
                     Cancel
                   </Button>
                 </YStack>
@@ -323,9 +322,11 @@ const ReadModifyLecture = ({
                                   // Convert database options to the expected format for the form
                                   if (dbOptions && dbOptions.length > 0) {
                                     // Get the correct option ID from reference answers
-                                    const correctOptionId = getCorrectOptionIdForQuestion(
-                                      question.question_id
-                                    )
+                                    // TODO: implement this
+                                    const correctOptionId = null
+                                    // const correctOptionId = getCorrectOptionIdForQuestion(
+                                    //   question.question_id
+                                    // )
                                     console.log(
                                       'Correct option ID for question',
                                       question.question_id,
@@ -363,7 +364,7 @@ const ReadModifyLecture = ({
                           {onDeleteQuestion && (
                             <Button
                               icon={Trash}
-                              theme="red"
+                              theme="warning"
                               size="$2"
                               onPress={() => {
                                 console.log(
@@ -444,7 +445,7 @@ const ReadModifyLecture = ({
                                       </XStack>
                                     ))
                                   ) : (
-                                    <Text color="$orange9">No options available</Text>
+                                    <Text color="$red10">No options available</Text>
                                   )
                                 })()}
                               </>
@@ -456,9 +457,9 @@ const ReadModifyLecture = ({
                               question.options.map((option, optIndex) => (
                                 <XStack key={optIndex} gap="$2" alignItems="center">
                                   {option.is_correct ? (
-                                    <Check color="$green9" />
+                                    <Check color="$green10" />
                                   ) : (
-                                    <X color="$gray9" />
+                                    <X color="$accent5" />
                                   )}
                                   <Text>{option.option_text}</Text>
                                 </XStack>
@@ -466,7 +467,7 @@ const ReadModifyLecture = ({
                             {!getOptionsForQuestion &&
                               (!Array.isArray(question.options) ||
                                 question.options.length === 0) && (
-                                <Text color="$orange9">No options available</Text>
+                                <Text color="$red10">No options available</Text>
                               )}
                           </YStack>
                         )}
