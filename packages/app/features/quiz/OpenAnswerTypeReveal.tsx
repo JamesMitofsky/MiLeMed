@@ -9,6 +9,7 @@ interface OpenAnswerTypeRevealProps {
   value: string
   hasAnswersVisible: boolean
   onSelfEvaluation: (isCorrect: boolean, questionId: number) => void
+  disabled: boolean
 }
 
 const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
@@ -17,28 +18,16 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   value,
   hasAnswersVisible,
   onSelfEvaluation,
+  disabled,
 }) => {
   const { data: openQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
 
   const [formState, setFormState] = useState<undefined | 'SUCCESS' | 'FAILURE'>()
 
-  // console.log('question id', question.question_id)
-
-  // console.log('\n\n\n\nREFERENCE ANSWER Singular', openQuestionAnswer)
-
-  // const [isShowingOpenQuestionAnswer, setIsShowingOpenQuestionAnswer] = useState(false)
-  // const [userHasSubmittedAnswer, setUserHasSubmittedAnswer] = useState(false)
-
-  // const handleShowOpenQuestionAnswer = () => {
-  //   setIsShowingOpenQuestionAnswer(true)
-  // }
-
   const handleSelfEvaluation = (isCorrect: boolean) => {
     setFormState(isCorrect ? 'SUCCESS' : 'FAILURE')
     onSelfEvaluation(isCorrect, question.question_id)
   }
-
-  // console.log('REFERENCE ANSWER Singular', openQuestionAnswer)
 
   return (
     <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
@@ -51,7 +40,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         multiline
         numberOfLines={5}
         mt="$2"
-        disabled={hasAnswersVisible}
+        disabled={disabled}
       />
 
       {hasAnswersVisible && (

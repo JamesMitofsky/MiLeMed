@@ -141,37 +141,27 @@ export const useLectureById = (lectureId: number) => {
   const { supabaseClient } = useSessionContext()
   const getLectureByIdKey = (id: number) => ['lecture', id] as const
 
-  console.log('📌 useLectureById - Hook called with lectureId:', lectureId)
-  console.log('📌 useLectureById - Enabled:', !!lectureId)
-
   return useQuery({
     queryKey: getLectureByIdKey(lectureId),
     queryFn: async () => {
-      console.log('📌 useLectureById - queryFn executing')
       const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
       const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
         p_lecture_id: lectureId,
       }
-      console.log('📌 useLectureById - Making RPC call with args:', args)
 
       try {
         const { data, error } = await supabaseClient.rpc(rpcName, args)
-        console.log('📌 useLectureById - RPC response:', { data, error })
 
         if (error) {
-          console.error('📌 useLectureById - Error from RPC call:', error)
           throw error
         }
 
         if (!data || data.length === 0) {
-          console.warn('📌 useLectureById - No data returned from RPC call')
           return null
         }
 
-        console.log('📌 useLectureById - Returning data[0]:', data[0])
         return data[0] // Returns the first (and only) result
       } catch (e) {
-        console.error('📌 useLectureById - Exception caught:', e)
         throw e
       }
     },
@@ -748,7 +738,7 @@ export const useQuizReferenceAnswer = (questionId?: number) => {
   }
 }
 
-// Hook to fetch reference answers from quiz_reference_answers table TODO: this doesn't even work
+// Hook to fetch reference answers from quiz_reference_answers table for multiple questions
 export const useQuizReferenceAnswers = (questionIds?: number[]) => {
   const supabaseClient = useSupabase()
 
@@ -771,9 +761,12 @@ export const useQuizReferenceAnswers = (questionIds?: number[]) => {
 
       // Execute the query
       const { data, error } = await query.order('id', { ascending: true })
-
-      if (error) throw error
-      return data
+      console.log('Reference answers data:', data)
+      if (error) {
+        console.error('Error fetching reference answers:', error)
+        throw error
+      }
+      return data || []
     },
     // Enable the query if questionIds is undefined or has elements
     enabled: !questionIds || questionIds.length > 0,

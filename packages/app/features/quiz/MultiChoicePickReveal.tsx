@@ -9,31 +9,29 @@ interface MultiChoicePickRevealProps {
   // this is outgoing. The second param lets us know which question in this lecture was being rendered
   onSelectOption: (selectedOptionId: number, questionId: number) => void
   hasAnswersVisible: boolean
+  disabled: boolean
 }
 
 const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
   question,
   onSelectOption,
   hasAnswersVisible,
+  disabled,
 }) => {
   const uniqueId = useId()
 
-  const { data: optionQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
-
-  console.log('\n\noptionQuestionAnswer', optionQuestionAnswer)
+  const { data: answerToQuestion } = useQuizReferenceAnswer(question.question_id)
 
   const handleValueChange = (value: string) => {
     const optionId = Number(value)
     onSelectOption(optionId, question.question_id)
   }
 
-  // console.log('OPTIONS', question.options)
-
   return (
     <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
       <SizableText fontWeight="bold">{question.question_text}</SizableText>
       <RadioGroup
-        disabled={hasAnswersVisible}
+        disabled={disabled}
         onValueChange={handleValueChange}
         flexWrap="wrap"
         gap="$2"
@@ -51,7 +49,10 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
             <View onPress={(e) => e.stopPropagation()}>
               <RadioGroup.Item
                 backgroundColor={
-                  hasAnswersVisible && optionQuestionAnswer?.[0].option_id === option.id
+                  hasAnswersVisible &&
+                  answerToQuestion &&
+                  answerToQuestion.length > 0 &&
+                  answerToQuestion[0].option_id === option.id
                     ? '$green7Light'
                     : undefined
                 }
@@ -64,7 +65,10 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
             <SizableText
               textWrap="wrap"
               color={
-                hasAnswersVisible && optionQuestionAnswer?.[0].option_id === option.id
+                hasAnswersVisible &&
+                answerToQuestion &&
+                answerToQuestion.length > 0 &&
+                answerToQuestion[0].option_id === option.id
                   ? '$green10Light'
                   : undefined
               }

@@ -94,8 +94,6 @@ const QuizForm: React.FC = () => {
     [questionId: number]: boolean | undefined
   }>({})
 
-  console.log('TEST', questionsThatHaveBeenEvaluated)
-
   // FUNCTIONS
 
   /**
@@ -123,7 +121,7 @@ const QuizForm: React.FC = () => {
         return option.option_id === selectedOptionId && isReferenceAnswer
       }) || false
 
-    updateTextResponseCorrectness(questionId, isCorrect)
+    updateCorrectnessOfAnyQuestionType(questionId, isCorrect)
   }, [])
 
   const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
@@ -152,19 +150,7 @@ const QuizForm: React.FC = () => {
 
   // trying to make sure all questions are evaluated before showing next button
   const hasAnsweredAllQuestions = useMemo(() => {
-    // console.log('questionsThatHaveBeenEvaluated', questionsThatHaveBeenEvaluated)
-    // console.log('questions', questions)
-    // console.log(
-    //   'questionsThatHaveBeenEvaluated.length',
-    //   Object.values(questionsThatHaveBeenEvaluated).length
-    // )
-    // console.log('questions.length', questions.length)
-
-    console.log('\n\n\nTEST')
-    console.log(Object.values(questionsThatHaveBeenEvaluated).length === questions?.length)
-
-    console.log(Object.values(questionsThatHaveBeenEvaluated).length)
-    console.log(questions?.length)
+    if (!questions || !questionsThatHaveBeenEvaluated) return false
     return Object.values(questionsThatHaveBeenEvaluated).length === questions?.length
   }, [questionsThatHaveBeenEvaluated, questions])
 
@@ -177,16 +163,19 @@ const QuizForm: React.FC = () => {
     )
   }, [questionsThatHaveBeenEvaluated, questions])
 
-  const updateTextResponseCorrectness = useCallback((questionId: number, isCorrect: boolean) => {
-    setQuestionsThatHaveBeenEvaluated((prev) => ({
-      ...prev,
-      [questionId]: isCorrect,
-    }))
-  }, [])
+  const updateCorrectnessOfAnyQuestionType = useCallback(
+    (questionId: number, isCorrect: boolean) => {
+      setQuestionsThatHaveBeenEvaluated((prev) => ({
+        ...prev,
+        [questionId]: isCorrect,
+      }))
+    },
+    []
+  )
 
   const submitEvaluationOfOpenAnswer = useCallback(
     async (questionId: number, isCorrect: boolean) => {
-      updateTextResponseCorrectness(questionId, isCorrect)
+      updateCorrectnessOfAnyQuestionType(questionId, isCorrect)
     },
     [user, recordQuizAnswer, lectureId, toast]
   )
@@ -194,8 +183,7 @@ const QuizForm: React.FC = () => {
   // this is called when the user has decided whether their open choice answer is correct or not
   const submitAllFinalAnswersToServer = useCallback(async () => {
     if (hasAnsweredAllQuestionsCorrectly) {
-      console.log('submitting quiz to server', userResponses)
-      await markLectureCompleted.mutate({ lectureId })
+      markLectureCompleted.mutate({ lectureId })
       navigate('/')
       toast.show('Quiz abgeschlossen', {
         message: 'Gut gemacht!',
@@ -240,6 +228,7 @@ const QuizForm: React.FC = () => {
                           updateUserSelectedAnswers(selectedOptionId, questionId)
                         }
                         hasAnswersVisible={hasAnswersVisible}
+                        disabled={hasAnsweredAllQuestions}
                       />
                     ) : (
                       <OpenAnswerTypeReveal
@@ -255,6 +244,7 @@ const QuizForm: React.FC = () => {
                         onSelfEvaluation={(isCorrect, questionId) =>
                           submitEvaluationOfOpenAnswer(questionId, isCorrect)
                         }
+                        disabled={hasAnsweredAllQuestions}
                       />
                     )}
                   </View>
@@ -270,7 +260,7 @@ const QuizForm: React.FC = () => {
                   Alle Antworten senden
                 </Button>
               )}
-              {hasAnsweredAllQuestions && (
+              {hasAnsweredAllQuestions && hasAnswersVisible && (
                 <Button
                   onPress={() => {
                     submitAllFinalAnswersToServer()
