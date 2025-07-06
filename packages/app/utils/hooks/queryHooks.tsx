@@ -28,7 +28,7 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
     staleTime: 1000 * 60 * 5, // 5m
     cacheTime: 1000 * 60 * 30, // 30m
     queryFn: async () => {
-      console.log('[useChaptersWithLectures] queryFn executing')
+      // console.log('[useChaptersWithLectures] queryFn executing')
       if (!userId) {
         console.error('[useChaptersWithLectures] Not authenticated')
         throw new Error('Not authenticated')
@@ -330,8 +330,6 @@ export const useUserProfile = () => {
         throw new Error(error.message)
       }
 
-      console.log('inside useUserProfile', data)
-
       return data
     },
   })
@@ -512,7 +510,7 @@ export const useUserEvents = () => {
 export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
   const { supabaseClient } = useSessionContext()
 
-  console.log('🔍 useAllChaptersAndLectures called with mode:', mode)
+  // console.log('🔍 useAllChaptersAndLectures called with mode:', mode)
 
   // Define query keys as constants
   const getAllChaptersAndLecturesKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
@@ -570,7 +568,7 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
         )
         .order('sort_order', { ascending: true })
 
-      console.log(`📊 Lectures query result: ${allLectures?.length || 0} lectures found`)
+      // console.log(`📊 Lectures query result: ${allLectures?.length || 0} lectures found`)
 
       if (lecturesError) {
         console.error('❌ Error fetching lectures:', lecturesError)
