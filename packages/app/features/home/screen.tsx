@@ -42,7 +42,15 @@ export function HomeScreen() {
         <>
           <ChaptersPreviewList />
           {/* <StatisticsPreviewList /> */}
-          <FeedbackSection onSubmitSuccess={() => console.log('Feedback submitted')} />
+          <FeedbackSection
+            onSubmitSuccess={() => {
+              toast.show('Danke für dein Feedback! 🎉 ', {
+                message:
+                  'Das ist eine große Sache für uns, und unser Team wird in Echtzeit benachrichtigt! 🚀',
+                duration: 9000,
+              })
+            }}
+          />
           {/*                 <FeedbackSection onSubmitSuccess={onFeedbackSubmitSucccess} />
            */}
         </>

@@ -35,7 +35,7 @@ export const FeedbackSection = ({ onSubmitSuccess }: FeedbackSectionProps) => {
 
   const onSubmit = async ({ feedback }: FeedbackFormType) => {
     try {
-      const { error } = await supabase.from('user_feedback').insert({
+      const { error } = await supabase.from('users_feedback').insert({
         description: feedback,
       })
 
