@@ -22,9 +22,6 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
   const { supabaseClient, session } = useSessionContext()
   const userId = session?.user.id
 
-  console.log('[useChaptersWithLectures] Hook initialized with mode:', mode)
-  console.log('[useChaptersWithLectures] User authenticated:', !!userId)
-
   return useQuery<Chapter[], Error>({
     queryKey: ['chaptersWithLectures', userId, mode],
     enabled: !!userId,
@@ -38,7 +35,6 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
       }
 
       // 1️⃣ load chapters, optionally filtering by mode
-      console.log('[useChaptersWithLectures] Fetching chapters with mode:', mode || 'all')
       let chapterQuery = supabaseClient
         .from('content_chapters')
         .select('id, title, sort_order')
@@ -53,11 +49,10 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
         console.error('[useChaptersWithLectures] Chapter fetch error:', chapErr)
         throw chapErr
       }
-      console.log('[useChaptersWithLectures] Chapters fetched:', chapters.length)
 
       // 2️⃣ load lectures for those chapters
       const chapterIds = chapters.map((c) => c.id)
-      console.log('[useChaptersWithLectures] Fetching lectures for chapter IDs:', chapterIds)
+
       const { data: lectures, error: lectErr } = await supabaseClient
         .from('content_lectures')
         .select('id, title, sort_order, chapter_id')
@@ -67,10 +62,9 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
         console.error('[useChaptersWithLectures] Lecture fetch error:', lectErr)
         throw lectErr
       }
-      console.log('[useChaptersWithLectures] Lectures fetched:', lectures.length)
 
       // 3️⃣ load completed lecture IDs (LECTURE_COMPLETED)
-      console.log('[useChaptersWithLectures] Fetching completed lectures for user')
+
       const { data: completions, error: compErr } = await supabaseClient
         .from('system_events')
         .select('lecture_id')
@@ -80,23 +74,19 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
         console.error('[useChaptersWithLectures] Completions fetch error:', compErr)
         throw compErr
       }
-      
-      // Log raw completions data to see what we're getting from the database
-      console.log('[useChaptersWithLectures] Raw completions data:', JSON.stringify(completions))
-      
+
       // Check for null or undefined lecture_ids
-      const validCompletions = completions.filter(c => c.lecture_id != null)
+      const validCompletions = completions.filter((c) => c.lecture_id != null)
       if (validCompletions.length !== completions.length) {
-        console.warn('[useChaptersWithLectures] Found completions with null lecture_id:', 
-          completions.filter(c => c.lecture_id == null).length)
+        console.warn(
+          '[useChaptersWithLectures] Found completions with null lecture_id:',
+          completions.filter((c) => c.lecture_id == null).length
+        )
       }
-      
+
       const completedSet = new Set(validCompletions.map((c) => c.lecture_id!))
-      console.log('[useChaptersWithLectures] Completed lecture IDs:', Array.from(completedSet))
-      console.log('[useChaptersWithLectures] Completed lectures count:', completedSet.size)
 
       // 4️⃣ merge
-      console.log('[useChaptersWithLectures] Merging data for final result')
       const result = chapters.map((c) => ({
         ...c,
         lectures: lectures
@@ -108,11 +98,7 @@ export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode
             is_completed: completedSet.has(l.id),
           })),
       }))
-      console.log(
-        '[useChaptersWithLectures] Final result:',
-        result.length,
-        'chapters with lectures'
-      )
+
       return result
     },
   })
@@ -190,6 +176,54 @@ export const useLectureById = (lectureId: number) => {
       }
     },
     enabled: !!lectureId,
+  })
+}
+export type LectureItem = {
+  id: number
+  title: string
+  sort_order: number
+  is_completed: boolean
+}
+
+export function useLecturesInChapter(chapterId?: number) {
+  const { supabaseClient, session } = useSessionContext()
+  const userId = session?.user.id
+
+  return useQuery<LectureItem[], Error>({
+    queryKey: ['lecturesInChapter', userId, chapterId],
+    enabled: !!userId && typeof chapterId === 'number',
+    staleTime: 1000 * 60 * 5, // 5m
+    cacheTime: 1000 * 60 * 30, // 30m
+    queryFn: async () => {
+      if (!userId) throw new Error('Not authenticated')
+      if (chapterId === undefined) throw new Error('chapterId is required')
+
+      // 1️⃣ Fetch all lectures in this chapter
+      const { data: lectures, error: lectErr } = await supabaseClient
+        .from('content_lectures')
+        .select('id, title, sort_order')
+        .eq('chapter_id', chapterId)
+        .order('sort_order', { ascending: true })
+      if (lectErr || !lectures) throw lectErr
+
+      // 2️⃣ Fetch all QUIZ_PASSED events for this user
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('system_events')
+        .select('lecture_id')
+        .eq('event_type', 'LECTURE_COMPLETED')
+        .eq('profile_id', userId)
+      if (compErr || !comps) throw compErr
+
+      const completedSet = new Set(comps.map((c) => c.lecture_id!))
+
+      // 3️⃣ Merge into the shape you want
+      return lectures.map((l) => ({
+        id: l.id,
+        title: l.title,
+        sort_order: l.sort_order,
+        is_completed: completedSet.has(l.id),
+      }))
+    },
   })
 }
 

@@ -36,13 +36,10 @@ const ListOfChapters = ({ limit, lockCardWidth, mode }: ListOfChaptersProps) => 
     <>
       {chaptersWithLectures.slice(0, limit).map((chapter) => {
         const full = chapter.lectures.length
-        // Ensure we're using integer values to avoid precision errors
         const current = chapter.lectures.reduce((count, lecture) => {
-          console.log(`Lecture ${lecture.id}: is_completed = ${lecture.is_completed}`)
           return lecture.is_completed ? count + 1 : count
         }, 0)
-        
-        // Make sure both values are integers to avoid floating point precision issues
+
         const safeCurrentValue = Math.floor(current || 0)
         const safeFullValue = Math.floor(full || 0)
 

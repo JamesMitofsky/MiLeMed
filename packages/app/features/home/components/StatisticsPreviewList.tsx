@@ -15,7 +15,7 @@ const StatisticsPreviewList = () => {
   }
 
   return (
-    <XStack fw="wrap" ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
+    <XStack ai="flex-start" jc="flex-start" px="$4" gap="$8" mb="$4">
       <OverviewCard
         title="Lektionen"
         value={`${statsData.completed_lectures} ${

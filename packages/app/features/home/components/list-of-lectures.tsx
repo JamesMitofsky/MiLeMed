@@ -1,8 +1,7 @@
 import { ChapterLectureCard } from '@my/ui'
 import { ChapterLectureCardSkeleton } from '@my/ui/src/components/ChapterLectureCardSkeleton'
+import { useLecturesInChapter } from 'app/utils/hooks/queryHooks'
 import { YStack, Text, useMedia } from 'tamagui'
-
-import { useLectures } from '../../../utils/hooks/queryHooks'
 
 type ListOfLecturesProps = {
   chapterId: string
@@ -10,12 +9,12 @@ type ListOfLecturesProps = {
 }
 
 const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
-  const { data: lectures, isLoading } = useLectures(parseInt(chapterId, 10))
+  const { data: lectures, isLoading } = useLecturesInChapter(parseInt(chapterId, 10))
   const { md } = useMedia()
 
   if (isLoading || !lectures) {
     return (
-      <YStack fw="wrap" f={1} gap="$3">
+      <YStack f={1} gap="$3">
         <ChapterLectureCardSkeleton isDense />
         <ChapterLectureCardSkeleton isDense />
       </YStack>
@@ -26,8 +25,10 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
     return <Text>Keine Lektionen gefunden.</Text>
   }
 
+  console.log('Lectures:', lectures)
+
   return (
-    <YStack my="$4" fw="wrap" gap="$3">
+    <YStack my="$4" gap="$3">
       {lectures.map((lecture, index) => (
         <ChapterLectureCard
           key={lecture.id}

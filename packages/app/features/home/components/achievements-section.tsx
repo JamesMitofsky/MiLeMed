@@ -45,7 +45,7 @@ export const ChaptersPreviewList = () => {
         </XStack>
       </Theme>
       <ScrollAdapt>
-        <XStack px="$4" fw="wrap" f={1} gap="$3">
+        <XStack px="$4" f={1} gap="$3">
           <ListOfChapters
             lockCardWidth
             limit={4}
