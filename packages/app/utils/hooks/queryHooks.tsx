@@ -33,7 +33,6 @@ export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
   return {
     data: chapterQuery.data,
     isLoading: chapterQuery.isLoading,
-    isPending: chapterQuery.isPending,
     error: chapterQuery.error,
     refetch: chapterQuery.refetch,
   }
@@ -137,7 +136,6 @@ export const useLectures = (chapterId?: number) => {
   return {
     data: lecturesQuery.data,
     isLoading: lecturesQuery.isLoading,
-    isPending: lecturesQuery.isPending,
     error: lecturesQuery.error,
     refetch: lecturesQuery.refetch,
     markLectureCompleted,
@@ -153,7 +151,6 @@ export const useUserProfile = () => {
 
   const {
     data: profile,
-    isPending,
     isLoading,
     refetch,
   } = useQuery({
@@ -218,7 +215,6 @@ export const useUserProfile = () => {
 
   return {
     profile,
-    isPending,
     isLoading,
     updateProfile,
     useCompletionStats,
