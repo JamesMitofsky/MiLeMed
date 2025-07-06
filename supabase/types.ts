@@ -97,16 +97,19 @@ export type Database = {
           id: number
           option_text: string
           question_id: number
+          updated_at: string | null
         }
         Insert: {
           id?: number
           option_text: string
           question_id: number
+          updated_at?: string | null
         }
         Update: {
           id?: number
           option_text?: string
           question_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
