@@ -36,7 +36,7 @@ const isVersionLessThan = (version1: string, version2: string | null): boolean =
 }
 
 export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) => {
-  const APP_VERSION = '1' // Hardcoded app version - update this when deploying a new version
+  const APP_VERSION = '2' // Hardcoded app version - update this when deploying a new version
   const [dbVersion, setDbVersion] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = useSupabase()
