@@ -190,11 +190,17 @@ const QuizForm: React.FC = () => {
         queryKey: ['chaptersWithLectures'],
       })
       markLectureCompleted.mutate({ lectureId })
-      navigate('/')
+
+      // Show toast immediately
       toast.show('Quiz abgeschlossen', {
         message: 'Gut gemacht!',
         duration: 3000,
       })
+
+      // Delay navigation by 1.5 seconds
+      setTimeout(() => {
+        navigate('/')
+      }, 1500)
     } else {
       navigate(`/lectures/${lectureId}`)
       toast.show('Quiz nicht abgeschlossen', {
