@@ -14,6 +14,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
+import { useQueryClient } from '@tanstack/react-query'
 
 /**
  * Represents a quiz response where the user selected an option.
@@ -61,6 +62,7 @@ const QuizForm: React.FC = () => {
   const { data: optionsData } = useQuizOptions(questionIds)
   // Fetch reference answers for all questions
   const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
+  const queryClient = useQueryClient()
 
   // Combine questions with their options and reference answers
   const questions: QuestionForQuizComponent[] | null = useMemo(() => {
@@ -183,6 +185,10 @@ const QuizForm: React.FC = () => {
   // this is called when the user has decided whether their open choice answer is correct or not
   const submitAllFinalAnswersToServer = useCallback(async () => {
     if (hasAnsweredAllQuestionsCorrectly) {
+      // If you want to be more specific with the exact query key:
+      queryClient.invalidateQueries({
+        queryKey: ['chaptersWithLectures'],
+      })
       markLectureCompleted.mutate({ lectureId })
       navigate('/')
       toast.show('Quiz abgeschlossen', {
@@ -190,7 +196,7 @@ const QuizForm: React.FC = () => {
         duration: 3000,
       })
     } else {
-      navigate('/')
+      navigate(`/lectures/${lectureId}`)
       toast.show('Quiz nicht abgeschlossen', {
         message: 'Noch nicht alle Fragen beantwortet',
         duration: 3000,
