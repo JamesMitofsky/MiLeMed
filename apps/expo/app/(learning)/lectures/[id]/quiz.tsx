@@ -25,7 +25,7 @@ const QuizForm: React.FC = () => {
   const router = useRouter()
   const { user } = useUser()
   const { data: lecture } = useLectureById(lectureId)
-  const { useQuizResults, recordQuizAnswer, markQuizCompleted } = useQuizSystem()
+  const { useQuizResults, recordQuizAnswer, markLectureCompleted } = useQuizSystem()
   const { data: quizQuestions } = useQuizResults(lectureId)
 
   // Extract question IDs from the quiz questions
@@ -35,6 +35,8 @@ const QuizForm: React.FC = () => {
 
   // Fetch options for all questions
   const { data: optionsData } = useQuizOptions(questionIds)
+
+  // console.log('Question IDs:', questionIds)
 
   // Fetch reference answers for all questions
   const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
@@ -82,7 +84,7 @@ const QuizForm: React.FC = () => {
   // IMPORTANT: the key is the question id and the value is the selected option id. It will contain the responses to all questions
   const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
 
-  console.log('\n\n\nuserResponses', userResponses)
+  // console.log('\n\n\nuserResponses', userResponses)
 
   const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
     // console.log('\n\n\n')
@@ -114,44 +116,22 @@ const QuizForm: React.FC = () => {
     ) => {
       if (!user || !sessionId) return
 
-      try {
-        await recordQuizAnswer.mutateAsync({
-          questionId,
-          answerText,
-          chosenOptionIds,
-          lectureId,
-        })
-
-        if (isCorrect) {
-          toast.show('Richtige Antwort!', {
-            message: 'Gut gemacht!',
-            duration: 2000,
-          })
-        } else {
-          toast.show('Falsche Antwort', {
-            message: 'Versuche es noch einmal.',
-            duration: 2000,
-          })
-        }
-      } catch (error) {
-        console.error('Error updating answer:', error)
-        toast.show('Fehler', {
-          message: 'Fehler beim Speichern der Antwort.',
-          duration: 2000,
-        })
-      }
+      // we are checking to see if open answer is right!
     },
     [user, sessionId, recordQuizAnswer, lectureId, toast]
   )
 
+  const { navigate } = useRouter()
+
   // this is called when the user has decided whether their open choice answer is correct or not
   const submitAllFinalAnswersToServer = useCallback(async () => {
     console.log('submitting quiz to server', userResponses)
+    markLectureCompleted.mutate({ lectureId })
     toast.show('Quiz abgeschlossen', {
       message: 'Gut gemacht!',
       duration: 3000,
     })
-    setUserResponses([])
+    navigate('/')
   }, [userResponses])
 
   if (!questions) {

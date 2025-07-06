@@ -20,7 +20,6 @@ import { useEffect, useState } from 'react'
 import QuizQuestionForm from './QuizQuestionForm'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
-import { useQuizReferenceAnswers } from 'app/utils/hooks/queryHooks'
 
 interface QuizQuestion {
   question_id: number
@@ -71,10 +70,6 @@ const ReadModifyLecture = ({
   onDeleteQuestion,
   onSaveSuccess,
 }: ReadModifyLectureProps) => {
-  // Extract question IDs for fetching reference answers
-  const questionIds = quizQuestions.map((q) => q.question_id)
-  // Use the hook to get reference answers
-  const { isLoading: isLoadingReferenceAnswers } = useQuizReferenceAnswers(questionIds)
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {

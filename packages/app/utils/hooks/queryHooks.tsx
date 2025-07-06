@@ -300,12 +300,11 @@ export const useQuizSystem = () => {
   }
 
   // Mark quiz as completed (passed/failed)
-  const markQuizCompleted = useMutation({
-    mutationFn: async (params: { lectureId: number; passed: boolean }) => {
-      const rpcName = 'quiz_mark_completed' as keyof Database['public']['Functions']
-      const args: Database['public']['Functions']['quiz_mark_completed']['Args'] = {
+  const markLectureCompleted = useMutation({
+    mutationFn: async (params: { lectureId: number }) => {
+      const rpcName = 'lecture_mark_completed' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_mark_completed']['Args'] = {
         p_lecture_id: params.lectureId,
-        p_passed: params.passed,
       }
       const { data, error } = await supabaseClient.rpc(rpcName, args)
 
@@ -328,7 +327,7 @@ export const useQuizSystem = () => {
     recordQuizAnswer,
     useQuizResults,
     useQuizCompletion,
-    markQuizCompleted,
+    markLectureCompleted,
   }
 }
 
@@ -345,7 +344,6 @@ export const useUserEvents = () => {
         .from('system_events')
         .select('*')
         .order('created_at', { ascending: false })
-        .returns<SystemEvent[]>()
 
       if (error) throw error
       return data
@@ -537,8 +535,54 @@ export const useQuizOptions = (questionIds?: number[]) => {
 }
 
 // Hook to fetch reference answers from quiz_reference_answers table
+export const useQuizReferenceAnswer = (questionId?: number) => {
+  const supabaseClient = useSupabase()
+
+  // Define query key as a constant
+  const quizReferenceAnswersKey = questionId
+    ? ['quiz-reference-answers', questionId]
+    : (['quiz-reference-answers'] as const)
+
+  // Get quiz reference answers filtered by question ID if provided
+  const quizReferenceAnswersQuery = useQuery({
+    queryKey: quizReferenceAnswersKey,
+    queryFn: async () => {
+      // Start with the base query
+      let query = supabaseClient.from('quiz_reference_answers').select('*')
+
+      // Apply filter for specific question ID if provided
+      if (questionId) {
+        query = query.eq('question_id', questionId)
+      }
+
+      // Execute the query
+      const { data, error } = await query.order('id', { ascending: true })
+
+      if (error) throw error
+      return data
+    },
+    // Enable the query regardless of questionId being provided
+    enabled: true,
+  })
+
+  // Get reference answers for a specific question
+  const getReferenceAnswersForQuestion = (id: number) => {
+    if (!quizReferenceAnswersQuery.data) return []
+    return quizReferenceAnswersQuery.data.filter((answer) => answer.question_id === id)
+  }
+
+  return {
+    data: quizReferenceAnswersQuery.data,
+    isLoading: quizReferenceAnswersQuery.isLoading,
+    error: quizReferenceAnswersQuery.error,
+    refetch: quizReferenceAnswersQuery.refetch,
+    getReferenceAnswersForQuestion,
+  }
+}
+
+// Hook to fetch reference answers from quiz_reference_answers table TODO: this doesn't even work
 export const useQuizReferenceAnswers = (questionIds?: number[]) => {
-  const { supabaseClient } = useSessionContext()
+  const supabaseClient = useSupabase()
 
   // Define query key as a constant
   const quizReferenceAnswersKey = questionIds

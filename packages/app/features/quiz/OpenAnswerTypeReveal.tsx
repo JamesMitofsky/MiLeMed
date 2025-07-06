@@ -1,3 +1,4 @@
+import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
 import { QuestionForQuizComponent } from 'app/utils/supabase/databaseTypes'
 import React, { useState } from 'react'
 import { YStack, SizableText, Input, XStack, Button } from 'tamagui'
@@ -17,6 +18,12 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   hasRequestedAnswers,
   onSelfEvaluation,
 }) => {
+  const { data: openQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
+
+  // console.log('question id', question.question_id)
+
+  // console.log('\n\n\n\nREFERENCE ANSWER Singular', openQuestionAnswer)
+
   const [isShowingOpenQuestionAnswer, setIsShowingOpenQuestionAnswer] = useState(false)
   const [userHasSubmittedAnswer, setUserHasSubmittedAnswer] = useState(false)
 
@@ -27,6 +34,8 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   const handleSelfEvaluation = (isCorrect: boolean) => {
     onSelfEvaluation(isCorrect, value, question.question_id)
   }
+
+  // console.log('REFERENCE ANSWER Singular', openQuestionAnswer)
 
   return (
     <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
@@ -44,11 +53,14 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
       {hasRequestedAnswers && (
         <YStack my="$3" gap="$2">
           <SizableText fontWeight="bold">Kam deine Antwort ungefähr hin?</SizableText>
-
-          <SizableText m="$2">
-            lorem ipsum dolor sit amet, consectetur adipiscing elit. lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          </SizableText>
+          {openQuestionAnswer?.[0] !== undefined ? (
+            <SizableText m="$2">{openQuestionAnswer?.[0].answer_text}</SizableText>
+          ) : (
+            <SizableText m="$2">
+              Noch keine Antwort -- looks like we goofed something up! Please let us know in the
+              feedback panel! 🙏
+            </SizableText>
+          )}
 
           <XStack ai="center" jc="space-around">
             <Button onPress={() => handleSelfEvaluation(true)} theme="success">
@@ -60,11 +72,6 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
           </XStack>
         </YStack>
       )}
-      {/* {isShowingOpenQuestionAnswer && (
-        <YStack mt="$2" gap="$2">
-          <SizableText>Answers are visible</SizableText>
-        </YStack>
-      )} */}
     </YStack>
   )
 }
