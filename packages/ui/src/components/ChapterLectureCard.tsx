@@ -56,7 +56,7 @@ export const ChapterLectureCard = ({
           {progress && (
             <Progress
               mt="$2"
-              value={(progress.current / progress.full) * 100}
+              value={progress.full > 0 ? Math.floor((progress.current / progress.full) * 100) : 0}
               bg="$color2"
               boc="$color5"
               bw={1}

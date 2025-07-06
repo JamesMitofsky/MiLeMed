@@ -6,6 +6,118 @@ import { useSessionContext } from '../supabase/useSessionContext'
 import { useSupabase } from '../supabase/useSupabase'
 
 // Comprehensive Hooks Collection
+type Chapter = Pick<
+  Database['public']['Tables']['content_chapters']['Row'],
+  'id' | 'title' | 'sort_order'
+> & {
+  lectures: (Pick<
+    Database['public']['Tables']['content_lectures']['Row'],
+    'id' | 'title' | 'sort_order'
+  > & {
+    is_completed: boolean
+  })[]
+}
+
+export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode']) => {
+  const { supabaseClient, session } = useSessionContext()
+  const userId = session?.user.id
+
+  console.log('[useChaptersWithLectures] Hook initialized with mode:', mode)
+  console.log('[useChaptersWithLectures] User authenticated:', !!userId)
+
+  return useQuery<Chapter[], Error>({
+    queryKey: ['chaptersWithLectures', userId, mode],
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5, // 5m
+    cacheTime: 1000 * 60 * 30, // 30m
+    queryFn: async () => {
+      console.log('[useChaptersWithLectures] queryFn executing')
+      if (!userId) {
+        console.error('[useChaptersWithLectures] Not authenticated')
+        throw new Error('Not authenticated')
+      }
+
+      // 1️⃣ load chapters, optionally filtering by mode
+      console.log('[useChaptersWithLectures] Fetching chapters with mode:', mode || 'all')
+      let chapterQuery = supabaseClient
+        .from('content_chapters')
+        .select('id, title, sort_order')
+        .order('sort_order', { ascending: true })
+
+      if (mode) {
+        chapterQuery = chapterQuery.eq('mode', mode)
+      }
+
+      const { data: chapters, error: chapErr } = await chapterQuery
+      if (chapErr || !chapters) {
+        console.error('[useChaptersWithLectures] Chapter fetch error:', chapErr)
+        throw chapErr
+      }
+      console.log('[useChaptersWithLectures] Chapters fetched:', chapters.length)
+
+      // 2️⃣ load lectures for those chapters
+      const chapterIds = chapters.map((c) => c.id)
+      console.log('[useChaptersWithLectures] Fetching lectures for chapter IDs:', chapterIds)
+      const { data: lectures, error: lectErr } = await supabaseClient
+        .from('content_lectures')
+        .select('id, title, sort_order, chapter_id')
+        .in('chapter_id', chapterIds)
+        .order('sort_order', { ascending: true })
+      if (lectErr || !lectures) {
+        console.error('[useChaptersWithLectures] Lecture fetch error:', lectErr)
+        throw lectErr
+      }
+      console.log('[useChaptersWithLectures] Lectures fetched:', lectures.length)
+
+      // 3️⃣ load completed lecture IDs (LECTURE_COMPLETED)
+      console.log('[useChaptersWithLectures] Fetching completed lectures for user')
+      const { data: completions, error: compErr } = await supabaseClient
+        .from('system_events')
+        .select('lecture_id')
+        .eq('event_type', 'LECTURE_COMPLETED')
+        .eq('profile_id', userId)
+      if (compErr || !completions) {
+        console.error('[useChaptersWithLectures] Completions fetch error:', compErr)
+        throw compErr
+      }
+      
+      // Log raw completions data to see what we're getting from the database
+      console.log('[useChaptersWithLectures] Raw completions data:', JSON.stringify(completions))
+      
+      // Check for null or undefined lecture_ids
+      const validCompletions = completions.filter(c => c.lecture_id != null)
+      if (validCompletions.length !== completions.length) {
+        console.warn('[useChaptersWithLectures] Found completions with null lecture_id:', 
+          completions.filter(c => c.lecture_id == null).length)
+      }
+      
+      const completedSet = new Set(validCompletions.map((c) => c.lecture_id!))
+      console.log('[useChaptersWithLectures] Completed lecture IDs:', Array.from(completedSet))
+      console.log('[useChaptersWithLectures] Completed lectures count:', completedSet.size)
+
+      // 4️⃣ merge
+      console.log('[useChaptersWithLectures] Merging data for final result')
+      const result = chapters.map((c) => ({
+        ...c,
+        lectures: lectures
+          .filter((l) => l.chapter_id === c.id)
+          .map((l) => ({
+            id: l.id,
+            title: l.title,
+            sort_order: l.sort_order,
+            is_completed: completedSet.has(l.id),
+          })),
+      }))
+      console.log(
+        '[useChaptersWithLectures] Final result:',
+        result.length,
+        'chapters with lectures'
+      )
+      return result
+    },
+  })
+}
+
 export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
   const supabase = useSupabase()
 
@@ -43,17 +155,39 @@ export const useLectureById = (lectureId: number) => {
   const { supabaseClient } = useSessionContext()
   const getLectureByIdKey = (id: number) => ['lecture', id] as const
 
+  console.log('📌 useLectureById - Hook called with lectureId:', lectureId)
+  console.log('📌 useLectureById - Enabled:', !!lectureId)
+
   return useQuery({
     queryKey: getLectureByIdKey(lectureId),
     queryFn: async () => {
+      console.log('📌 useLectureById - queryFn executing')
       const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
       const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
         p_lecture_id: lectureId,
       }
-      const { data, error } = await supabaseClient.rpc(rpcName, args)
+      console.log('📌 useLectureById - Making RPC call with args:', args)
 
-      if (error) throw error
-      return data[0] // Returns the first (and only) result
+      try {
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
+        console.log('📌 useLectureById - RPC response:', { data, error })
+
+        if (error) {
+          console.error('📌 useLectureById - Error from RPC call:', error)
+          throw error
+        }
+
+        if (!data || data.length === 0) {
+          console.warn('📌 useLectureById - No data returned from RPC call')
+          return null
+        }
+
+        console.log('📌 useLectureById - Returning data[0]:', data[0])
+        return data[0] // Returns the first (and only) result
+      } catch (e) {
+        console.error('📌 useLectureById - Exception caught:', e)
+        throw e
+      }
     },
     enabled: !!lectureId,
   })
