@@ -1,7 +1,7 @@
 import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
 import { QuestionForQuizComponent } from 'app/utils/supabase/databaseTypes'
 import React, { useState } from 'react'
-import { YStack, SizableText, Input, XStack, Button } from 'tamagui'
+import { YStack, SizableText, Input } from 'tamagui'
 
 interface OpenAnswerTypeRevealProps {
   question: QuestionForQuizComponent
@@ -62,14 +62,14 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
             </SizableText>
           )}
 
-          <XStack ai="center" jc="space-around">
+          {/* <XStack ai="center" jc="space-around">
             <Button onPress={() => handleSelfEvaluation(true)} theme="success">
               Das passt!
             </Button>
             <Button onPress={() => handleSelfEvaluation(false)} theme="error">
               Ich übe noch!
             </Button>
-          </XStack>
+          </XStack> */}
         </YStack>
       )}
     </YStack>

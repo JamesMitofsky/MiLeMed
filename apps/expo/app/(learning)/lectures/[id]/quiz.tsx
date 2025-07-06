@@ -202,7 +202,7 @@ const QuizForm: React.FC = () => {
                   </View>
                 )
               })}
-              {!hasVisibleAnswers ? (
+              {!hasVisibleAnswers && (
                 <Button
                   onPress={() => {
                     setHasVisibleAnswers(true)
@@ -211,10 +211,10 @@ const QuizForm: React.FC = () => {
                 >
                   Alle Antworten senden
                 </Button>
-              ) : (
+              )}
+              {hasVisibleAnswers && questions?.length === Object.keys(userResponses).length && (
                 <Button
                   onPress={() => {
-                    setHasVisibleAnswers(true)
                     submitAllFinalAnswersToServer()
                   }}
                   theme="brandPrimary"
