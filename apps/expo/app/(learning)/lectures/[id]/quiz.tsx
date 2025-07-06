@@ -73,7 +73,7 @@ const QuizForm: React.FC = () => {
 
   // these are the answer ids for all questions
   const [answerIds, setAnswerIds] = useState<{ [key: number]: number[] }>({})
-  const [areAnswersVisible, setAreAnswersVisible] = useState(false)
+  const [hasVisibleAnswers, setHasVisibleAnswers] = useState(false)
 
   const toast = useToastController()
   const [sessionId, setSessionId] = useState<string | null>(null)
@@ -150,13 +150,9 @@ const QuizForm: React.FC = () => {
     [user, sessionId, recordQuizAnswer, lectureId, toast]
   )
 
-  const initialSubmit = useCallback(async () => {
-    console.log('submitting quiz')
-  }, [])
-
   // this is called when the user has decided whether their open choice answer is correct or not
-  const secondarySubmit = useCallback(async () => {
-    console.log('submitting quiz')
+  const submitToServer = useCallback(async () => {
+    console.log('submitting quiz to server')
   }, [])
 
   if (!questions) {
@@ -180,9 +176,6 @@ const QuizForm: React.FC = () => {
           <ScrollView>
             <YStack gap="$4" p="$4">
               {questions?.map((question) => {
-                // console.log('answerIds', answerIds)
-                // console.log('question.question_id', question.question_id)
-
                 return (
                   <View key={question.question_id}>
                     {question.question_type === 'MULTIPLE_CHOICE' ? (
@@ -199,21 +192,35 @@ const QuizForm: React.FC = () => {
                           updateUserWrittenAnswers(userSubmittedText, questionId)
                         }
                         value={userResponses[question.question_id] as string}
+                        hasRequestedAnswers={hasVisibleAnswers}
+                        onSelfEvaluation={(isCorrect, answerText, questionId) =>
+                          updateAnswerCorrectness(questionId, isCorrect, answerText)
+                        }
                       />
                     )}
                   </View>
                 )
               })}
-              <Button
-                onPress={() => {
-                  setAreAnswersVisible(true)
-                  initialSubmit()
-                }}
-                disabled={!hasEvaluatedMultipleChoice}
-                themeInverse={hasEvaluatedMultipleChoice}
-              >
-                Quiz abschließen
-              </Button>
+              {!hasVisibleAnswers ? (
+                <Button
+                  onPress={() => {
+                    setHasVisibleAnswers(true)
+                  }}
+                  theme="brandSecondary"
+                >
+                  Alle Antworten senden
+                </Button>
+              ) : (
+                <Button
+                  onPress={() => {
+                    setHasVisibleAnswers(true)
+                    submitToServer()
+                  }}
+                  theme="brandPrimary"
+                >
+                  Vortrag abschließen
+                </Button>
+              )}
             </YStack>
           </ScrollView>
         </KeyboardAvoidingView>
