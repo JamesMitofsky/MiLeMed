@@ -182,6 +182,7 @@ const QuizForm: React.FC = () => {
                         onSelectOption={(selectedOptionId, questionId) =>
                           updateUserSelectedAnswers(selectedOptionId, questionId)
                         }
+                        hasAnswersVisible={hasAnswersVisible}
                       />
                     ) : (
                       <OpenAnswerTypeReveal

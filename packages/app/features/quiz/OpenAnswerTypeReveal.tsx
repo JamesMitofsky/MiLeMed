@@ -1,6 +1,6 @@
 import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
 import { QuestionForQuizComponent } from 'app/utils/supabase/databaseTypes'
-import React, { useState } from 'react'
+import React from 'react'
 import { YStack, SizableText, Input } from 'tamagui'
 
 interface OpenAnswerTypeRevealProps {
@@ -16,7 +16,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   onTextInput,
   value,
   hasAnswersVisible,
-  onSelfEvaluation,
+  // onSelfEvaluation,
 }) => {
   const { data: openQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
 
@@ -24,16 +24,16 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
 
   // console.log('\n\n\n\nREFERENCE ANSWER Singular', openQuestionAnswer)
 
-  const [isShowingOpenQuestionAnswer, setIsShowingOpenQuestionAnswer] = useState(false)
-  const [userHasSubmittedAnswer, setUserHasSubmittedAnswer] = useState(false)
+  // const [isShowingOpenQuestionAnswer, setIsShowingOpenQuestionAnswer] = useState(false)
+  // const [userHasSubmittedAnswer, setUserHasSubmittedAnswer] = useState(false)
 
-  const handleShowOpenQuestionAnswer = () => {
-    setIsShowingOpenQuestionAnswer(true)
-  }
+  // const handleShowOpenQuestionAnswer = () => {
+  //   setIsShowingOpenQuestionAnswer(true)
+  // }
 
-  const handleSelfEvaluation = (isCorrect: boolean) => {
-    onSelfEvaluation(isCorrect, value, question.question_id)
-  }
+  // const handleSelfEvaluation = (isCorrect: boolean) => {
+  //   onSelfEvaluation(isCorrect, value, question.question_id)
+  // }
 
   // console.log('REFERENCE ANSWER Singular', openQuestionAnswer)
 
@@ -48,6 +48,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         multiline
         numberOfLines={5}
         mt="$2"
+        disabled={hasAnswersVisible}
       />
 
       {hasAnswersVisible && (
