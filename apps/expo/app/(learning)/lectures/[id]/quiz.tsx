@@ -39,12 +39,6 @@ const QuizForm: React.FC = () => {
   // Fetch reference answers for all questions
   const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
 
-  console.log('reference answer data')
-
-  // console.log('optionsData', optionsData)
-
-  // Define the Question type for proper type inference
-
   // Combine questions with their options and reference answers
   const questions: QuestionForQuizComponent[] | null = useMemo(() => {
     if (!quizQuestions || !optionsData) return null
@@ -111,7 +105,7 @@ const QuizForm: React.FC = () => {
     }))
   }, [])
 
-  const updateAnswerCorrectness = useCallback(
+  const submitEvaluationOfOpenAnswer = useCallback(
     async (
       questionId: number,
       isCorrect: boolean,
@@ -151,9 +145,14 @@ const QuizForm: React.FC = () => {
   )
 
   // this is called when the user has decided whether their open choice answer is correct or not
-  const submitToServer = useCallback(async () => {
-    console.log('submitting quiz to server')
-  }, [])
+  const submitAllFinalAnswersToServer = useCallback(async () => {
+    console.log('submitting quiz to server', userResponses)
+    toast.show('Quiz abgeschlossen', {
+      message: 'Gut gemacht!',
+      duration: 3000,
+    })
+    setUserResponses([])
+  }, [userResponses])
 
   if (!questions) {
     return (
@@ -194,7 +193,7 @@ const QuizForm: React.FC = () => {
                         value={userResponses[question.question_id] as string}
                         hasRequestedAnswers={hasVisibleAnswers}
                         onSelfEvaluation={(isCorrect, answerText, questionId) =>
-                          updateAnswerCorrectness(questionId, isCorrect, answerText)
+                          submitEvaluationOfOpenAnswer(questionId, isCorrect, answerText)
                         }
                       />
                     )}
@@ -214,7 +213,7 @@ const QuizForm: React.FC = () => {
                 <Button
                   onPress={() => {
                     setHasVisibleAnswers(true)
-                    submitToServer()
+                    submitAllFinalAnswersToServer()
                   }}
                   theme="brandPrimary"
                 >
