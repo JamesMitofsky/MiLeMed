@@ -9,9 +9,8 @@ import {
   useQuizReferenceAnswers,
 } from 'app/utils/hooks/queryHooks'
 import { useUser } from 'app/utils/useUser'
-import { randomUUID } from 'expo-crypto'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
@@ -22,22 +21,19 @@ const QuizForm: React.FC = () => {
     params: { id: lectureId },
   } = useParams()
 
-  const router = useRouter()
+  // HOOKS
   const { user } = useUser()
+
+  const toast = useToastController()
   const { data: lecture } = useLectureById(lectureId)
   const { useQuizResults, recordQuizAnswer, markLectureCompleted } = useQuizSystem()
   const { data: quizQuestions } = useQuizResults(lectureId)
-
   // Extract question IDs from the quiz questions
   const questionIds = useMemo(() => {
     return quizQuestions?.map((question: { question_id: any }) => question.question_id) || []
   }, [quizQuestions])
-
   // Fetch options for all questions
   const { data: optionsData } = useQuizOptions(questionIds)
-
-  // console.log('Question IDs:', questionIds)
-
   // Fetch reference answers for all questions
   const { data: referenceAnswersData } = useQuizReferenceAnswers(questionIds)
 
@@ -65,42 +61,29 @@ const QuizForm: React.FC = () => {
     })
   }, [quizQuestions, optionsData, referenceAnswersData])
 
-  const [hasEvaluatedMultipleChoice, setHasEvaluatedMultipleChoice] = useState(false)
-
-  // these are the answer ids for all questions
-  const [answerIds, setAnswerIds] = useState<{ [key: number]: number[] }>({})
+  // STATES
   const [hasVisibleAnswers, setHasVisibleAnswers] = useState(false)
-
-  const toast = useToastController()
-  const [sessionId, setSessionId] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (!sessionId) {
-      const newId = randomUUID()
-      setSessionId(newId)
-    }
-  }, [sessionId])
-
-  // IMPORTANT: the key is the question id and the value is the selected option id. It will contain the responses to all questions
+  /** Stores all user responses to quiz questions */
   const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
 
-  // console.log('\n\n\nuserResponses', userResponses)
-
+  /**
+   * Updates the user's selected answers for multiple choice questions
+   * @param selectedOptionId - The ID of the selected option
+   * @param questionId - The ID of the question being answered
+   */
   const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
-    // console.log('\n\n\n')
-    // console.log('Saving selected answer!')
-    // console.log('selectedOptionId', selectedOptionId)
-    // console.log('questionId', questionId)
-    // console.log('\n\n\n')
     setUserResponses((prev) => ({
       ...prev,
       [questionId]: [selectedOptionId],
     }))
   }, [])
 
+  /**
+   * Updates the user's written answers for open answer questions
+   * @param userSubmittedText - The text submitted by the user
+   * @param questionId - The ID of the question being answered
+   */
   const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
-    // console.log('userSubmittedText', userSubmittedText)
-    // console.log('questionId', questionId)
     setUserResponses((prev) => ({
       ...prev,
       [questionId]: userSubmittedText,
@@ -108,17 +91,17 @@ const QuizForm: React.FC = () => {
   }, [])
 
   const submitEvaluationOfOpenAnswer = useCallback(
-    async (
-      questionId: number,
-      isCorrect: boolean,
-      answerText?: string,
-      chosenOptionIds?: number[]
-    ) => {
-      if (!user || !sessionId) return
+    async (questionId: number, isCorrect: boolean, answerText: string) => {
+      if (!user) return null
 
-      // we are checking to see if open answer is right!
+      // // we are checking to see if open answer is right!
+      // recordQuizAnswer.mutate({
+      //   questionId,
+      //   answerText,
+      //   lectureId,
+      // })
     },
-    [user, sessionId, recordQuizAnswer, lectureId, toast]
+    [user, recordQuizAnswer, lectureId, toast]
   )
 
   const { navigate } = useRouter()
