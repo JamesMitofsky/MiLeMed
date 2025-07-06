@@ -10,7 +10,7 @@ import {
 } from 'app/utils/hooks/queryHooks'
 import { useUser } from 'app/utils/useUser'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
@@ -47,8 +47,9 @@ const QuizForm: React.FC = () => {
 
   // HOOKS
   const { user } = useUser()
-
+  const { navigate } = useRouter()
   const toast = useToastController()
+
   const { data: lecture } = useLectureById(lectureId)
   const { useQuizResults, recordQuizAnswer, markLectureCompleted } = useQuizSystem()
   const { data: quizQuestions } = useQuizResults(lectureId)
@@ -87,12 +88,13 @@ const QuizForm: React.FC = () => {
 
   // STATES
   const [hasAnswersVisible, setHasAnswersVisible] = useState(false)
-  /** Stores all user responses to quiz questions */
-
-  // const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
-  // const [userResponses, setUserResponses] = useState<QuizResponse[]>([])
-
   const [userResponses, setUserResponses] = useState<UserResponsesMap>({})
+  // this groups all OPTION and TEXT choices that have been marked correct or incorrect, regardles of correctness
+  const [questionsThatHaveBeenEvaluated, setQuestionsThatHaveBeenEvaluated] = useState<{
+    [questionId: number]: boolean | undefined
+  }>({})
+
+  console.log('TEST', questionsThatHaveBeenEvaluated)
 
   // FUNCTIONS
 
@@ -102,7 +104,6 @@ const QuizForm: React.FC = () => {
    * @param questionId - The ID of the question being answered
    */
   const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
-    console.log('selectedOptionId', selectedOptionId)
     setUserResponses((prev) => ({
       ...prev,
       [questionId]: {
@@ -111,6 +112,18 @@ const QuizForm: React.FC = () => {
         selected_option_id: selectedOptionId,
       },
     }))
+
+    // check if this selectedOptionIsRight
+    const isCorrect =
+      referenceAnswersData?.some((option) => {
+        // Find if this option is in the reference answers
+        const isReferenceAnswer = referenceAnswersData?.some(
+          (answer) => answer.question_id === questionId && answer.option_id === selectedOptionId
+        )
+        return option.option_id === selectedOptionId && isReferenceAnswer
+      }) || false
+
+    updateTextResponseCorrectness(questionId, isCorrect)
   }, [])
 
   const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
@@ -124,34 +137,78 @@ const QuizForm: React.FC = () => {
     }))
   }, [])
 
-  console.log('userResponses', userResponses)
+  // Initialize questionsUserHasCorrectlyAnswered when questions are loaded
+  useEffect(() => {
+    if (questions) {
+      const initialAnswerState = questions.reduce((acc, question) => {
+        // Only add entries that have a defined value
+        // Since we're initializing, we'll skip adding undefined values
+        return acc
+      }, {} as { [questionId: number]: boolean | undefined })
+
+      setQuestionsThatHaveBeenEvaluated(initialAnswerState)
+    }
+  }, [questions])
+
+  // trying to make sure all questions are evaluated before showing next button
+  const hasAnsweredAllQuestions = useMemo(() => {
+    // console.log('questionsThatHaveBeenEvaluated', questionsThatHaveBeenEvaluated)
+    // console.log('questions', questions)
+    // console.log(
+    //   'questionsThatHaveBeenEvaluated.length',
+    //   Object.values(questionsThatHaveBeenEvaluated).length
+    // )
+    // console.log('questions.length', questions.length)
+
+    console.log('\n\n\nTEST')
+    console.log(Object.values(questionsThatHaveBeenEvaluated).length === questions?.length)
+
+    console.log(Object.values(questionsThatHaveBeenEvaluated).length)
+    console.log(questions?.length)
+    return Object.values(questionsThatHaveBeenEvaluated).length === questions?.length
+  }, [questionsThatHaveBeenEvaluated, questions])
+
+  const hasAnsweredAllQuestionsCorrectly = useMemo(() => {
+    // Check if we have the correct number of answers and all are true
+    return (
+      questions &&
+      Object.keys(questionsThatHaveBeenEvaluated).length === questions.length &&
+      Object.values(questionsThatHaveBeenEvaluated).every((value) => value)
+    )
+  }, [questionsThatHaveBeenEvaluated, questions])
+
+  const updateTextResponseCorrectness = useCallback((questionId: number, isCorrect: boolean) => {
+    setQuestionsThatHaveBeenEvaluated((prev) => ({
+      ...prev,
+      [questionId]: isCorrect,
+    }))
+  }, [])
 
   const submitEvaluationOfOpenAnswer = useCallback(
-    async (questionId: number, isCorrect: boolean, answerText: string) => {
-      if (!user) return null
-
-      // // we are checking to see if open answer is right!
-      // recordQuizAnswer.mutate({
-      //   questionId,
-      //   answerText,
-      //   lectureId,
-      // })
+    async (questionId: number, isCorrect: boolean) => {
+      updateTextResponseCorrectness(questionId, isCorrect)
     },
     [user, recordQuizAnswer, lectureId, toast]
   )
 
-  const { navigate } = useRouter()
-
   // this is called when the user has decided whether their open choice answer is correct or not
   const submitAllFinalAnswersToServer = useCallback(async () => {
-    console.log('submitting quiz to server', userResponses)
-    markLectureCompleted.mutate({ lectureId })
-    toast.show('Quiz abgeschlossen', {
-      message: 'Gut gemacht!',
-      duration: 3000,
-    })
-    navigate('/')
-  }, [userResponses])
+    if (hasAnsweredAllQuestionsCorrectly) {
+      console.log('submitting quiz to server', userResponses)
+      await markLectureCompleted.mutate({ lectureId })
+      navigate('/')
+      toast.show('Quiz abgeschlossen', {
+        message: 'Gut gemacht!',
+        duration: 3000,
+      })
+    } else {
+      navigate('/')
+      toast.show('Quiz nicht abgeschlossen', {
+        message: 'Noch nicht alle Fragen beantwortet',
+        duration: 3000,
+      })
+    }
+  }, [hasAnsweredAllQuestionsCorrectly])
 
   if (!questions) {
     return (
@@ -195,8 +252,8 @@ const QuizForm: React.FC = () => {
                           return response?.type === 'TEXT' ? response.answer_text : ''
                         })()}
                         hasAnswersVisible={hasAnswersVisible}
-                        onSelfEvaluation={(isCorrect, answerText, questionId) =>
-                          submitEvaluationOfOpenAnswer(questionId, isCorrect, answerText)
+                        onSelfEvaluation={(isCorrect, questionId) =>
+                          submitEvaluationOfOpenAnswer(questionId, isCorrect)
                         }
                       />
                     )}
@@ -213,7 +270,7 @@ const QuizForm: React.FC = () => {
                   Alle Antworten senden
                 </Button>
               )}
-              {hasAnswersVisible && questions?.length === Object.keys(userResponses).length && (
+              {hasAnsweredAllQuestions && (
                 <Button
                   onPress={() => {
                     submitAllFinalAnswersToServer()

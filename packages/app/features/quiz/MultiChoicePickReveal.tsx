@@ -52,7 +52,7 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
               <RadioGroup.Item
                 backgroundColor={
                   hasAnswersVisible && optionQuestionAnswer?.[0].option_id === option.id
-                    ? '$green5Light'
+                    ? '$green7Light'
                     : undefined
                 }
                 id={uniqueId + option.id}
@@ -61,7 +61,16 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
                 <RadioGroup.Indicator />
               </RadioGroup.Item>
             </View>
-            <SizableText textWrap="wrap">{option.option_text}</SizableText>
+            <SizableText
+              textWrap="wrap"
+              color={
+                hasAnswersVisible && optionQuestionAnswer?.[0].option_id === option.id
+                  ? '$green10Light'
+                  : undefined
+              }
+            >
+              {option.option_text}
+            </SizableText>
           </XStack>
         ))}
       </RadioGroup>

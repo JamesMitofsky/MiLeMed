@@ -1,14 +1,14 @@
 import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
 import { QuestionForQuizComponent } from 'app/utils/supabase/databaseTypes'
-import React from 'react'
-import { YStack, SizableText, Input } from 'tamagui'
+import React, { useState } from 'react'
+import { YStack, SizableText, Input, Button, XStack } from 'tamagui'
 
 interface OpenAnswerTypeRevealProps {
   question: QuestionForQuizComponent
   onTextInput: (userSubmittedText: string, questionId: number) => void
   value: string
   hasAnswersVisible: boolean
-  onSelfEvaluation: (isCorrect: boolean, answerText: string, questionId: number) => void
+  onSelfEvaluation: (isCorrect: boolean, questionId: number) => void
 }
 
 const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
@@ -16,9 +16,11 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   onTextInput,
   value,
   hasAnswersVisible,
-  // onSelfEvaluation,
+  onSelfEvaluation,
 }) => {
   const { data: openQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
+
+  const [formState, setFormState] = useState<undefined | 'SUCCESS' | 'FAILURE'>()
 
   // console.log('question id', question.question_id)
 
@@ -31,9 +33,10 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   //   setIsShowingOpenQuestionAnswer(true)
   // }
 
-  // const handleSelfEvaluation = (isCorrect: boolean) => {
-  //   onSelfEvaluation(isCorrect, value, question.question_id)
-  // }
+  const handleSelfEvaluation = (isCorrect: boolean) => {
+    setFormState(isCorrect ? 'SUCCESS' : 'FAILURE')
+    onSelfEvaluation(isCorrect, question.question_id)
+  }
 
   // console.log('REFERENCE ANSWER Singular', openQuestionAnswer)
 
@@ -62,15 +65,26 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
               feedback panel! 🙏
             </SizableText>
           )}
-
-          {/* <XStack ai="center" jc="space-around">
-            <Button onPress={() => handleSelfEvaluation(true)} theme="success">
-              Das passt!
-            </Button>
-            <Button onPress={() => handleSelfEvaluation(false)} theme="error">
-              Ich übe noch!
-            </Button>
-          </XStack> */}
+          {!formState && (
+            <XStack ai="center" jc="space-around">
+              <Button onPress={() => handleSelfEvaluation(true)} theme="success">
+                Das passt!
+              </Button>
+              <Button onPress={() => handleSelfEvaluation(false)} theme="error">
+                Ich übe noch!
+              </Button>
+            </XStack>
+          )}
+          {formState === 'SUCCESS' && (
+            <SizableText m="$2" fontWeight="bold" theme="success">
+              Gut gemacht! 🎉
+            </SizableText>
+          )}
+          {formState === 'FAILURE' && (
+            <SizableText m="$2" fontWeight="bold" theme="error">
+              Kein Problem, beim nächsten Mal klappt's bestimmt! 💪
+            </SizableText>
+          )}
         </YStack>
       )}
     </YStack>
