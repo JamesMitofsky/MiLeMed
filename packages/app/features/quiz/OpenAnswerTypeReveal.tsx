@@ -7,7 +7,7 @@ interface OpenAnswerTypeRevealProps {
   question: QuestionForQuizComponent
   onTextInput: (userSubmittedText: string, questionId: number) => void
   value: string
-  hasRequestedAnswers: boolean
+  hasAnswersVisible: boolean
   onSelfEvaluation: (isCorrect: boolean, answerText: string, questionId: number) => void
 }
 
@@ -15,7 +15,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   question,
   onTextInput,
   value,
-  hasRequestedAnswers,
+  hasAnswersVisible,
   onSelfEvaluation,
 }) => {
   const { data: openQuestionAnswer } = useQuizReferenceAnswer(question.question_id)
@@ -50,7 +50,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         mt="$2"
       />
 
-      {hasRequestedAnswers && (
+      {hasAnswersVisible && (
         <YStack my="$3" gap="$2">
           <SizableText fontWeight="bold">Kam deine Antwort ungefähr hin?</SizableText>
           {openQuestionAnswer?.[0] !== undefined ? (

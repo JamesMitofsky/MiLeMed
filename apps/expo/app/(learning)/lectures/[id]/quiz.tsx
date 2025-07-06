@@ -86,7 +86,7 @@ const QuizForm: React.FC = () => {
   }, [quizQuestions, optionsData, referenceAnswersData])
 
   // STATES
-  const [hasVisibleAnswers, setHasVisibleAnswers] = useState(false)
+  const [hasAnswersVisible, setHasAnswersVisible] = useState(false)
   /** Stores all user responses to quiz questions */
 
   // const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
@@ -193,7 +193,7 @@ const QuizForm: React.FC = () => {
                           const response = userResponses[question.question_id]
                           return response?.type === 'TEXT' ? response.answer_text : ''
                         })()}
-                        hasRequestedAnswers={hasVisibleAnswers}
+                        hasAnswersVisible={hasAnswersVisible}
                         onSelfEvaluation={(isCorrect, answerText, questionId) =>
                           submitEvaluationOfOpenAnswer(questionId, isCorrect, answerText)
                         }
@@ -202,17 +202,17 @@ const QuizForm: React.FC = () => {
                   </View>
                 )
               })}
-              {!hasVisibleAnswers && (
+              {!hasAnswersVisible && (
                 <Button
                   onPress={() => {
-                    setHasVisibleAnswers(true)
+                    setHasAnswersVisible(true)
                   }}
                   theme="brandSecondary"
                 >
                   Alle Antworten senden
                 </Button>
               )}
-              {hasVisibleAnswers && questions?.length === Object.keys(userResponses).length && (
+              {hasAnswersVisible && questions?.length === Object.keys(userResponses).length && (
                 <Button
                   onPress={() => {
                     submitAllFinalAnswersToServer()
