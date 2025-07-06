@@ -15,6 +15,30 @@ import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
 
+/**
+ * Represents a quiz response where the user selected an option.
+ */
+type OptionResponse = {
+  question_id: number
+  type: 'OPTION'
+  selected_option_id: number
+}
+
+/**
+ * Represents a quiz response where the user provided a text answer.
+ */
+type TextResponse = {
+  question_id: number
+  type: 'TEXT'
+  answer_text: string
+}
+
+/**
+ * A user's response to a quiz question, either option or text.
+ */
+type QuizResponse = OptionResponse | TextResponse
+type UserResponsesMap = Record<number, QuizResponse>
+
 const { useParams } = createParam<{ id: number }>()
 const QuizForm: React.FC = () => {
   const {
@@ -64,7 +88,13 @@ const QuizForm: React.FC = () => {
   // STATES
   const [hasVisibleAnswers, setHasVisibleAnswers] = useState(false)
   /** Stores all user responses to quiz questions */
-  const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
+
+  // const [userResponses, setUserResponses] = useState<{ [key: number]: number | string }[]>([])
+  // const [userResponses, setUserResponses] = useState<QuizResponse[]>([])
+
+  const [userResponses, setUserResponses] = useState<UserResponsesMap>({})
+
+  // FUNCTIONS
 
   /**
    * Updates the user's selected answers for multiple choice questions
@@ -72,23 +102,29 @@ const QuizForm: React.FC = () => {
    * @param questionId - The ID of the question being answered
    */
   const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
+    console.log('selectedOptionId', selectedOptionId)
     setUserResponses((prev) => ({
       ...prev,
-      [questionId]: [selectedOptionId],
+      [questionId]: {
+        question_id: questionId,
+        type: 'OPTION',
+        selected_option_id: selectedOptionId,
+      },
     }))
   }, [])
 
-  /**
-   * Updates the user's written answers for open answer questions
-   * @param userSubmittedText - The text submitted by the user
-   * @param questionId - The ID of the question being answered
-   */
   const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
     setUserResponses((prev) => ({
       ...prev,
-      [questionId]: userSubmittedText,
+      [questionId]: {
+        question_id: questionId,
+        type: 'TEXT',
+        answer_text: userSubmittedText,
+      },
     }))
   }, [])
+
+  console.log('userResponses', userResponses)
 
   const submitEvaluationOfOpenAnswer = useCallback(
     async (questionId: number, isCorrect: boolean, answerText: string) => {
@@ -153,7 +189,10 @@ const QuizForm: React.FC = () => {
                         onTextInput={(userSubmittedText, questionId) =>
                           updateUserWrittenAnswers(userSubmittedText, questionId)
                         }
-                        value={userResponses[question.question_id] as string}
+                        value={(() => {
+                          const response = userResponses[question.question_id]
+                          return response?.type === 'TEXT' ? response.answer_text : ''
+                        })()}
                         hasRequestedAnswers={hasVisibleAnswers}
                         onSelfEvaluation={(isCorrect, answerText, questionId) =>
                           submitEvaluationOfOpenAnswer(questionId, isCorrect, answerText)
