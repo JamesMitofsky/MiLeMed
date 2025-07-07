@@ -25,8 +25,6 @@ const ListOfLectures = ({ chapterId, limit }: ListOfLecturesProps) => {
     return <Text>Keine Lektionen gefunden.</Text>
   }
 
-  console.log('Lectures:', lectures)
-
   return (
     <YStack my="$4" gap="$3">
       {lectures.map((lecture, index) => (
