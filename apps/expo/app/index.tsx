@@ -24,16 +24,22 @@ function AppVersionCheck({ MainComponent }: { MainComponent: JSX.Element }) {
 
   if (needsUpdate) {
     return (
-      <YStack flex={1} alignItems="center" justifyContent="center" padding="$6" gap="$4">
-        <SizableText
-          style={{ fontSize: 32, fontWeight: 'bold', marginBottom: 24, textAlign: 'center' }}
-        >
+      <YStack
+        flex={1}
+        height="100%"
+        alignItems="center"
+        justifyContent="center"
+        pb="$18"
+        px="$6"
+        gap="$6"
+      >
+        <SizableText size="$9" fontWeight="bold" textAlign="center">
           Zeit für dein Glow-Up! ✨
         </SizableText>
-        <SizableText style={{ fontSize: 22, textAlign: 'center', marginBottom: 14 }}>
+        <SizableText size="$6" textAlign="center">
           Ups! Deine App braucht ein kleines Zauber-Upgrade!
         </SizableText>
-        <SizableText style={{ fontSize: 20, textAlign: 'center', marginBottom: 24 }}>
+        <SizableText size="$5" textAlign="center">
           Wir haben ein paar fantastische neue Features für dich parat!
         </SizableText>
         <Button
