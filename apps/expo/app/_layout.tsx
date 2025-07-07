@@ -85,7 +85,6 @@ export default function RootLayout() {
           })}
           drawerContent={(props) => <SidebarDrawer {...props} />}
         />
-        {/* </AppVersionCheck> */}
       </Provider>
     </GestureHandlerRootView>
   )
