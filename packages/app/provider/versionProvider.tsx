@@ -1,4 +1,5 @@
 import { useSupabase } from 'app/utils/supabase/useSupabase'
+import { useUser } from 'app/utils/useUser'
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 interface VersionProviderState {
@@ -40,9 +41,11 @@ export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) =>
   const [dbVersion, setDbVersion] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = useSupabase()
+  const { user } = useUser()
 
   useEffect(() => {
     const fetchDbVersion = async () => {
+      if (!user) return
       try {
         const { data, error } = await supabase
           .from('db_version')
@@ -66,7 +69,7 @@ export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) =>
     }
 
     fetchDbVersion()
-  }, [supabase])
+  }, [supabase, user])
 
   const value: VersionProviderState = {
     appVersion: APP_VERSION,
