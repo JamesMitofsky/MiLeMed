@@ -1,11 +1,9 @@
 import { XStack, SizableText } from '@my/ui'
 import { ArrowLeft } from '@tamagui/lucide-icons'
-import { useRouter } from 'solito/router'
 
-const CustomHeader = () => {
-  const router = useRouter()
+const CustomHeader = ({ onBack }: { onBack: () => void }) => {
   return (
-    <XStack ai="center" gap="$2" px="$4" pt="$6" bg="white" onPress={() => router.back()}>
+    <XStack ai="center" gap="$2" px="$4" pt="$6" bg="white" onPress={onBack}>
       <ArrowLeft />
       <SizableText size="$5">Zurück</SizableText>
     </XStack>
