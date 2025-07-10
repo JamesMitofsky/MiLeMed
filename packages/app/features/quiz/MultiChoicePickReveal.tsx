@@ -1,7 +1,7 @@
 import { QuestionForQuizComponent } from '@my/app/utils/supabase/databaseTypes'
 import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
-import React, { useId } from 'react'
-import { RadioGroup, YStack, SizableText, View, XStack } from 'tamagui'
+import React, { useId, useState } from 'react'
+import { RadioGroup, YStack, SizableText, Label, View, styled } from 'tamagui'
 
 interface MultiChoicePickRevealProps {
   // this is incoming
@@ -20,62 +20,63 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
 }) => {
   const uniqueId = useId()
 
+  const [selectedId, setSelectedId] = useState<string>()
+
   const { data: answerToQuestion } = useQuizReferenceAnswer(question.question_id)
 
-  const handleValueChange = (value: string) => {
-    const optionId = Number(value)
-    onSelectOption(optionId, question.question_id)
+  const handleIdSelection = (id: string) => {
+    setSelectedId(id)
+    onSelectOption(parseInt(id, 10), question.question_id)
   }
 
   return (
     <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
       <SizableText fontWeight="bold">{question.question_text}</SizableText>
       <RadioGroup
-        disabled={disabled}
-        onValueChange={handleValueChange}
         flexWrap="wrap"
-        gap="$2"
-        flexDirection="column"
+        gap="$4"
+        my="$2"
+        rowGap="$4"
+        flexDirection="row"
+        value={selectedId}
+        onValueChange={handleIdSelection}
       >
-        {question.options.map((option) => (
-          <XStack
-            key={option.id}
+        {question.options.map(({ id, option_text }) => (
+          <Card
+            key={option_text}
             flexDirection="row"
+            flex={1}
+            flexBasis={150}
             alignItems="center"
             gap="$3"
-            borderRadius="$2"
-            onPress={() => handleValueChange(String(option.id))}
+            padding={0}
+            minWidth="100%"
+            active={selectedId === String(id) || false}
+            paddingHorizontal="$2.5"
+            cursor="pointer"
+            onPress={() => handleIdSelection(String(id))}
+            $gtXs={{
+              minWidth: 'auto',
+            }}
+            backgroundColor={
+              hasAnswersVisible &&
+              answerToQuestion &&
+              answerToQuestion.length > 0 &&
+              answerToQuestion[0].option_id === id
+                ? '$green7Light'
+                : undefined
+            }
           >
             <View onPress={(e) => e.stopPropagation()}>
-              <RadioGroup.Item
-                backgroundColor={
-                  hasAnswersVisible &&
-                  answerToQuestion &&
-                  answerToQuestion.length > 0 &&
-                  answerToQuestion[0].option_id === option.id
-                    ? '$green7Light'
-                    : undefined
-                }
-                id={uniqueId + option.id}
-                value={String(option.id)}
-              >
+              <RadioGroup.Item id={uniqueId + option_text} value={String(id)}>
                 <RadioGroup.Indicator />
               </RadioGroup.Item>
             </View>
-            <SizableText
-              textWrap="wrap"
-              color={
-                hasAnswersVisible &&
-                answerToQuestion &&
-                answerToQuestion.length > 0 &&
-                answerToQuestion[0].option_id === option.id
-                  ? '$green10Light'
-                  : undefined
-              }
-            >
-              {option.option_text}
-            </SizableText>
-          </XStack>
+
+            <Label padding="$2" lineHeight="$8" cursor="pointer" htmlFor={uniqueId + option_text}>
+              {option_text}
+            </Label>
+          </Card>
         ))}
       </RadioGroup>
     </YStack>
@@ -83,3 +84,37 @@ const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
 }
 
 export default MultiChoicePickReveal
+
+export const Card = styled(View, {
+  cursor: 'pointer',
+  width: '100%',
+  borderRadius: '$4',
+  padding: '$3',
+  backgroundColor: '$background',
+  borderColor: '$borderColor',
+  borderWidth: 1,
+  focusStyle: {
+    backgroundColor: '$backgroundFocus',
+    borderColor: '$borderColorFocus',
+  },
+  hoverStyle: {
+    backgroundColor: '$backgroundHover',
+    borderColor: '$borderColorHover',
+  },
+
+  ...(process.env.TAMAGUI_TARGET === 'web' && {
+    pressStyle: {
+      backgroundColor: '$backgroundPress',
+      borderColor: '$borderColorPress',
+    },
+  }),
+
+  variants: {
+    active: {
+      true: {
+        backgroundColor: '$backgroundFocus',
+        borderColor: '$borderColorFocus',
+      },
+    },
+  } as const,
+})

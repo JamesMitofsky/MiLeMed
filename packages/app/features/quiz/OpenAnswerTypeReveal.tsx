@@ -5,8 +5,7 @@ import { YStack, SizableText, Input, Button, XStack } from 'tamagui'
 
 interface OpenAnswerTypeRevealProps {
   question: QuestionForQuizComponent
-  onTextInput: (userSubmittedText: string, questionId: number) => void
-  value: string
+  // value: string
   hasAnswersVisible: boolean
   onSelfEvaluation: (isCorrect: boolean, questionId: number) => void
   disabled: boolean
@@ -14,8 +13,7 @@ interface OpenAnswerTypeRevealProps {
 
 const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
   question,
-  onTextInput,
-  value,
+  // value,
   hasAnswersVisible,
   onSelfEvaluation,
   disabled,
@@ -35,8 +33,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
 
       <Input
         placeholder="Deine Antwort..."
-        value={value}
-        onChangeText={(text) => onTextInput(text, question.question_id)}
+        // value={value}
         multiline
         numberOfLines={5}
         mt="$2"

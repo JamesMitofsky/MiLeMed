@@ -10,7 +10,7 @@ import {
 } from 'app/utils/hooks/queryHooks'
 import { useUser } from 'app/utils/useUser'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
@@ -23,6 +23,7 @@ type OptionResponse = {
   question_id: number
   type: 'OPTION'
   selected_option_id: number
+  isCorrect: boolean
 }
 
 /**
@@ -31,7 +32,7 @@ type OptionResponse = {
 type TextResponse = {
   question_id: number
   type: 'TEXT'
-  answer_text: string
+  isCorrect?: boolean
 }
 
 /**
@@ -50,6 +51,7 @@ const QuizForm: React.FC = () => {
   const { user } = useUser()
   const { navigate } = useRouter()
   const toast = useToastController()
+  const scrollViewRef = useRef<any>(null)
 
   const { data: lecture } = useLectureById(lectureId)
   const { useQuizResults, recordQuizAnswer, markLectureCompleted } = useQuizSystem()
@@ -91,94 +93,12 @@ const QuizForm: React.FC = () => {
   // STATES
   const [hasAnswersVisible, setHasAnswersVisible] = useState(false)
   const [userResponses, setUserResponses] = useState<UserResponsesMap>({})
-  // this groups all OPTION and TEXT choices that have been marked correct or incorrect, regardles of correctness
-  const [questionsThatHaveBeenEvaluated, setQuestionsThatHaveBeenEvaluated] = useState<{
-    [questionId: number]: boolean | undefined
-  }>({})
+  // // this groups all OPTION and TEXT choices that have been marked correct or incorrect, regardles of correctness
+  // const [questionsThatHaveBeenEvaluated, setQuestionsThatHaveBeenEvaluated] = useState<{
+  //   [questionId: number]: boolean | undefined
+  // }>({})
 
   // FUNCTIONS
-
-  /**
-   * Updates the user's selected answers for multiple choice questions
-   * @param selectedOptionId - The ID of the selected option
-   * @param questionId - The ID of the question being answered
-   */
-  const updateUserSelectedAnswers = useCallback((selectedOptionId: number, questionId: number) => {
-    setUserResponses((prev) => ({
-      ...prev,
-      [questionId]: {
-        question_id: questionId,
-        type: 'OPTION',
-        selected_option_id: selectedOptionId,
-      },
-    }))
-
-    // check if this selectedOptionIsRight
-    const isCorrect =
-      referenceAnswersData?.some((option) => {
-        // Find if this option is in the reference answers
-        const isReferenceAnswer = referenceAnswersData?.some(
-          (answer) => answer.question_id === questionId && answer.option_id === selectedOptionId
-        )
-        return option.option_id === selectedOptionId && isReferenceAnswer
-      }) || false
-
-    updateCorrectnessOfAnyQuestionType(questionId, isCorrect)
-  }, [])
-
-  const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
-    console.log('userSubmittedText:', userSubmittedText)
-    console.log('questionId:', questionId)
-    setUserResponses((prev) => ({
-      ...prev,
-      [questionId]: {
-        question_id: questionId,
-        type: 'TEXT',
-        answer_text: userSubmittedText,
-      },
-    }))
-  }, [])
-
-  // Initialize questionsUserHasCorrectlyAnswered when questions are loaded
-  useEffect(() => {
-    if (questions) {
-      const initialAnswerState = questions.reduce((acc, question) => {
-        // Only add entries that have a defined value
-        // Since we're initializing, we'll skip adding undefined values
-        return acc
-      }, {} as { [questionId: number]: boolean | undefined })
-
-      setQuestionsThatHaveBeenEvaluated(initialAnswerState)
-    }
-  }, [questions])
-
-  // trying to make sure all questions are evaluated before showing next button
-  const hasAnsweredAllQuestions = useMemo(() => {
-    if (!questions || !questionsThatHaveBeenEvaluated) return false
-    return Object.values(questionsThatHaveBeenEvaluated).length === questions?.length
-  }, [questionsThatHaveBeenEvaluated, questions])
-
-  const hasAnsweredAllQuestionsCorrectly = useMemo(() => {
-    // Check if we have the correct number of answers and all are true
-    return (
-      questions &&
-      Object.keys(questionsThatHaveBeenEvaluated).length === questions.length &&
-      Object.values(questionsThatHaveBeenEvaluated).every((value) => value)
-    )
-  }, [questionsThatHaveBeenEvaluated, questions])
-
-  const updateCorrectnessOfAnyQuestionType = useCallback(
-    (questionId: number, isCorrect: boolean) => {
-      setQuestionsThatHaveBeenEvaluated((prev) => ({
-        ...prev,
-        [questionId]: isCorrect,
-      }))
-    },
-    []
-  )
-
-  // Create a ref for the ScrollView component
-  const scrollViewRef = useRef<any>(null)
 
   const scrollToBottom = () => {
     // Make sure the ref is available
@@ -190,32 +110,69 @@ const QuizForm: React.FC = () => {
     }
   }
 
-  const submitEvaluationOfOpenAnswer = useCallback(
+  const handleMultiChoiceSelect = (selectedOptionId: number, questionId: number) => {
+    // first, check to see if the selected option was right
+    const isCorrect =
+      referenceAnswersData?.some((option) => {
+        // Find if this option is in the reference answers
+        const isReferenceAnswer = referenceAnswersData?.some(
+          (answer) => answer.question_id === questionId && answer.option_id === selectedOptionId
+        )
+        return option.option_id === selectedOptionId && isReferenceAnswer
+      }) || false
+
+    // then record that
+    setUserResponses((prev) => ({
+      ...prev,
+      [questionId]: {
+        question_id: questionId,
+        type: 'OPTION',
+        selected_option_id: selectedOptionId,
+        isCorrect,
+      },
+    }))
+  }
+
+  const handleOpenAnswerEvaluation = useCallback(
     async (questionId: number, isCorrect: boolean) => {
-      updateCorrectnessOfAnyQuestionType(questionId, isCorrect)
+      setUserResponses((prev) => ({
+        ...prev,
+        [questionId]: {
+          question_id: questionId,
+          type: 'TEXT',
+          isCorrect,
+        },
+      }))
     },
     [user, recordQuizAnswer, lectureId, toast]
   )
 
   // this is called when the user has decided whether their open choice answer is correct or not
+  const allQuestionsAnswered = Object.values(userResponses).length === questions?.length
+
+  const allQuestionsAnsweredCorrectly = Object.values(userResponses).every(
+    (response) => response.isCorrect
+  )
+
   const submitAllFinalAnswersToServer = useCallback(async () => {
-    if (hasAnsweredAllQuestionsCorrectly) {
-      // If you want to be more specific with the exact query key:
-      queryClient.invalidateQueries({
-        queryKey: ['chaptersWithLectures'],
-      })
-      markLectureCompleted.mutate({ lectureId })
+    if (allQuestionsAnsweredCorrectly && allQuestionsAnswered) {
+      try {
+        // If you want to be more specific with the exact query key:
+        queryClient.invalidateQueries({
+          queryKey: ['chaptersWithLectures'],
+        })
+        markLectureCompleted.mutate({ lectureId })
 
-      // Show toast immediately
-      toast.show('Quiz abgeschlossen', {
-        message: 'Gut gemacht!',
-        duration: 3000,
-      })
+        // Show toast immediately
+        toast.show('Quiz abgeschlossen', {
+          message: 'Gut gemacht!',
+          duration: 3000,
+        })
 
-      // Delay navigation by 1.5 seconds
-      setTimeout(() => {
         navigate('/')
-      }, 1500)
+      } catch (error) {
+        console.error('Something went wrong on submit', error)
+      }
     } else {
       navigate(`/lectures/${lectureId}`)
       toast.show('Quiz nicht abgeschlossen', {
@@ -223,7 +180,15 @@ const QuizForm: React.FC = () => {
         duration: 3000,
       })
     }
-  }, [hasAnsweredAllQuestionsCorrectly])
+  }, [
+    allQuestionsAnsweredCorrectly,
+    allQuestionsAnswered,
+    queryClient,
+    markLectureCompleted,
+    lectureId,
+    toast,
+    navigate,
+  ])
 
   if (!questions) {
     return (
@@ -252,26 +217,26 @@ const QuizForm: React.FC = () => {
                       <MultiChoicePickReveal
                         question={question}
                         onSelectOption={(selectedOptionId, questionId) =>
-                          updateUserSelectedAnswers(selectedOptionId, questionId)
+                          handleMultiChoiceSelect(selectedOptionId, questionId)
                         }
                         hasAnswersVisible={hasAnswersVisible}
-                        disabled={hasAnsweredAllQuestions}
+                        disabled={hasAnswersVisible}
                       />
                     ) : (
                       <OpenAnswerTypeReveal
                         question={question}
-                        onTextInput={(userSubmittedText, questionId) =>
-                          updateUserWrittenAnswers(userSubmittedText, questionId)
-                        }
-                        value={(() => {
-                          const response = userResponses[question.question_id]
-                          return response?.type === 'TEXT' ? response.answer_text : ''
-                        })()}
+                        // onTextInput={(userSubmittedText, questionId) =>
+                        //   updateUserWrittenAnswers(userSubmittedText, questionId)
+                        // }
+                        // value={(() => {
+                        //   const response = userResponses[question.question_id]
+                        //   return response?.type === 'TEXT' ? response.answer_text : ''
+                        // })()}
                         hasAnswersVisible={hasAnswersVisible}
                         onSelfEvaluation={(isCorrect, questionId) =>
-                          submitEvaluationOfOpenAnswer(questionId, isCorrect)
+                          handleOpenAnswerEvaluation(questionId, isCorrect)
                         }
-                        disabled={hasAnsweredAllQuestions}
+                        disabled={hasAnswersVisible}
                       />
                     )}
                   </View>
@@ -293,14 +258,6 @@ const QuizForm: React.FC = () => {
               {hasAnswersVisible && (
                 <Button
                   onPress={() => {
-                    console.log('submitting final answers')
-                    console.log('userResponses:', userResponses)
-                    console.log('hasAnsweredAllQuestions:', hasAnsweredAllQuestions)
-                    console.log('hasAnswersVisible:', hasAnswersVisible)
-                    console.log(
-                      'hasAnsweredAllQuestionsCorrectly:',
-                      hasAnsweredAllQuestionsCorrectly
-                    )
                     submitAllFinalAnswersToServer()
                   }}
                   theme="brandPrimary"

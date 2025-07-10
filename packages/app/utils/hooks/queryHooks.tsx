@@ -510,8 +510,6 @@ export const useUserEvents = () => {
 export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
   const { supabaseClient } = useSessionContext()
 
-  // console.log('🔍 useAllChaptersAndLectures called with mode:', mode)
-
   // Define query keys as constants
   const getAllChaptersAndLecturesKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
     ['all-chapters-and-lectures', chapterMode] as const
@@ -520,8 +518,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
   const chaptersAndLecturesQuery = useQuery({
     queryKey: getAllChaptersAndLecturesKey(mode),
     queryFn: async () => {
-      console.log('🔄 Query function executing with mode:', mode)
-
       // First get all chapters based on mode filter
       let chaptersQuery = supabaseClient
         .from('content_chapters')
@@ -530,15 +526,10 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
 
       // Only apply the filter if mode is specified
       if (mode) {
-        console.log(`🔍 Filtering chapters by mode: ${mode}`)
         chaptersQuery = chaptersQuery.eq('mode', mode)
-      } else {
-        console.log('🔍 No mode filter applied, fetching all chapters')
       }
 
       const { data: chapters, error: chaptersError } = await chaptersQuery
-
-      console.log(`📊 Chapters query result: ${chapters?.length || 0} chapters found`)
 
       if (chaptersError) {
         console.error('❌ Error fetching chapters:', chaptersError)
@@ -554,10 +545,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
       const lecturesByChapter: Record<number, unknown[]> = {}
 
       // Get lectures for all chapters at once
-      console.log(
-        '🔍 Fetching lectures for chapter IDs:',
-        chapters.map((chapter) => chapter.id)
-      )
 
       const { data: allLectures, error: lecturesError } = await supabaseClient
         .from('content_lectures')
@@ -567,8 +554,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
           chapters.map((chapter) => chapter.id)
         )
         .order('sort_order', { ascending: true })
-
-      // console.log(`📊 Lectures query result: ${allLectures?.length || 0} lectures found`)
 
       if (lecturesError) {
         console.error('❌ Error fetching lectures:', lecturesError)
@@ -583,12 +568,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
           }
           lecturesByChapter[lecture.chapter_id].push(lecture)
         })
-
-        console.log(
-          '📊 Organized lectures by chapter:',
-          Object.keys(lecturesByChapter).length,
-          'chapters with lectures'
-        )
       } else {
         console.log('⚠️ No lectures found')
       }
@@ -598,15 +577,8 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
         lecturesByChapter,
       }
 
-      console.log('✅ Query function completed successfully')
       return result
     },
-  })
-
-  console.log('🔄 Hook state:', {
-    isLoading: chaptersAndLecturesQuery.isLoading,
-    isError: !!chaptersAndLecturesQuery.error,
-    dataAvailable: !!chaptersAndLecturesQuery.data,
   })
 
   return {
@@ -759,7 +731,7 @@ export const useQuizReferenceAnswers = (questionIds?: number[]) => {
 
       // Execute the query
       const { data, error } = await query.order('id', { ascending: true })
-      console.log('Reference answers data:', data)
+
       if (error) {
         console.error('Error fetching reference answers:', error)
         throw error
