@@ -1,10 +1,11 @@
+import { Database } from '@my/supabase/types'
 import { useSupabase } from 'app/utils/supabase/useSupabase'
 import { useUser } from 'app/utils/useUser'
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 
 interface VersionProviderState {
   appVersion: string
-  dbVersion: string | null
+  remoteVersionInfo: Database['public']['Tables']['db_version']['Row'] | null
   isLoading: boolean
   versionsMatch: boolean
   needsUpdate: boolean
@@ -17,7 +18,7 @@ interface VersionProviderProps {
 const VersionContext = createContext<VersionProviderState | undefined>(undefined)
 
 // Compare version strings (e.g., "1.0", "1.2.0") and return true if version1 is less than version2
-const isVersionLessThan = (version1: string, version2: string | null): boolean => {
+const isVersionLessThan = (version1: string, version2?: string | null): boolean => {
   if (!version2) return false
 
   const v1Parts = version1.split('.').map(Number)
@@ -37,8 +38,10 @@ const isVersionLessThan = (version1: string, version2: string | null): boolean =
 }
 
 export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) => {
-  const APP_VERSION = '2' // Hardcoded app version - update this when deploying a new version
-  const [dbVersion, setDbVersion] = useState<string | null>(null)
+  const APP_VERSION = '3' // Hardcoded app version - update this when deploying a new version
+  const [versionInformation, setVersionInformation] = useState<
+    Database['public']['Tables']['db_version']['Row'] | null
+  >(null)
   const [isLoading, setIsLoading] = useState(true)
   const supabase = useSupabase()
   const { user } = useUser()
@@ -49,7 +52,7 @@ export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) =>
       try {
         const { data, error } = await supabase
           .from('db_version')
-          .select('version')
+          .select('*')
           .order('updated_at', { ascending: false })
           .limit(1)
           .single()
@@ -60,7 +63,7 @@ export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) =>
           return
         }
 
-        setDbVersion(data?.version || null)
+        setVersionInformation(data || null)
       } catch (error) {
         console.error('Failed to fetch DB version:', error)
       } finally {
@@ -73,10 +76,10 @@ export const VersionProvider: React.FC<VersionProviderProps> = ({ children }) =>
 
   const value: VersionProviderState = {
     appVersion: APP_VERSION,
-    dbVersion,
+    remoteVersionInfo: versionInformation,
     isLoading,
-    versionsMatch: dbVersion === APP_VERSION,
-    needsUpdate: isVersionLessThan(APP_VERSION, dbVersion),
+    versionsMatch: versionInformation?.version === APP_VERSION,
+    needsUpdate: isVersionLessThan(APP_VERSION, versionInformation?.version),
   }
 
   return <VersionContext.Provider value={value}>{children}</VersionContext.Provider>
