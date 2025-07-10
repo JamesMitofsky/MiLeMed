@@ -10,7 +10,7 @@ import {
 } from 'app/utils/hooks/queryHooks'
 import { useUser } from 'app/utils/useUser'
 import { Stack, useRouter } from 'expo-router'
-import React, { useState, useCallback, useMemo, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
@@ -127,6 +127,8 @@ const QuizForm: React.FC = () => {
   }, [])
 
   const updateUserWrittenAnswers = useCallback((userSubmittedText: string, questionId: number) => {
+    console.log('userSubmittedText:', userSubmittedText)
+    console.log('questionId:', questionId)
     setUserResponses((prev) => ({
       ...prev,
       [questionId]: {
@@ -174,6 +176,19 @@ const QuizForm: React.FC = () => {
     },
     []
   )
+
+  // Create a ref for the ScrollView component
+  const scrollViewRef = useRef<any>(null)
+
+  const scrollToBottom = () => {
+    // Make sure the ref is available
+    if (scrollViewRef.current) {
+      // Use setTimeout to ensure this happens after the state update and render
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({ animated: true })
+      }, 100)
+    }
+  }
 
   const submitEvaluationOfOpenAnswer = useCallback(
     async (questionId: number, isCorrect: boolean) => {
@@ -227,9 +242,9 @@ const QuizForm: React.FC = () => {
         }}
       />
       <Theme name="light">
-        <KeyboardAvoidingView>
-          <ScrollView>
-            <YStack gap="$4" p="$4">
+        <ScrollView ref={scrollViewRef}>
+          <KeyboardAvoidingView>
+            <YStack gap="$4" p="$4" pb="$10">
               {questions?.map((question) => {
                 return (
                   <View key={question.question_id}>
@@ -266,15 +281,26 @@ const QuizForm: React.FC = () => {
                 <Button
                   onPress={() => {
                     setHasAnswersVisible(true)
+                    scrollToBottom()
                   }}
                   theme="brandSecondary"
                 >
                   Alle Antworten senden
                 </Button>
               )}
-              {hasAnsweredAllQuestions && hasAnswersVisible && (
+              {/* TODO maybe this should only show after the user has submitted the value of all their written answers  */}
+              {/* {hasAnsweredAllQuestions && hasAnswersVisible && ( */}
+              {hasAnswersVisible && (
                 <Button
                   onPress={() => {
+                    console.log('submitting final answers')
+                    console.log('userResponses:', userResponses)
+                    console.log('hasAnsweredAllQuestions:', hasAnsweredAllQuestions)
+                    console.log('hasAnswersVisible:', hasAnswersVisible)
+                    console.log(
+                      'hasAnsweredAllQuestionsCorrectly:',
+                      hasAnsweredAllQuestionsCorrectly
+                    )
                     submitAllFinalAnswersToServer()
                   }}
                   theme="brandPrimary"
@@ -283,8 +309,8 @@ const QuizForm: React.FC = () => {
                 </Button>
               )}
             </YStack>
-          </ScrollView>
-        </KeyboardAvoidingView>
+          </KeyboardAvoidingView>
+        </ScrollView>
       </Theme>
     </>
   )

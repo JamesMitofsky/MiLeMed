@@ -79,39 +79,41 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
   )
 
   return (
-    <YStack p="$4" gap="$4" bg="white" flex={1}>
-      {isLoading ? (
-        <Skeleton height={200} width="100%" />
-      ) : lecture ? (
-        <ScrollView>
-          <YStack gap="$2">
-            <SizableText size="$8" fontWeight="800">
-              {lecture.title}
-            </SizableText>
-            {/* <Theme name="alt1">
+    <ScrollView>
+      <YStack p="$4" gap="$4" bg="white" flex={1}>
+        {isLoading ? (
+          <Skeleton height={200} width="100%" />
+        ) : lecture ? (
+          <YStack pb="$10">
+            <YStack gap="$2">
+              <SizableText size="$8" fontWeight="800">
+                {lecture.title}
+              </SizableText>
+              {/* <Theme name="alt1">
                 <SizableText size="$3">{lecture.subtitle}</SizableText>
               </Theme> */}
-          </YStack>
-          <RenderHtml
-            contentWidth={width - 32} // Accounting for padding
-            source={{ html: htmlContent }}
-            tagsStyles={styles}
-          />
-          <Button size="$5" onPress={handleNavigateToQuiz}>
-            Zum Quiz
-          </Button>
-          {/* TODO: Important: check if quiz exists */}
-          {/* {lecture.has_quiz ? (
+            </YStack>
+            <RenderHtml
+              contentWidth={width - 32} // Accounting for padding
+              source={{ html: htmlContent }}
+              tagsStyles={styles}
+            />
+            <Button size="$5" onPress={handleNavigateToQuiz}>
+              Zum Quiz
+            </Button>
+            {/* TODO: Important: check if quiz exists */}
+            {/* {lecture.has_quiz ? (
             ) : (
               <Button size="$5" onPress={handleMarkAsRead}>
-                Als gelesen markieren
+              Als gelesen markieren
               </Button>
-            )} */}
-        </ScrollView>
-      ) : (
-        <Text>Keine Vorlesung gefunden</Text>
-      )}
-    </YStack>
+              )} */}
+          </YStack>
+        ) : (
+          <Text>Keine Vorlesung gefunden</Text>
+        )}
+      </YStack>
+    </ScrollView>
   )
 }
 
