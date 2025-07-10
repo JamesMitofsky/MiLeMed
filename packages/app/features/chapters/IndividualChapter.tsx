@@ -1,18 +1,20 @@
 import { useQuery } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { YStack, Text, Separator, ScrollView, SizableText } from 'tamagui'
 
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { Skeleton } from '../general/Skeleton'
 import ListOfLectures from '../home/components/list-of-lectures'
+import CustomBackButton from '../general/CustomHeader'
 
 export const IndividualChapter = () => {
   // const { id } = useSearchParams()
   const { id }: { id: string } = useLocalSearchParams()
 
   const supabase = useSupabase()
+  const router = useRouter()
   // Use the ID to query specific module data
-  const { data: chapter, isPending } = useQuery({
+  const { data: chapter, isLoading } = useQuery({
     queryKey: ['chapter', id],
     queryFn: async () => {
       if (!id) return null
@@ -39,7 +41,8 @@ export const IndividualChapter = () => {
 
   return (
     <YStack padding="$4" flex={1} mb="$4" bg="white">
-      {isPending ? (
+      <CustomBackButton onBack={() => router.push('/chapters')} />
+      {isLoading ? (
         <YStack o={0.5} gap="$2" pb="$4">
           <Skeleton height={16} width="100%" />
           <YStack gap="$2" mt="$3">

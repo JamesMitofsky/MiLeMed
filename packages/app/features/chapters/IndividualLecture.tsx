@@ -8,6 +8,7 @@ import { YStack, Text, SizableText, ScrollView, Button } from 'tamagui'
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
 import { useLectureById } from '../../utils/hooks/queryHooks'
 import { Skeleton } from '../general/Skeleton'
+import CustomBackButton from '../general/CustomHeader'
 
 interface IndividualLectureProps {
   lectureId: string
@@ -81,6 +82,7 @@ const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
   return (
     <ScrollView>
       <YStack p="$4" gap="$4" bg="white" flex={1}>
+        <CustomBackButton onBack={() => router.push(`/chapters/${lecture.chapter_id}`)} />
         {isLoading ? (
           <Skeleton height={200} width="100%" />
         ) : lecture ? (
