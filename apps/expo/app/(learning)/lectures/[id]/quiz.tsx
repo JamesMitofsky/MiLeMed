@@ -11,7 +11,7 @@ import {
 import { useUser } from 'app/utils/useUser'
 import { Stack, useRouter } from 'expo-router'
 import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { KeyboardAvoidingView } from 'react-native'
+import { KeyboardAvoidingView, Platform } from 'react-native'
 import { createParam } from 'solito'
 import { YStack, SizableText, Button, Theme } from 'tamagui'
 import { useQueryClient } from '@tanstack/react-query'
@@ -207,8 +207,12 @@ const QuizForm: React.FC = () => {
         }}
       />
       <Theme name="light">
-        <ScrollView ref={scrollViewRef}>
-          <KeyboardAvoidingView>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 80 : 0}
+          style={{ flex: 1 }}
+        >
+          <ScrollView ref={scrollViewRef}>
             <YStack gap="$4" p="$4" pb="$10">
               {questions?.map((question) => {
                 return (
@@ -266,8 +270,8 @@ const QuizForm: React.FC = () => {
                 </Button>
               )}
             </YStack>
-          </KeyboardAvoidingView>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Theme>
     </>
   )

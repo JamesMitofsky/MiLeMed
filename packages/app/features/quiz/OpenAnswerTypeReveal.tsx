@@ -31,6 +31,10 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
     <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
       <SizableText fontWeight="bold">{question.question_text}</SizableText>
 
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={modalOffsetFromTop}
+      > */}
       <Input
         placeholder="Deine Antwort..."
         // value={value}
@@ -39,6 +43,7 @@ const OpenAnswerTypeReveal: React.FC<OpenAnswerTypeRevealProps> = ({
         mt="$2"
         disabled={disabled}
       />
+      {/* </KeyboardAvoidingView> */}
 
       {hasAnswersVisible && (
         <YStack my="$3" gap="$2">
