@@ -82,13 +82,6 @@ export const Page: NextPageWithLayout = () => {
     setIsSubmitting(true)
     setError('')
 
-    console.log('Form Data:', {
-      title,
-      description,
-      sortOrder,
-      mode,
-    })
-
     try {
       // Insert new chapter
       const { error } = await supabaseClient
