@@ -77,21 +77,45 @@ export type Database = {
           },
         ]
       }
+      db_version: {
+        Row: {
+          description: string | null
+          title: string | null
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          description?: string | null
+          title?: string | null
+          updated_at?: string
+          version: string
+        }
+        Update: {
+          description?: string | null
+          title?: string | null
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
       quiz_options: {
         Row: {
           id: number
           option_text: string
           question_id: number
+          updated_at: string | null
         }
         Insert: {
           id?: number
           option_text: string
           question_id: number
+          updated_at?: string | null
         }
         Update: {
           id?: number
           option_text?: string
           question_id?: number
+          updated_at?: string | null
         }
         Relationships: [
           {

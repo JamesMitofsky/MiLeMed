@@ -1,21 +1,28 @@
 import { useQuery } from '@tanstack/react-query'
-import { useLocalSearchParams } from 'expo-router'
-import { YStack, Text, Separator, ScrollView } from 'tamagui'
+import { useLocalSearchParams, useRouter } from 'expo-router'
+import { YStack, Text, Separator, ScrollView, SizableText } from 'tamagui'
 
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { Skeleton } from '../general/Skeleton'
 import ListOfLectures from '../home/components/list-of-lectures'
+import CustomBackButton from '../general/CustomHeader'
 
 export const IndividualChapter = () => {
   // const { id } = useSearchParams()
   const { id }: { id: string } = useLocalSearchParams()
 
   const supabase = useSupabase()
+  const router = useRouter()
   // Use the ID to query specific module data
-  const { data: chapter, isLoading } = useQuery(['chapter', id], {
+  const { data: chapter, isLoading } = useQuery({
+    queryKey: ['chapter', id],
     queryFn: async () => {
       if (!id) return null
-      const { data, error } = await supabase.from('chapters').select('*').eq('id', id).single()
+      const { data, error } = await supabase
+        .from('content_chapters')
+        .select('*')
+        .eq('id', parseInt(id, 10))
+        .single()
       if (error) {
         throw new Error(error.message)
       }
@@ -33,7 +40,8 @@ export const IndividualChapter = () => {
   }
 
   return (
-    <YStack padding="$4" flex={1} mb="$4">
+    <YStack padding="$4" flex={1} mb="$4" bg="white">
+      <CustomBackButton onBack={() => router.push('/chapters')} />
       {isLoading ? (
         <YStack o={0.5} gap="$2" pb="$4">
           <Skeleton height={16} width="100%" />
@@ -44,10 +52,10 @@ export const IndividualChapter = () => {
           </YStack>
         </YStack>
       ) : (
-        <YStack gap="$2" pb="$4">
-          <Text fontSize="$5" fontWeight="bold" marginBottom="$4">
+        <YStack gap="$2" py="$4">
+          <SizableText size="$8" fontWeight="bold" marginBottom="$4">
             {chapter.title}
-          </Text>
+          </SizableText>
           <Text fontSize="$4" marginBottom="$4">
             {chapter.description}
           </Text>

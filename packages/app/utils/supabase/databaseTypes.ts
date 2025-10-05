@@ -1,5 +1,26 @@
 import { Database } from '@my/supabase/types'
 
+// Start James's custom types July 2025
+export type QuestionForQuizComponent = {
+  question_id: number
+  question_text: string
+  question_type: 'MULTIPLE_CHOICE' | 'OPEN'
+  lecture_id: number
+  created_at: string | null
+  updated_at: string | null
+  // id: number
+
+  // Added properties in the useMemo
+  options: {
+    id: number
+    question_id: number
+    option_text: string
+    // Any other properties that might be in optionsData
+  }[]
+  // this appears to not exist
+  // reference_answer_ids: number[]
+}
+
 // Types based on the schema (you'd typically generate these)
 export type Chapter = {
   id: number

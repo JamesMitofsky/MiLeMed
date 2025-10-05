@@ -3,25 +3,128 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { UserProfile, SystemEvent } from '../supabase/databaseTypes'
 import { useSessionContext } from '../supabase/useSessionContext'
+import { useSupabase } from '../supabase/useSupabase'
 
 // Comprehensive Hooks Collection
-export const useChapters = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
-  const { supabaseClient } = useSessionContext()
+type Chapter = Pick<
+  Database['public']['Tables']['content_chapters']['Row'],
+  'id' | 'title' | 'sort_order'
+> & {
+  lectures: (Pick<
+    Database['public']['Tables']['content_lectures']['Row'],
+    'id' | 'title' | 'sort_order'
+  > & {
+    is_completed: boolean
+  })[]
+}
+
+export const useChaptersWithLectures = (mode?: Database['public']['Enums']['mode']) => {
+  const { supabaseClient, session } = useSessionContext()
+  const userId = session?.user.id
+
+  return useQuery<Chapter[], Error>({
+    queryKey: ['chaptersWithLectures', userId, mode],
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 5, // 5m
+    cacheTime: 1000 * 60 * 30, // 30m
+    queryFn: async () => {
+      // console.log('[useChaptersWithLectures] queryFn executing')
+      if (!userId) {
+        console.error('[useChaptersWithLectures] Not authenticated')
+        throw new Error('Not authenticated')
+      }
+
+      // 1️⃣ load chapters, optionally filtering by mode
+      let chapterQuery = supabaseClient
+        .from('content_chapters')
+        .select('id, title, sort_order')
+        .order('sort_order', { ascending: true })
+
+      if (mode) {
+        chapterQuery = chapterQuery.eq('mode', mode)
+      }
+
+      const { data: chapters, error: chapErr } = await chapterQuery
+      if (chapErr || !chapters) {
+        console.error('[useChaptersWithLectures] Chapter fetch error:', chapErr)
+        throw chapErr
+      }
+
+      // 2️⃣ load lectures for those chapters
+      const chapterIds = chapters.map((c) => c.id)
+
+      const { data: lectures, error: lectErr } = await supabaseClient
+        .from('content_lectures')
+        .select('id, title, sort_order, chapter_id')
+        .in('chapter_id', chapterIds)
+        .order('sort_order', { ascending: true })
+      if (lectErr || !lectures) {
+        console.error('[useChaptersWithLectures] Lecture fetch error:', lectErr)
+        throw lectErr
+      }
+
+      // 3️⃣ load completed lecture IDs (LECTURE_COMPLETED)
+
+      const { data: completions, error: compErr } = await supabaseClient
+        .from('system_events')
+        .select('lecture_id')
+        .eq('event_type', 'LECTURE_COMPLETED')
+        .eq('profile_id', userId)
+      if (compErr || !completions) {
+        console.error('[useChaptersWithLectures] Completions fetch error:', compErr)
+        throw compErr
+      }
+
+      // Check for null or undefined lecture_ids
+      const validCompletions = completions.filter((c) => c.lecture_id != null)
+      if (validCompletions.length !== completions.length) {
+        console.warn(
+          '[useChaptersWithLectures] Found completions with null lecture_id:',
+          completions.filter((c) => c.lecture_id == null).length
+        )
+      }
+
+      const completedSet = new Set(validCompletions.map((c) => c.lecture_id!))
+
+      // 4️⃣ merge
+      const result = chapters.map((c) => ({
+        ...c,
+        lectures: lectures
+          .filter((l) => l.chapter_id === c.id)
+          .map((l) => ({
+            id: l.id,
+            title: l.title,
+            sort_order: l.sort_order,
+            is_completed: completedSet.has(l.id),
+          })),
+      }))
+
+      return result
+    },
+  })
+}
+
+export const useChapters = (mode?: Database['public']['Enums']['mode']) => {
+  const supabase = useSupabase()
 
   // Define query key as a constant
-  const getChapterSummaryKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
-    ['chapters', chapterMode] as const
+  const getChapterSummaryKey = (chapterMode?: Database['public']['Enums']['mode']) =>
+    chapterMode ? (['chapters', chapterMode] as const) : (['chapters'] as const)
 
   // Get chapter summary with completion status
-  const chapterQuery = useQuery({
+  const chapterQuery = useQuery<Database['public']['Functions']['chapter_get_summary']['Returns']>({
     queryKey: getChapterSummaryKey(mode),
     queryFn: async () => {
-      const { data, error } = await supabaseClient.rpc('chapter_get_summary', {
-        mode: mode,
-      })
+      // Type-safe RPC call with proper function name and args typing
+      const rpcName = 'chapter_get_summary' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['chapter_get_summary']['Args'] = {
+        chapter_mode: mode,
+      }
+
+      const { data, error } = await supabase.rpc(rpcName, args)
 
       if (error) throw error
-      return data
+      return data as Database['public']['Functions']['chapter_get_summary']['Returns']
     },
   })
 
@@ -33,13 +136,93 @@ export const useChapters = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
   }
 }
 
+// Custom hook to get a lecture by ID
+export const useLectureById = (lectureId: number) => {
+  const { supabaseClient } = useSessionContext()
+  const getLectureByIdKey = (id: number) => ['lecture', id] as const
+
+  return useQuery({
+    queryKey: getLectureByIdKey(lectureId),
+    queryFn: async () => {
+      const rpcName = 'lecture_get_by_id' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_get_by_id']['Args'] = {
+        p_lecture_id: lectureId,
+      }
+
+      try {
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
+
+        if (error) {
+          throw error
+        }
+
+        if (!data || data.length === 0) {
+          return null
+        }
+
+        return data[0] // Returns the first (and only) result
+      } catch (e) {
+        throw e
+      }
+    },
+    enabled: !!lectureId,
+  })
+}
+export type LectureItem = {
+  id: number
+  title: string
+  sort_order: number
+  is_completed: boolean
+}
+
+export function useLecturesInChapter(chapterId?: number) {
+  const { supabaseClient, session } = useSessionContext()
+  const userId = session?.user.id
+
+  return useQuery<LectureItem[], Error>({
+    queryKey: ['lecturesInChapter', userId, chapterId],
+    enabled: !!userId && typeof chapterId === 'number',
+    staleTime: 1000 * 60 * 5, // 5m
+    cacheTime: 1000 * 60 * 30, // 30m
+    queryFn: async () => {
+      if (!userId) throw new Error('Not authenticated')
+      if (chapterId === undefined) throw new Error('chapterId is required')
+
+      // 1️⃣ Fetch all lectures in this chapter
+      const { data: lectures, error: lectErr } = await supabaseClient
+        .from('content_lectures')
+        .select('id, title, sort_order')
+        .eq('chapter_id', chapterId)
+        .order('sort_order', { ascending: true })
+      if (lectErr || !lectures) throw lectErr
+
+      // 2️⃣ Fetch all QUIZ_PASSED events for this user
+      const { data: comps, error: compErr } = await supabaseClient
+        .from('system_events')
+        .select('lecture_id')
+        .eq('event_type', 'LECTURE_COMPLETED')
+        .eq('profile_id', userId)
+      if (compErr || !comps) throw compErr
+
+      const completedSet = new Set(comps.map((c) => c.lecture_id!))
+
+      // 3️⃣ Merge into the shape you want
+      return lectures.map((l) => ({
+        id: l.id,
+        title: l.title,
+        sort_order: l.sort_order,
+        is_completed: completedSet.has(l.id),
+      }))
+    },
+  })
+}
+
 export const useLectures = (chapterId?: number) => {
   const { supabaseClient } = useSessionContext()
   const queryClient = useQueryClient()
 
   // Define query keys as constants
   const getLecturesKey = (chapterId: number) => ['lectures', chapterId] as const
-  const getLectureByIdKey = (lectureId: number) => ['lecture', lectureId] as const
 
   // Get lectures with completion status for a specific chapter
   const lecturesQuery = useQuery({
@@ -47,36 +230,26 @@ export const useLectures = (chapterId?: number) => {
     queryFn: async () => {
       if (!chapterId) return null
 
-      const { data, error } = await supabaseClient.rpc('lecture_get_with_completion', {
+      const rpcName = 'lecture_get_with_completion' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_get_with_completion']['Args'] = {
         p_chapter_id: chapterId,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
     },
     enabled: !!chapterId, // Only run the query if chapterId is provided
   })
-  // Function to get a single lecture by ID
-  const useLectureById = (lectureId: number) => {
-    return useQuery({
-      queryKey: getLectureByIdKey(lectureId),
-      queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('lecture_get_by_id', {
-          p_lecture_id: lectureId,
-        })
-
-        if (error) throw error
-        return data[0] // Returns the first (and only) result
-      },
-    })
-  }
 
   // Mark lecture as completed
   const markLectureCompleted = useMutation({
     mutationFn: async (lectureId: number) => {
-      const { data, error } = await supabaseClient.rpc('lecture_mark_completed', {
+      const rpcName = 'lecture_mark_completed' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_mark_completed']['Args'] = {
         p_lecture_id: lectureId,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -89,7 +262,7 @@ export const useLectures = (chapterId?: number) => {
 
       // Attempt to get the lecture to invalidate its specific cache
       queryClient.invalidateQueries({
-        queryKey: getLectureByIdKey(lectureId),
+        queryKey: ['lecture', lectureId],
       })
 
       // If possible, try to get the associated chapter and invalidate lectures list
@@ -123,7 +296,6 @@ export const useLectures = (chapterId?: number) => {
     isLoading: lecturesQuery.isLoading,
     error: lecturesQuery.error,
     refetch: lecturesQuery.refetch,
-    useLectureById,
     markLectureCompleted,
   }
 }
@@ -158,8 +330,6 @@ export const useUserProfile = () => {
         throw new Error(error.message)
       }
 
-      console.log('inside useUserProfile', data)
-
       return data
     },
   })
@@ -185,11 +355,13 @@ export const useUserProfile = () => {
   })
 
   // Get user completion statistics
-  const getCompletionStats = () => {
+  const useCompletionStats = () => {
     return useQuery({
       queryKey: statsKey,
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('user_get_completion_stats')
+        const rpcName = 'user_get_completion_stats' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['user_get_completion_stats']['Args'] = {}
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -201,7 +373,7 @@ export const useUserProfile = () => {
     profile,
     isLoading,
     updateProfile,
-    getCompletionStats,
+    useCompletionStats,
     refetch,
   }
 }
@@ -223,11 +395,13 @@ export const useQuizSystem = () => {
       chosenOptionIds?: number[]
       lectureId?: number // Adding this to allow invalidation of the right keys
     }) => {
-      const { data, error } = await supabaseClient.rpc('quiz_record_user_answer', {
+      const rpcName = 'quiz_record_user_answer' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['quiz_record_user_answer']['Args'] = {
         p_question_id: params.questionId,
         p_answer_text: params.answerText,
         p_chosen_option_ids: params.chosenOptionIds,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -247,14 +421,16 @@ export const useQuizSystem = () => {
     },
   })
 
-  // Get quiz results for a lecture
-  const getQuizResults = (lectureId: number) => {
+  // Custom hook to get quiz results for a lecture
+  const useQuizResults = (lectureId: number) => {
     return useQuery({
       queryKey: quizResultsKey(lectureId),
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('quiz_get_results', {
+        const rpcName = 'quiz_get_results' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['quiz_get_results']['Args'] = {
           p_lecture_id: lectureId,
-        })
+        }
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -262,14 +438,16 @@ export const useQuizSystem = () => {
     })
   }
 
-  // Check if all questions in a lecture quiz are answered
-  const checkQuizCompletion = (lectureId: number) => {
+  // Custom hook to check if all questions in a lecture quiz are answered
+  const useQuizCompletion = (lectureId: number) => {
     return useQuery({
       queryKey: quizCompletionKey(lectureId),
       queryFn: async () => {
-        const { data, error } = await supabaseClient.rpc('quiz_check_completion', {
+        const rpcName = 'quiz_check_completion' as keyof Database['public']['Functions']
+        const args: Database['public']['Functions']['quiz_check_completion']['Args'] = {
           p_lecture_id: lectureId,
-        })
+        }
+        const { data, error } = await supabaseClient.rpc(rpcName, args)
 
         if (error) throw error
         return data
@@ -278,12 +456,13 @@ export const useQuizSystem = () => {
   }
 
   // Mark quiz as completed (passed/failed)
-  const markQuizCompleted = useMutation({
-    mutationFn: async (params: { lectureId: number; passed: boolean }) => {
-      const { data, error } = await supabaseClient.rpc('quiz_mark_completed', {
+  const markLectureCompleted = useMutation({
+    mutationFn: async (params: { lectureId: number }) => {
+      const rpcName = 'lecture_mark_completed' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['lecture_mark_completed']['Args'] = {
         p_lecture_id: params.lectureId,
-        p_passed: params.passed,
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -302,9 +481,9 @@ export const useQuizSystem = () => {
 
   return {
     recordQuizAnswer,
-    getQuizResults,
-    checkQuizCompletion,
-    markQuizCompleted,
+    useQuizResults,
+    useQuizCompletion,
+    markLectureCompleted,
   }
 }
 
@@ -321,7 +500,6 @@ export const useUserEvents = () => {
         .from('system_events')
         .select('*')
         .order('created_at', { ascending: false })
-        .returns<SystemEvent[]>()
 
       if (error) throw error
       return data
@@ -332,8 +510,6 @@ export const useUserEvents = () => {
 export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') => {
   const { supabaseClient } = useSessionContext()
 
-  console.log('🔍 useAllChaptersAndLectures called with mode:', mode)
-
   // Define query keys as constants
   const getAllChaptersAndLecturesKey = (chapterMode?: 'THEORETICAL' | 'PRACTICAL') =>
     ['all-chapters-and-lectures', chapterMode] as const
@@ -342,8 +518,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
   const chaptersAndLecturesQuery = useQuery({
     queryKey: getAllChaptersAndLecturesKey(mode),
     queryFn: async () => {
-      console.log('🔄 Query function executing with mode:', mode)
-
       // First get all chapters based on mode filter
       let chaptersQuery = supabaseClient
         .from('content_chapters')
@@ -352,15 +526,10 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
 
       // Only apply the filter if mode is specified
       if (mode) {
-        console.log(`🔍 Filtering chapters by mode: ${mode}`)
         chaptersQuery = chaptersQuery.eq('mode', mode)
-      } else {
-        console.log('🔍 No mode filter applied, fetching all chapters')
       }
 
       const { data: chapters, error: chaptersError } = await chaptersQuery
-
-      console.log(`📊 Chapters query result: ${chapters?.length || 0} chapters found`)
 
       if (chaptersError) {
         console.error('❌ Error fetching chapters:', chaptersError)
@@ -376,10 +545,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
       const lecturesByChapter: Record<number, unknown[]> = {}
 
       // Get lectures for all chapters at once
-      console.log(
-        '🔍 Fetching lectures for chapter IDs:',
-        chapters.map((chapter) => chapter.id)
-      )
 
       const { data: allLectures, error: lecturesError } = await supabaseClient
         .from('content_lectures')
@@ -389,8 +554,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
           chapters.map((chapter) => chapter.id)
         )
         .order('sort_order', { ascending: true })
-
-      console.log(`📊 Lectures query result: ${allLectures?.length || 0} lectures found`)
 
       if (lecturesError) {
         console.error('❌ Error fetching lectures:', lecturesError)
@@ -405,12 +568,6 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
           }
           lecturesByChapter[lecture.chapter_id].push(lecture)
         })
-
-        console.log(
-          '📊 Organized lectures by chapter:',
-          Object.keys(lecturesByChapter).length,
-          'chapters with lectures'
-        )
       } else {
         console.log('⚠️ No lectures found')
       }
@@ -420,15 +577,8 @@ export const useAllChaptersAndLectures = (mode?: 'THEORETICAL' | 'PRACTICAL') =>
         lecturesByChapter,
       }
 
-      console.log('✅ Query function completed successfully')
       return result
     },
-  })
-
-  console.log('🔄 Hook state:', {
-    isLoading: chaptersAndLecturesQuery.isLoading,
-    isError: !!chaptersAndLecturesQuery.error,
-    dataAvailable: !!chaptersAndLecturesQuery.data,
   })
 
   return {
@@ -451,13 +601,15 @@ export const useSystemEvents = () => {
       quizQuestionId?: number
       metadata?: Json
     }) => {
-      const { data, error } = await supabaseClient.rpc('system_record_event', {
+      const rpcName = 'system_record_event' as keyof Database['public']['Functions']
+      const args: Database['public']['Functions']['system_record_event']['Args'] = {
         p_event_type: params.eventType,
         p_lecture_id: params.lectureId,
         p_chapter_id: params.chapterId,
         p_quiz_question_id: params.quizQuestionId,
         p_metadata: params.metadata || {},
-      })
+      }
+      const { data, error } = await supabaseClient.rpc(rpcName, args)
 
       if (error) throw error
       return data
@@ -471,22 +623,20 @@ export const useQuizOptions = (questionIds?: number[]) => {
   const { supabaseClient } = useSessionContext()
 
   // Define query key as a constant
-  const quizOptionsKey = questionIds ? ['quiz-options', questionIds] : ['quiz-options'] as const
+  const quizOptionsKey = questionIds ? ['quiz-options', questionIds] : (['quiz-options'] as const)
 
   // Get quiz options filtered by question IDs if provided
   const quizOptionsQuery = useQuery({
     queryKey: quizOptionsKey,
     queryFn: async () => {
       // Start with the base query
-      let query = supabaseClient
-        .from('quiz_options')
-        .select('*')
-      
+      let query = supabaseClient.from('quiz_options').select('*')
+
       // Apply filter for specific question IDs if provided
       if (questionIds && questionIds.length > 0) {
         query = query.in('question_id', questionIds)
       }
-      
+
       // Execute the query with ordering
       const { data, error } = await query.order('id', { ascending: true })
 
@@ -509,6 +659,101 @@ export const useQuizOptions = (questionIds?: number[]) => {
     error: quizOptionsQuery.error,
     refetch: quizOptionsQuery.refetch,
     getOptionsForQuestion,
+  }
+}
+
+// Hook to fetch reference answers from quiz_reference_answers table
+export const useQuizReferenceAnswer = (questionId?: number) => {
+  const supabaseClient = useSupabase()
+
+  // Define query key as a constant
+  const quizReferenceAnswersKey = questionId
+    ? ['quiz-reference-answers', questionId]
+    : (['quiz-reference-answers'] as const)
+
+  // Get quiz reference answers filtered by question ID if provided
+  const quizReferenceAnswersQuery = useQuery({
+    queryKey: quizReferenceAnswersKey,
+    queryFn: async () => {
+      // Start with the base query
+      let query = supabaseClient.from('quiz_reference_answers').select('*')
+
+      // Apply filter for specific question ID if provided
+      if (questionId) {
+        query = query.eq('question_id', questionId)
+      }
+
+      // Execute the query
+      const { data, error } = await query.order('id', { ascending: true })
+
+      if (error) throw error
+      return data
+    },
+    // Enable the query regardless of questionId being provided
+    enabled: true,
+  })
+
+  // Get reference answers for a specific question
+  const getReferenceAnswersForQuestion = (id: number) => {
+    if (!quizReferenceAnswersQuery.data) return []
+    return quizReferenceAnswersQuery.data.filter((answer) => answer.question_id === id)
+  }
+
+  return {
+    data: quizReferenceAnswersQuery.data,
+    isLoading: quizReferenceAnswersQuery.isLoading,
+    error: quizReferenceAnswersQuery.error,
+    refetch: quizReferenceAnswersQuery.refetch,
+    getReferenceAnswersForQuestion,
+  }
+}
+
+// Hook to fetch reference answers from quiz_reference_answers table for multiple questions
+export const useQuizReferenceAnswers = (questionIds?: number[]) => {
+  const supabaseClient = useSupabase()
+
+  // Define query key as a constant
+  const quizReferenceAnswersKey = questionIds
+    ? ['quiz-reference-answers', questionIds]
+    : (['quiz-reference-answers'] as const)
+
+  // Get quiz reference answers filtered by question IDs if provided
+  const quizReferenceAnswersQuery = useQuery({
+    queryKey: quizReferenceAnswersKey,
+    queryFn: async () => {
+      // Start with the base query
+      let query = supabaseClient.from('quiz_reference_answers').select('*')
+
+      // Apply filter for specific question IDs if provided
+      if (questionIds && questionIds.length > 0) {
+        query = query.in('question_id', questionIds)
+      }
+
+      // Execute the query
+      const { data, error } = await query.order('id', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching reference answers:', error)
+        throw error
+      }
+      return data || []
+    },
+    // Enable the query if questionIds is undefined or has elements
+    enabled: !questionIds || questionIds.length > 0,
+  })
+
+  // Get reference answers for a specific question
+  const getReferenceAnswersForQuestion = (questionId: number) => {
+    if (!quizReferenceAnswersQuery.data) return []
+    return quizReferenceAnswersQuery.data.filter((answer) => answer.question_id === questionId)
+  }
+
+  return {
+    data: quizReferenceAnswersQuery.data,
+    isLoading: quizReferenceAnswersQuery.isLoading,
+    error: quizReferenceAnswersQuery.error,
+    refetch: quizReferenceAnswersQuery.refetch,
+    getReferenceAnswersForQuestion,
   }
 }
 
@@ -537,7 +782,7 @@ export const useFeedback = () => {
   })
 
   // Optional: Get user's previous feedback (if needed)
-  const getUserFeedback = () => {
+  const useFeedbackHistory = () => {
     return useQuery({
       queryKey: userFeedbackKey,
       queryFn: async () => {
@@ -554,6 +799,6 @@ export const useFeedback = () => {
 
   return {
     submitFeedback,
-    getUserFeedback,
+    useFeedbackHistory,
   }
 }

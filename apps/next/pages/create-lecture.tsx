@@ -40,7 +40,7 @@ export const Page: NextPageWithLayout = () => {
   const [content, setContent] = useState('')
   const [chapterId, setChapterId] = useState<number | null>(null)
   const [sortOrder, setSortOrder] = useState<number>() // Default to 1 as the starting sort order
-  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('THEORETICAL')
+  const [mode, setMode] = useState<'THEORETICAL' | 'PRACTICAL'>('PRACTICAL')
 
   // State for quiz questions
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestionFormData[]>([])

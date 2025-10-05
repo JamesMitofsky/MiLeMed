@@ -1,49 +1,46 @@
 import { serve } from 'https://deno.land/std@0.182.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.14.0'
 
-// based on this: https://blog.mansueli.com/supabase-user-self-deletion-empower-users-with-edge-functions
-
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS', // 👈 added
 }
 
-console.log(`Function "delete-user" up and running!`)
+console.log('Function "delete-user" up and running!')
 
-serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    // Handle CORS preflight request
-    return new Response('ok', { headers: corsHeaders })
-  }
+serve(async (req) => {
+  if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: { headers: { Authorization: req.headers.get('Authorization')! } },
-      }
-    )
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
+    const anonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? ''
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
+    /* 1.  Validate caller & get user */
+    const jwt = req.headers.get('authorization')?.replace('Bearer ', '') ?? ''
+    const supabase = createClient(supabaseUrl, anonKey)
     const {
       data: { user },
-    } = await supabaseClient.auth.getUser()
+      error: userErr,
+    } = await supabase.auth.getUser(jwt)
+    if (userErr) throw userErr
     if (!user) throw new Error('User not found')
 
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    /* 2.  Delete with service-role */
+    const admin = createClient(supabaseUrl, serviceKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    })
+    const { error: delErr } = await admin.auth.admin.deleteUser(user.id /*, { hardDelete:true } */)
+    if (delErr) throw delErr
 
-    const { error } = await supabaseAdmin.auth.admin.deleteUser(user.id)
-    if (error) throw error
-
-    return new Response(JSON.stringify({ success: true, message: 'User deleted successfully' }), {
+    return new Response(JSON.stringify({ success: true, message: 'User deleted' }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, message: error.message }), {
+  } catch (err: any) {
+    console.error('[delete-user] ', err)
+    return new Response(JSON.stringify({ success: false, message: err.message ?? err }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })

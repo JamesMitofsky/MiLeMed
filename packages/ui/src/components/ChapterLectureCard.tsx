@@ -2,8 +2,8 @@ import { IconProps } from '@tamagui/helpers-icon'
 import { LinearGradient } from '@tamagui/linear-gradient'
 import { Check, ChevronRight } from '@tamagui/lucide-icons'
 import React from 'react'
-import { useLink } from 'solito/link'
 import { Button, Card, CardProps, H4, Progress, SizableText, XStack, YStack } from 'tamagui'
+import { useRouter } from 'solito/router'
 
 export type AchievementCardProps = {
   icon?: React.FC<IconProps>
@@ -14,13 +14,13 @@ export type AchievementCardProps = {
     label?: string
   }
   action?: {
-    props?: ReturnType<typeof useLink>
     text: string
     href?: string
   }
   dense?: boolean
   isDone?: boolean
   index?: number
+  w?: string | number
 } & CardProps
 
 export const ChapterLectureCard = ({
@@ -31,11 +31,12 @@ export const ChapterLectureCard = ({
   dense,
   isDone,
   index,
-  ...props
+  w,
 }: AchievementCardProps) => {
-  const linkProps = useLink({ href: action?.href || '' })
+  const router = useRouter()
+
   return (
-    <Card {...linkProps} br="$0" chromeless {...props}>
+    <Card br="$0" chromeless w={w}>
       <Card.Header my="auto" padded gap={!dense ? '$3' : undefined}>
         {Icon && <Icon size="$3" o={0.6} />}
         <YStack gap={!dense ? '$2' : undefined}>
@@ -45,12 +46,9 @@ export const ChapterLectureCard = ({
 
           {progress && (
             <XStack ai="center">
-              <SizableText size="$3" theme="alt1">
-                {progress.current}
-              </SizableText>
-              <SizableText size="$2" theme="alt1">
-                {' '}
-                / {progress.full} {progress.label}
+              <SizableText size="$3">{progress.current}</SizableText>
+              <SizableText size="$2">
+                /{progress.full} {progress.label}
               </SizableText>
             </XStack>
           )}
@@ -58,8 +56,7 @@ export const ChapterLectureCard = ({
           {progress && (
             <Progress
               mt="$2"
-              theme="alt2"
-              value={(progress.current / progress.full) * 100}
+              value={progress.full > 0 ? Math.floor((progress.current / progress.full) * 100) : 0}
               bg="$color2"
               boc="$color5"
               bw={1}
@@ -74,8 +71,10 @@ export const ChapterLectureCard = ({
               als="flex-end"
               size="$2"
               iconAfter={isDone ? <Check /> : <ChevronRight />}
-              {...action.props}
-              {...linkProps}
+              onPress={() => {
+                if (!action?.href) return
+                router.push(action.href)
+              }}
             >
               {action.text}
             </Button>

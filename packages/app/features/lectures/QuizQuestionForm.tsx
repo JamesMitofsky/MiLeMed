@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { YStack, XStack, Button, Input, SizableText, useToastController } from '@my/ui'
-import { Save, Plus, Trash, Check } from '@tamagui/lucide-icons'
+import { Save, Plus, Trash } from '@tamagui/lucide-icons'
 import { useQueryClient } from '@tanstack/react-query'
 import React, { useCallback, useEffect, useState } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { Checkbox, TextArea } from 'tamagui'
+import { RadioGroup, TextArea } from 'tamagui'
 
 import { addQuizQuestion } from '../../utils/supabase/simpleQueries/addQuizQuestion'
 import { updateQuizQuestion } from '../../utils/supabase/simpleQueries/updateQuizQuestion'
@@ -25,11 +25,9 @@ export interface QuizQuestionFormData {
 }
 
 interface QuizQuestionFormProps {
-  onSubmitSuccess: (questionData?: QuizQuestionFormData) => void
-  lectureId?: number
-  initialData?: QuizQuestionFormData
-  questionId?: number // Add questionId for existing questions
-  tempQuestion?: boolean
+  lectureId: number
+  questionId?: number // If provided, will fetch and update existing question
+  onSuccess?: () => void // Optional callback after successful save
 }
 
 const questionTypes = [
@@ -64,13 +62,14 @@ const quizQuestionSchema = z
   })
 
 const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
-  onSubmitSuccess,
   lectureId,
-  initialData,
-  questionId, // Add questionId
-  tempQuestion = false,
+  questionId,
+  onSuccess,
 }) => {
-  console.log('QuizQuestionForm initialData:', initialData)
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = useSupabase()
+  const toast = useToastController()
+  const queryClient = useQueryClient()
 
   const {
     control,
@@ -80,20 +79,102 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     formState: { errors },
   } = useForm<QuizQuestionFormData>({
     resolver: zodResolver(quizQuestionSchema),
-    defaultValues: initialData || {
+    defaultValues: {
       question_text: '',
       question_type: 'MULTIPLE_CHOICE',
       options: [{ option_text: '', is_correct: false }],
     },
   })
 
-  const supabase = useSupabase()
-  const toast = useToastController()
-  const queryClient = useQueryClient()
   const { fields: options, append, remove } = useFieldArray({ control, name: 'options' })
-  console.log('Field array options:', options)
 
   const questionType = watch('question_type')
+  const allOptions = watch('options')
+
+  // Get the index of the currently selected correct option
+  const correctOptionIndex = allOptions.findIndex((opt) => opt.is_correct)
+
+  // Handler to update which option is correct (for radio button)
+  const handleCorrectOptionChange = useCallback(
+    (index: number) => {
+      // Set all options to false, then set the selected one to true
+      const updatedOptions = allOptions.map((opt, i) => ({
+        ...opt,
+        is_correct: i === index,
+      }))
+      reset({ ...watch(), options: updatedOptions })
+    },
+    [allOptions, reset, watch]
+  )
+
+  // Fetch existing question data if questionId is provided
+  useEffect(() => {
+    const fetchQuestionData = async () => {
+      if (!questionId) {
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        // Fetch question details
+        const { data: question, error: questionError } = await supabase
+          .from('quiz_questions')
+          .select('id, question_text, question_type')
+          .eq('id', questionId)
+          .single()
+
+        if (questionError) throw questionError
+
+        // Fetch options
+        const { data: dbOptions, error: optionsError } = await supabase
+          .from('quiz_options')
+          .select('id, option_text')
+          .eq('question_id', questionId)
+
+        if (optionsError) throw optionsError
+
+        // Fetch reference answers to determine which options are correct
+        const { data: refAnswers, error: refError } = await supabase
+          .from('quiz_reference_answers')
+          .select('option_id, answer_text')
+          .eq('question_id', questionId)
+
+        if (refError) throw refError
+
+        // Build options array with is_correct flags
+        const formattedOptions =
+          dbOptions?.map((opt) => ({
+            option_text: opt.option_text,
+            is_correct: refAnswers?.some((ref) => ref.option_id === opt.id) || false,
+          })) || []
+
+        // For OPEN questions, use answer_text from reference answers
+        if (question.question_type === 'OPEN' && refAnswers?.[0]?.answer_text) {
+          formattedOptions[0] = {
+            option_text: refAnswers[0].answer_text,
+            is_correct: true,
+          }
+        }
+
+        // Reset form with fetched data
+        reset({
+          question_text: question.question_text,
+          question_type: question.question_type,
+          options:
+            formattedOptions.length > 0
+              ? formattedOptions
+              : [{ option_text: '', is_correct: false }],
+        })
+      } catch (error) {
+        console.error('Failed to fetch question data:', error)
+        toast.show('Failed to load question data')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchQuestionData()
+  }, [questionId, supabase, reset, toast])
 
   const handleAddOption = useCallback(
     () => append({ option_text: '', is_correct: false }),
@@ -105,70 +186,30 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
   const submitForm = useCallback(
     async (data: QuizQuestionFormData) => {
       try {
-        // If this is a temporary question (during lecture creation), just pass the data back
-        if (tempQuestion) {
-          console.log('Temporary question - passing data back', data)
-          onSubmitSuccess(data)
-          reset()
-          return
-        }
-
-        // For database operations, we need a lectureId
-        if (!lectureId) {
-          console.error('No lectureId provided')
-          return
-        }
-
-        // Check if this is an edit or a new question
         if (questionId) {
-          console.log('UPDATING existing question ID:', questionId, 'with data:', data)
+          // Update existing question
           await updateQuizQuestion(supabase, questionId, data)
-          console.log('Question updated successfully')
-
-          // Invalidate relevant caches to update the UI
-          queryClient.invalidateQueries({ queryKey: ['quiz-options'] })
-          queryClient.invalidateQueries({ queryKey: ['quiz-reference-answers'] })
           toast.show('Question updated successfully')
-          
-          // Pass updated data back to parent for immediate UI update
-          // Include the question ID so the parent knows which question was updated
-          const updatedData: QuizQuestionFormData = {
-            ...data,
-            question_id: questionId
-          }
-          onSubmitSuccess(updatedData)
         } else {
-          console.log('ADDING new question to lectureID:', lectureId, 'with data:', data)
-          const result = await addQuizQuestion(supabase, lectureId, data)
-          console.log('Question added successfully', result)
-
-          // Invalidate relevant caches to update the UI
-          queryClient.invalidateQueries({ queryKey: ['quiz-options'] })
-          queryClient.invalidateQueries({ queryKey: ['quiz-reference-answers'] })
+          // Create new question
+          await addQuizQuestion(supabase, lectureId, data)
           toast.show('Question added successfully')
-          
-          // Pass the newly created question data back to parent
-          onSubmitSuccess(data)
+          reset() // Only reset form for new questions
         }
 
-        reset()
+        // Invalidate relevant caches
+        queryClient.invalidateQueries({ queryKey: ['quiz-questions'] })
+        queryClient.invalidateQueries({ queryKey: ['quiz-options'] })
+        queryClient.invalidateQueries({ queryKey: ['quiz-reference-answers'] })
+
+        // Call success callback if provided
+        onSuccess?.()
       } catch (error) {
         console.error('Failed to save quiz question:', error)
         toast.show('Failed to save quiz question')
       }
     },
-    [
-      lectureId,
-      questionId,
-      addQuizQuestion,
-      updateQuizQuestion,
-      supabase,
-      reset,
-      onSubmitSuccess,
-      tempQuestion,
-      queryClient,
-      toast,
-    ]
+    [lectureId, questionId, supabase, reset, queryClient, toast, onSuccess]
   )
 
   // Store initial question type to detect actual changes
@@ -200,11 +241,19 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
     reset({ ...watch(), options: [{ option_text: '', is_correct: false }] })
   }, [questionType, initialQuestionType, reset, watch])
 
+  if (isLoading) {
+    return (
+      <YStack gap="$4" p="$5" borderWidth={1} borderRadius="$2" ai="center" jc="center">
+        <SizableText>Loading question data...</SizableText>
+      </YStack>
+    )
+  }
+
   return (
     <>
-      <YStack gap="$4" p="$5" borderWidth={1} borderColor="$gray3" borderRadius="$2">
+      <YStack gap="$4" p="$5" borderRadius="$2">
         <SizableText fontWeight="bold" size="$5">
-          {initialData ? 'Edit Quiz Question' : 'Create New Quiz Question'}
+          {questionId ? 'Edit Quiz Question' : 'Create New Quiz Question'}
         </SizableText>
 
         <Controller
@@ -220,13 +269,17 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
           )}
         />
 
-        <Controller
-          name="question_type"
-          control={control}
-          render={({ field }) => (
-            <CustomSelect placeholder="Question Type" {...field} items={questionTypes} />
-          )}
-        />
+        {!questionId ? (
+          <Controller
+            name="question_type"
+            control={control}
+            render={({ field }) => (
+              <CustomSelect placeholder="Question Type" {...field} items={questionTypes} />
+            )}
+          />
+        ) : (
+          <SizableText fontWeight="bold">Question Type: {questionType}</SizableText>
+        )}
 
         {questionType === 'MULTIPLE_CHOICE' ? (
           <YStack gap="$3">
@@ -238,46 +291,41 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
               </SizableText>
             )}
 
-            {options.map((option, index) => (
-              <XStack key={option.id} gap="$6" alignItems="center">
-                <Controller
-                  name={`options.${index}.option_text`}
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      <Input {...field} placeholder={`Option ${index + 1}`} />
-                      {errors.options?.[index]?.option_text && (
-                        <SizableText color="red">
-                          {errors.options[index].option_text.message}
-                        </SizableText>
-                      )}
-                    </>
-                  )}
-                />
+            <RadioGroup
+              value={correctOptionIndex.toString()}
+              onValueChange={(value) => handleCorrectOptionChange(parseInt(value, 10))}
+              gap="$3"
+            >
+              {options.map((option, index) => (
+                <XStack key={option.id} gap="$3" alignItems="center">
+                  <RadioGroup.Item value={index.toString()} id={`option-${index}`} size="$4">
+                    <RadioGroup.Indicator />
+                  </RadioGroup.Item>
 
-                <Controller
-                  name={`options.${index}.is_correct`}
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={(v) => field.onChange(v === true)}
-                      size="$6"
-                    >
-                      <Checkbox.Indicator>
-                        <Check />
-                      </Checkbox.Indicator>
-                    </Checkbox>
-                  )}
-                />
-                <Button
-                  themeShallow
-                  size="$2"
-                  icon={Trash}
-                  onPress={() => handleRemoveOption(index)}
-                />
-              </XStack>
-            ))}
+                  <Controller
+                    name={`options.${index}.option_text`}
+                    control={control}
+                    render={({ field }) => (
+                      <YStack f={1}>
+                        <Input {...field} placeholder={`Option ${index + 1}`} f={1} />
+                        {errors.options?.[index]?.option_text && (
+                          <SizableText color="red">
+                            {errors.options[index].option_text.message}
+                          </SizableText>
+                        )}
+                      </YStack>
+                    )}
+                  />
+
+                  <Button
+                    themeShallow
+                    size="$2"
+                    icon={Trash}
+                    onPress={() => handleRemoveOption(index)}
+                  />
+                </XStack>
+              ))}
+            </RadioGroup>
 
             <Button themeShallow icon={Plus} onPress={handleAddOption}>
               Add Option
@@ -304,7 +352,7 @@ const QuizQuestionForm: React.FC<QuizQuestionFormProps> = ({
         )}
 
         <Button themeInverse size="$3" icon={Save} onPress={handleSubmit(submitForm)}>
-          {initialData ? 'Update Question' : 'Save Question'}
+          {questionId ? 'Update Question' : 'Save Question'}
         </Button>
       </YStack>
     </>

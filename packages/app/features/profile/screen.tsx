@@ -1,9 +1,12 @@
-import { Settings, YStack, useWindowDimensions } from '@my/ui'
+import { Settings, YStack, useWindowDimensions, Image } from '@my/ui'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
 import { Cog, Home, User } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'app/utils/useSafeAreaInsets'
 import { useUser } from 'app/utils/useUser'
 import { useLink } from 'solito/link'
+
+// @ts-ignore
+import logo from './square-logo.png'
 
 // used in expo
 export function SidebarDrawer(props) {
@@ -23,6 +26,7 @@ export function SidebarDrawer(props) {
         py="$4"
         pb="$2"
       >
+        <Image m="auto" height="$18" width="$18" src={logo} />
         <Settings>
           <Settings.Items>
             <Settings.Group>

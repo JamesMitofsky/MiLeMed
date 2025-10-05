@@ -49,12 +49,21 @@
   "resolutions": {
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-test-renderer": "19.0.0",
+    "react-test-renderer": "18.3.1",
     "react-refresh": "^0.14.0",
-    "react-native-svg": "15.10.1",
-    "react-native-web": "~0.19.10",
-    "@babel/core": "^7.24",
-    "babel-loader": "^8.3.0"
+    "react-native": "0.79.4",
+    "react-native-svg": "15.11.2",
+    "react-native-web": "^0.20.0",
+    "@babel/core": "^7.26.0",
+    "babel-loader": "^8.3.0",
+    "expo": "53.0.15",
+    "expo-constants": "~17.1.6",
+    "expo-device": "~7.1.4",
+    "expo-document-picker": "~13.1.5",
+    "expo-image-picker": "~16.1.4",
+    "expo-linking": "~7.1.5",
+    "expo-secure-store": "~14.2.3",
+    "react-native-safe-area-context": "5.4.0"
   },
   "packageManager": "yarn@4.1.0",
   "devDependencies": {
@@ -69,7 +78,10 @@
     "@tamagui/cli": "^1.127.1",
     "@tamagui/config": "^1.127.1",
     "@turbo/gen": "^2.4.0",
+    "@types/babel__core": "^7",
     "@types/fs-extra": "^11",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "axios": "^1.7.2",
     "check-dependency-version-consistency": "^3.0.3",
     "dotenv": "^16.4.7",
@@ -81,7 +93,14 @@
     "prettier": "^2.7.1",
     "promise-throttle-all": "^1.1.1",
     "turbo": "^2.4.0",
-    "typescript": "^5.3.3",
+    "typescript": "~5.8.3",
     "ultra-runner": "^3.10.5"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "expo": "53.0.15",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.4"
   }
 }

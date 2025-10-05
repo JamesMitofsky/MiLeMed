@@ -1,5 +1,5 @@
-import { Button, H2, SizableText, Switch, XStack, YStack } from '@my/ui'
-import { ArrowRight, LibraryBig } from '@tamagui/lucide-icons'
+import { Button, SizableText, Switch, Theme, XStack, YStack } from '@my/ui'
+import { ArrowRight, BookOpen, Stethoscope } from '@tamagui/lucide-icons'
 import { useRouter } from 'solito/router'
 
 import ListOfChapters from './list-of-chapters'
@@ -17,43 +17,54 @@ export const ChaptersPreviewList = () => {
   return (
     <YStack>
       <XStack px="$4.5" ai="center" jc="space-between" mb="$5">
-        <XStack ai="center" gap="$2">
-          <H2 theme="alt1" fow="400">
-            <LibraryBig size={25} />
-          </H2>
-          <H2 theme="alt1" fow="400">
-            {' '}
-            Kapitel
-          </H2>
+        <XStack ai="center" gap="$3">
+          {mode === 'PRACTICAL' ? (
+            <Stethoscope size="$3" color="$brandPrimary" />
+          ) : (
+            <BookOpen size="$3" color="$brandSecondary" />
+          )}
+
+          <SizableText size="$8" color={mode === 'PRACTICAL' ? '$brandPrimary' : '$brandSecondary'}>
+            {mode === 'PRACTICAL' ? 'Blockpraktikum' : 'Vorlesung'}
+          </SizableText>
         </XStack>
+      </XStack>
+
+      <Theme name={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}>
+        <XStack mx="$5" mb="$5" gap="$4" ai="center" onPress={toggleMode}>
+          <Switch
+            id="mode-switch"
+            checked={mode === 'PRACTICAL'}
+            onCheckedChange={(checked) => setMode(checked ? 'PRACTICAL' : 'THEORETICAL')}
+            size="$3"
+            theme={mode === 'PRACTICAL' ? 'brandPrimary' : 'brandSecondary'}
+          >
+            <Switch.Thumb animation="quick" />
+          </Switch>
+          <SizableText color="$black8">Lernmodus</SizableText>
+        </XStack>
+      </Theme>
+      <ScrollAdapt>
+        <XStack px="$4" f={1} gap="$3">
+          <ListOfChapters
+            lockCardWidth
+            limit={4}
+            mode={mode === 'PRACTICAL' ? 'PRACTICAL' : 'THEORETICAL'}
+          />
+        </XStack>
+      </ScrollAdapt>
+      <XStack mt="$6" mr="$3" ai="center" jc="flex-end">
         <Button
-          theme="alt2"
-          size="$2"
+          size="$3"
           chromeless
           iconAfter={ArrowRight}
           onPress={() => {
             router.push('/chapters')
           }}
         >
-          Alle Kapitel ansehen
+          Alle Kapitel
         </Button>
       </XStack>
-
-      <XStack mx="$5" mb="$5" gap="$4" onPress={toggleMode}>
-        <Switch checked={mode === 'THEORETICAL'} onCheckedChange={toggleMode} size="$2">
-          <Switch.Thumb borderColor="$color1" animation="200ms" />
-        </Switch>
-        <SizableText>{mode === 'THEORETICAL' ? 'Vorlesung' : 'Blockpraktikum'}</SizableText>
-      </XStack>
-      <ScrollAdapt>
-        <XStack px="$4" fw="wrap" f={1} gap="$3">
-          <ListOfChapters
-            lockCardWidth
-            limit={4}
-            mode={mode === 'THEORETICAL' ? 'THEORETICAL' : 'PRACTICAL'}
-          />
-        </XStack>
-      </ScrollAdapt>
     </YStack>
   )
 }

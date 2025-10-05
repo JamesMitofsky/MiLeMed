@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 
-import { ModeType } from '../utils/supabase/databaseTypes'
-
 interface ModeProviderState {
-  mode: ModeType
-  setMode: (mode: ModeType) => void
+  mode: 'THEORETICAL' | 'PRACTICAL'
+  setMode: (mode: 'THEORETICAL' | 'PRACTICAL') => void
 }
 
 interface ModeProviderProps {
@@ -14,9 +12,9 @@ interface ModeProviderProps {
 const ModeContext = createContext<ModeProviderState | undefined>(undefined)
 
 export const ModeProvider: React.FC<ModeProviderProps> = ({ children }) => {
-  const [mode, setModeState] = useState<ModeType>('THEORETICAL')
+  const [mode, setModeState] = useState<ModeProviderState['mode']>('PRACTICAL')
 
-  const setMode = (mode: ModeType) => {
+  const setMode = (mode: ModeProviderState['mode']) => {
     setModeState(mode)
   }
 

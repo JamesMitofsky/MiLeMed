@@ -1,74 +1,120 @@
-import { YStack, XStack, Label, RadioGroup } from '@my/ui'
-import React from 'react'
-
-import { Chip } from '../general/chipParts'
-
-interface QuizQuestion {
-  question_id: number
-  question_text: string
-  question_type: 'OPEN' | 'MULTIPLE_CHOICE'
-  answer_text: string | null
-  chosen_option_ids: number[]
-  correct_option_ids: number[]
-  correct_answer_text: string | null
-  is_correct: boolean | null
-  answered_at: string | null
-  options?: {
-    id: number
-    text: string
-    is_correct: boolean
-  }[]
-}
+import { QuestionForQuizComponent } from '@my/app/utils/supabase/databaseTypes'
+import { useQuizReferenceAnswer } from 'app/utils/hooks/queryHooks'
+import React, { useId, useState } from 'react'
+import { RadioGroup, YStack, SizableText, Label, View, styled } from 'tamagui'
 
 interface MultiChoicePickRevealProps {
-  question: QuizQuestion
-  onAnswerSelected: (selectedIds: number[]) => void
-  onAnswerSubmitted: (isCorrect: boolean) => void
-  showAnswers: boolean
+  // this is incoming
+  question: QuestionForQuizComponent
+  // this is outgoing. The second param lets us know which question in this lecture was being rendered
+  onSelectOption: (selectedOptionId: number, questionId: number) => void
+  hasAnswersVisible: boolean
+  disabled: boolean
 }
 
 const MultiChoicePickReveal: React.FC<MultiChoicePickRevealProps> = ({
   question,
-  onAnswerSelected,
-  onAnswerSubmitted,
-  showAnswers,
+  onSelectOption,
+  hasAnswersVisible,
+  disabled,
 }) => {
-  const handleAnswerSelect = (selectedIds: number[]) => {
-    onAnswerSelected(selectedIds)
-    if (showAnswers) {
-      const isCorrect =
-        selectedIds.length === question.correct_option_ids.length &&
-        selectedIds.every((id) => question.correct_option_ids.includes(id))
-      onAnswerSubmitted(isCorrect)
-    }
+  const uniqueId = useId()
+
+  const [selectedId, setSelectedId] = useState<string>()
+
+  const { data: answerToQuestion } = useQuizReferenceAnswer(question.question_id)
+
+  const handleIdSelection = (id: string) => {
+    setSelectedId(id)
+    onSelectOption(parseInt(id, 10), question.question_id)
   }
 
   return (
-    <YStack gap="$4">
-      <Label size="$6" mb="$2">
-        {question.question_text}
-      </Label>
+    <YStack gap="$2" p="$2" borderRadius="$4" borderWidth={1} borderColor="$borderColor">
+      <SizableText fontWeight="bold">{question.question_text}</SizableText>
       <RadioGroup
-        onValueChange={(value) => handleAnswerSelect([parseInt(value, 10)])}
-        value={question.chosen_option_ids?.[0]?.toString()}
+        flexWrap="wrap"
+        gap="$4"
+        my="$2"
+        rowGap="$4"
+        flexDirection="row"
+        value={selectedId}
+        onValueChange={handleIdSelection}
       >
-        <XStack fw="wrap" gap="$2">
-          {question.options?.map((option) => (
-            <RadioGroup.Item
-              key={option.id}
-              value={option.id.toString()}
-              size="$4"
-              disabled={showAnswers}
-            >
-              <Chip rounded unstyled={false} size="$3">
-                <Chip.Text>{option.text}</Chip.Text>
-              </Chip>
-            </RadioGroup.Item>
-          ))}
-        </XStack>
+        {question.options.map(({ id, option_text }) => (
+          <Card
+            key={option_text}
+            flexDirection="row"
+            flex={1}
+            flexBasis={150}
+            alignItems="center"
+            gap="$3"
+            padding={0}
+            minWidth="100%"
+            active={selectedId === String(id) || false}
+            paddingHorizontal="$2.5"
+            cursor="pointer"
+            onPress={() => handleIdSelection(String(id))}
+            $gtXs={{
+              minWidth: 'auto',
+            }}
+            backgroundColor={
+              hasAnswersVisible &&
+              answerToQuestion &&
+              answerToQuestion.length > 0 &&
+              answerToQuestion[0].option_id === id
+                ? '$green7Light'
+                : undefined
+            }
+          >
+            <View onPress={(e) => e.stopPropagation()}>
+              <RadioGroup.Item id={uniqueId + option_text} value={String(id)}>
+                <RadioGroup.Indicator />
+              </RadioGroup.Item>
+            </View>
+
+            <Label padding="$2" lineHeight="$8" cursor="pointer" htmlFor={uniqueId + option_text}>
+              {option_text}
+            </Label>
+          </Card>
+        ))}
       </RadioGroup>
     </YStack>
   )
 }
 
 export default MultiChoicePickReveal
+
+export const Card = styled(View, {
+  cursor: 'pointer',
+  width: '100%',
+  borderRadius: '$4',
+  padding: '$3',
+  backgroundColor: '$background',
+  borderColor: '$borderColor',
+  borderWidth: 1,
+  focusStyle: {
+    backgroundColor: '$backgroundFocus',
+    borderColor: '$borderColorFocus',
+  },
+  hoverStyle: {
+    backgroundColor: '$backgroundHover',
+    borderColor: '$borderColorHover',
+  },
+
+  ...(process.env.TAMAGUI_TARGET === 'web' && {
+    pressStyle: {
+      backgroundColor: '$backgroundPress',
+      borderColor: '$borderColorPress',
+    },
+  }),
+
+  variants: {
+    active: {
+      true: {
+        backgroundColor: '$backgroundFocus',
+        borderColor: '$borderColorFocus',
+      },
+    },
+  } as const,
+})

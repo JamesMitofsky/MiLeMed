@@ -9,26 +9,25 @@ import { useRouter } from 'next/router'
 
 import ReadModifyLecture from '../../../../packages/app/features/lectures/ReadModifyLecture'
 import {
-  useLectures,
   useQuizSystem,
   useQuizOptions,
+  useLectureById,
 } from '../../../../packages/app/utils/hooks/queryHooks'
 import { NextPageWithLayout } from '../_app'
 
 export const Page: NextPageWithLayout = () => {
   const router = useRouter()
 
-  const { useLectureById } = useLectures()
   const { data: lecture, refetch: refetchLecture } = useLectureById(
     parseInt(router.query.id as string, 10)
   )
 
-  const { getQuizResults } = useQuizSystem()
+  const { useQuizResults } = useQuizSystem()
   const {
     data: quizQuestions,
     isLoading: areQuestionsLoading,
     error,
-  } = getQuizResults(parseInt(router.query.id as string, 10))
+  } = useQuizResults(parseInt(router.query.id as string, 10))
 
   console.log('Quiz questions:', quizQuestions)
 

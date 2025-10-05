@@ -1,3 +1,4 @@
+import type { Database } from '@my/supabase/types'
 import {
   Button,
   Card,
@@ -18,9 +19,9 @@ import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 
 import QuizQuestionForm from './QuizQuestionForm'
+import { useQuizReferenceAnswers } from '../../utils/hooks/queryHooks'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
-import { useQuizReferenceAnswers } from '../../utils/hooks/useQuizReferenceAnswers'
 
 interface QuizQuestion {
   question_id: number
@@ -37,12 +38,7 @@ interface QuizQuestion {
 
 // Removed unused type
 
-interface QuizOption {
-  id: number
-  question_id: number
-  option_text: string
-  // Add other properties as needed
-}
+type QuizOption = Database['public']['Tables']['quiz_options']['Row']
 
 interface ReadModifyLectureProps {
   lecture: {
@@ -71,11 +67,6 @@ const ReadModifyLecture = ({
   onDeleteQuestion,
   onSaveSuccess,
 }: ReadModifyLectureProps) => {
-  // Extract question IDs for fetching reference answers
-  const questionIds = quizQuestions.map((q) => q.question_id)
-  // Use the hook to get reference answers
-  const { getCorrectOptionIdForQuestion, isLoading: isLoadingReferenceAnswers } =
-    useQuizReferenceAnswers(questionIds)
   const supabase = useSupabase()
   const { control, handleSubmit, setValue, getValues, watch } = useForm({
     defaultValues: {
@@ -145,6 +136,27 @@ const ReadModifyLecture = ({
     }
   }
 
+  // Build list of question IDs and load reference (correct) answers for those questions
+  const questionIds = (localQuestions || []).map((q) => q.question_id)
+  const { getReferenceAnswersForQuestion } = useQuizReferenceAnswers(questionIds)
+
+  type RefAnswerRow = Database['public']['Tables']['quiz_reference_answers']['Row']
+
+  const getCorrectOptionIdsForQuestion = (questionId: number): number[] => {
+    try {
+      const refs: RefAnswerRow[] = getReferenceAnswersForQuestion
+        ? getReferenceAnswersForQuestion(questionId)
+        : []
+      // Filter for OPTION type answers and return option_id list
+      return refs
+        .filter((r) => r.answer_type === 'OPTION' && r.option_id != null)
+        .map((r) => r.option_id as number)
+    } catch (e) {
+      console.error('Error determining correct options for question', questionId, e)
+      return []
+    }
+  }
+
   return (
     <YStack gap="$3">
       {lecture ? (
@@ -155,7 +167,7 @@ const ReadModifyLecture = ({
             </SizableText>
             <Button
               size="$3"
-              theme={isEditMode ? 'red' : 'blue'}
+              theme={isEditMode ? 'success' : 'warning'}
               icon={isEditMode ? Eye : Pencil}
               onPress={() => setIsEditMode(!isEditMode)}
             >
@@ -245,7 +257,7 @@ const ReadModifyLecture = ({
                 <Button
                   size="$3"
                   themeShallow
-                  theme="green"
+                  theme="success"
                   icon={Plus}
                   onPress={() => setShowNewQuestionForm(true)}
                 >
@@ -259,7 +271,8 @@ const ReadModifyLecture = ({
               <Card bordered padding="$3" mb="$3">
                 <YStack gap="$3">
                   <QuizQuestionForm
-                    onSubmitSuccess={(questionData) => {
+                    lectureId={parseInt(lectureId, 10)}
+                    onSuccess={() => {
                       // Hide the form
                       setShowNewQuestionForm(false)
 
@@ -268,10 +281,9 @@ const ReadModifyLecture = ({
                         onSaveSuccess()
                       }
                     }}
-                    lectureId={parseInt(lectureId, 10)}
                   />
 
-                  <Button theme="red" size="$2" onPress={() => setShowNewQuestionForm(false)}>
+                  <Button theme="warning" size="$2" onPress={() => setShowNewQuestionForm(false)}>
                     Cancel
                   </Button>
                 </YStack>
@@ -292,7 +304,9 @@ const ReadModifyLecture = ({
                       <Card key={`edit-${question.question_id}`} bordered padding="$3" mb="$3">
                         <YStack gap="$3">
                           <QuizQuestionForm
-                            onSubmitSuccess={(questionData) => {
+                            lectureId={parseInt(lectureId, 10)}
+                            questionId={question.question_id}
+                            onSuccess={() => {
                               // Mark this question as saved
                               setSavedQuestions((prev) => ({
                                 ...prev,
@@ -304,66 +318,13 @@ const ReadModifyLecture = ({
                                 onSaveSuccess()
                               }
                             }}
-                            lectureId={parseInt(lectureId, 10)}
-                            questionId={question.question_id} // Pass the question ID for updating
-                            initialData={{
-                              question_text: question.question_text,
-                              // Convert OPEN to OPEN for the form
-                              question_type:
-                                question.question_type === 'OPEN' ? 'OPEN' : 'MULTIPLE_CHOICE',
-                              options: (() => {
-                                // Debugging: log the question we're trying to edit
-                                console.log('Editing question:', question.question_id, question)
-
-                                // If we have the getOptionsForQuestion function, use it to get the latest options from the database
-                                if (getOptionsForQuestion) {
-                                  const dbOptions = getOptionsForQuestion(question.question_id)
-                                  console.log('DB Options found for question:', dbOptions)
-
-                                  // Convert database options to the expected format for the form
-                                  if (dbOptions && dbOptions.length > 0) {
-                                    // Get the correct option ID from reference answers
-                                    const correctOptionId = getCorrectOptionIdForQuestion(
-                                      question.question_id
-                                    )
-                                    console.log(
-                                      'Correct option ID for question',
-                                      question.question_id,
-                                      ':',
-                                      correctOptionId
-                                    )
-
-                                    const formattedOptions = dbOptions.map((option) => ({
-                                      option_text: option.option_text,
-                                      // Mark as correct if this option ID matches the correct reference answer option ID
-                                      is_correct: correctOptionId === option.id,
-                                    }))
-                                    console.log(
-                                      'Formatted options for form with reference answers:',
-                                      formattedOptions
-                                    )
-                                    return formattedOptions
-                                  }
-                                }
-
-                                // Fallback to existing options or create a default one
-                                const fallbackOptions = question.options || [
-                                  {
-                                    option_text: question.correct_answer || '',
-                                    is_correct: true,
-                                  },
-                                ]
-                                console.log('Using fallback options:', fallbackOptions)
-                                return fallbackOptions
-                              })(),
-                            }}
                           />
 
                           {/* Delete button still available in edit mode */}
                           {onDeleteQuestion && (
                             <Button
                               icon={Trash}
-                              theme="red"
+                              theme="warning"
                               size="$2"
                               onPress={() => {
                                 console.log(
@@ -435,16 +396,22 @@ const ReadModifyLecture = ({
                                 {/* Display options from the quiz_options table */}
                                 {(() => {
                                   const options = getOptionsForQuestion(question.question_id)
+                                  const correctOptionIds = getCorrectOptionIdsForQuestion(
+                                    question.question_id
+                                  )
                                   return options && options.length > 0 ? (
-                                    options.map((option, optIndex) => (
+                                    options.map((option: QuizOption, optIndex) => (
                                       <XStack key={optIndex} gap="$2" alignItems="center">
-                                        {/* This part would need additional logic to determine if an option is correct */}
-                                        {/* For now, display all options without indicating correctness */}
+                                        {correctOptionIds.includes(option.id) ? (
+                                          <Check color="$green10" />
+                                        ) : (
+                                          <X color="$accent5" />
+                                        )}
                                         <Text>{option.option_text}</Text>
                                       </XStack>
                                     ))
                                   ) : (
-                                    <Text color="$orange9">No options available</Text>
+                                    <Text color="$red10">No options available</Text>
                                   )
                                 })()}
                               </>
@@ -456,9 +423,9 @@ const ReadModifyLecture = ({
                               question.options.map((option, optIndex) => (
                                 <XStack key={optIndex} gap="$2" alignItems="center">
                                   {option.is_correct ? (
-                                    <Check color="$green9" />
+                                    <Check color="$green10" />
                                   ) : (
-                                    <X color="$gray9" />
+                                    <X color="$accent5" />
                                   )}
                                   <Text>{option.option_text}</Text>
                                 </XStack>
@@ -466,7 +433,7 @@ const ReadModifyLecture = ({
                             {!getOptionsForQuestion &&
                               (!Array.isArray(question.options) ||
                                 question.options.length === 0) && (
-                                <Text color="$orange9">No options available</Text>
+                                <Text color="$red10">No options available</Text>
                               )}
                           </YStack>
                         )}

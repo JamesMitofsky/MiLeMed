@@ -4,7 +4,7 @@
     "slug": "milemed",
     "jsEngine": "hermes",
     "scheme": "milemed",
-    "version": "1.2.0",
+    "version": "1.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -17,12 +17,16 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/d7927c8c-9306-469b-804f-8fddf70fbe01"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "de.milemed.app",
-      "associatedDomains": ["applinks:milemed.de"],
-      "buildNumber": "31"
+      "associatedDomains": [
+        "applinks:milemed.de"
+      ],
+      "buildNumber": "41"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -31,7 +35,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "de.milemed.app",
-      "versionCode": 7
+      "versionCode": 12
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -52,11 +56,15 @@
         {
           "ios": {
             "deploymentTarget": "15.1"
+          },
+          "android": {
+            "gradlePluginVersion": "8.14.3"
           }
         }
       ],
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser"
     ],
     "extra": {
       "router": {

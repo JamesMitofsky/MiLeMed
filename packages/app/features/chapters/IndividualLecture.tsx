@@ -1,42 +1,92 @@
-import { useContext } from 'react'
-import Markdown from 'react-native-markdown-display'
-import { createParam } from 'solito'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { useWindowDimensions } from 'react-native'
+import { marked } from 'marked'
+import RenderHtml from 'react-native-render-html'
 import { useRouter } from 'solito/router'
-import { YStack, Text, ScrollView, SizableText } from 'tamagui'
+import { YStack, Text, SizableText, ScrollView, Button } from 'tamagui'
 
 import { ThemeContext } from '../../provider/theme/UniversalThemeProvider.native'
-import { useLectures } from '../../utils/hooks/queryHooks'
+import { useLectureById } from '../../utils/hooks/queryHooks'
 import { Skeleton } from '../general/Skeleton'
+import CustomBackButton from '../general/CustomHeader'
 
-const { useParams } = createParam<{ id: string }>()
+interface IndividualLectureProps {
+  lectureId: string
+}
 
-const IndividualLecture = () => {
-  const {
-    params: { id },
-  } = useParams()
+// Function to convert markdown to HTML using marked
+const markdownToHtml = async (markdown: string): Promise<string> => {
+  return marked.parse(markdown)
+}
+
+const IndividualLecture = ({ lectureId }: IndividualLectureProps) => {
+  // Keep router for potential future use with commented functions
   const router = useRouter()
+  const id = parseInt(lectureId, 10)
+  const { width } = useWindowDimensions()
 
-  const { getLectureById, markLectureCompleted } = useLectures()
-  const { data: lecture, isLoading } = getLectureById(parseInt(id, 10))
+  // Use the proper hook to fetch lecture data
+  const { data: lecture, isLoading } = useLectureById(id)
 
-  const handleNavigateToQuiz = () => {
-    router.push(`/lecture/${id}/quiz`)
-  }
+  // Convert markdown to HTML
+  const [htmlContent, setHtmlContent] = useState<string>('')
 
-  const handleMarkAsRead = () => {
-    markLectureCompleted.mutate(parseInt(id, 10))
-    router.back()
-  }
+  useEffect(() => {
+    if (lecture?.content) {
+      markdownToHtml(lecture.content)
+        .then((html) => setHtmlContent(html))
+        .catch((error) => console.error('Error converting markdown to HTML:', error))
+    }
+  }, [lecture?.content])
 
   const context = useContext(ThemeContext)
 
+  function handleNavigateToQuiz() {
+    router.push(`/lectures/${id}/quiz`)
+  }
+
+  const styles = useMemo(
+    () => ({
+      body: {
+        color: context?.current === 'dark' ? '#fff' : '#000',
+        fontSize: 16,
+      },
+      h1: {
+        color: context?.current === 'dark' ? '#fff' : '#000',
+        fontSize: 26,
+        marginTop: 8,
+        marginBottom: 8,
+      },
+      h2: {
+        color: context?.current === 'dark' ? '#fff' : '#000',
+        fontSize: 24,
+        marginTop: 8,
+        marginBottom: 8,
+      },
+      h3: {
+        color: context?.current === 'dark' ? '#fff' : '#000',
+        fontSize: 22,
+        marginTop: 8,
+        marginBottom: 8,
+      },
+      p: {
+        color: context?.current === 'dark' ? '#fff' : '#000',
+        fontSize: 20,
+        marginTop: 8,
+        marginBottom: 8,
+      },
+    }),
+    [context?.current]
+  )
+
   return (
     <ScrollView>
-      <YStack p="$4" gap="$4">
+      <YStack p="$4" gap="$4" bg="white" flex={1}>
+        <CustomBackButton onBack={() => router.push(`/chapters/${lecture.chapter_id}`)} />
         {isLoading ? (
           <Skeleton height={200} width="100%" />
         ) : lecture ? (
-          <>
+          <YStack pb="$10">
             <YStack gap="$2">
               <SizableText size="$8" fontWeight="800">
                 {lecture.title}
@@ -45,51 +95,22 @@ const IndividualLecture = () => {
                 <SizableText size="$3">{lecture.subtitle}</SizableText>
               </Theme> */}
             </YStack>
-            <Markdown
-              style={{
-                body: {
-                  color: context?.current === 'dark' ? '#fff' : '#000',
-                  fontSize: 16,
-                },
-                heading1: {
-                  color: context?.current === 'dark' ? '#fff' : '#000',
-                  fontSize: 24,
-                  marginTop: 8,
-                  marginBottom: 8,
-                },
-                heading2: {
-                  color: context?.current === 'dark' ? '#fff' : '#000',
-                  fontSize: 20,
-                  marginTop: 8,
-                  marginBottom: 8,
-                },
-                heading3: {
-                  color: context?.current === 'dark' ? '#fff' : '#000',
-                  fontSize: 18,
-                  marginTop: 8,
-                  marginBottom: 8,
-                },
-                image: {
-                  maxHeight: 400,
-                  width: '100%',
-                  height: '100%',
-                  resizeMode: 'contain',
-                },
-              }}
-            >
-              {lecture.content}
-            </Markdown>
+            <RenderHtml
+              contentWidth={width - 32} // Accounting for padding
+              source={{ html: htmlContent }}
+              tagsStyles={styles}
+            />
+            <Button size="$5" onPress={handleNavigateToQuiz}>
+              Zum Quiz
+            </Button>
             {/* TODO: Important: check if quiz exists */}
             {/* {lecture.has_quiz ? (
-              <Button size="$5" onPress={handleNavigateToQuiz}>
-                Zum Quiz
-              </Button>
             ) : (
               <Button size="$5" onPress={handleMarkAsRead}>
-                Als gelesen markieren
+              Als gelesen markieren
               </Button>
-            )} */}
-          </>
+              )} */}
+          </YStack>
         ) : (
           <Text>Keine Vorlesung gefunden</Text>
         )}

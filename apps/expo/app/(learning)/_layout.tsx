@@ -1,5 +1,12 @@
 import { Slot } from 'expo-router'
 
-export default function LearningLayout() {
-  return <Slot />
+const Layout = () => {
+  return (
+    <>
+      {/* <CustomHeader onBack={() => router.back()} /> */}
+      <Slot />
+    </>
+  )
 }
+
+export default Layout
