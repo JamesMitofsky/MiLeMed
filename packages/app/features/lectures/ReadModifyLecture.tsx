@@ -253,7 +253,8 @@ const ReadModifyLecture = ({
               <Card bordered padding="$3" mb="$3">
                 <YStack gap="$3">
                   <QuizQuestionForm
-                    onSubmitSuccess={(questionData) => {
+                    lectureId={parseInt(lectureId, 10)}
+                    onSuccess={() => {
                       // Hide the form
                       setShowNewQuestionForm(false)
 
@@ -262,7 +263,6 @@ const ReadModifyLecture = ({
                         onSaveSuccess()
                       }
                     }}
-                    lectureId={parseInt(lectureId, 10)}
                   />
 
                   <Button theme="warning" size="$2" onPress={() => setShowNewQuestionForm(false)}>
@@ -286,7 +286,9 @@ const ReadModifyLecture = ({
                       <Card key={`edit-${question.question_id}`} bordered padding="$3" mb="$3">
                         <YStack gap="$3">
                           <QuizQuestionForm
-                            onSubmitSuccess={(questionData) => {
+                            lectureId={parseInt(lectureId, 10)}
+                            questionId={question.question_id}
+                            onSuccess={() => {
                               // Mark this question as saved
                               setSavedQuestions((prev) => ({
                                 ...prev,
@@ -297,61 +299,6 @@ const ReadModifyLecture = ({
                               if (onSaveSuccess) {
                                 onSaveSuccess()
                               }
-                            }}
-                            lectureId={parseInt(lectureId, 10)}
-                            questionId={question.question_id} // Pass the question ID for updating
-                            initialData={{
-                              question_text: question.question_text,
-                              // Convert OPEN to OPEN for the form
-                              question_type:
-                                question.question_type === 'OPEN' ? 'OPEN' : 'MULTIPLE_CHOICE',
-                              options: (() => {
-                                // Debugging: log the question we're trying to edit
-                                console.log('Editing question:', question.question_id, question)
-
-                                // If we have the getOptionsForQuestion function, use it to get the latest options from the database
-                                if (getOptionsForQuestion) {
-                                  const dbOptions = getOptionsForQuestion(question.question_id)
-                                  console.log('DB Options found for question:', dbOptions)
-
-                                  // Convert database options to the expected format for the form
-                                  if (dbOptions && dbOptions.length > 0) {
-                                    // Get the correct option ID from reference answers
-                                    // TODO: implement this
-                                    const correctOptionId = null
-                                    // const correctOptionId = getCorrectOptionIdForQuestion(
-                                    //   question.question_id
-                                    // )
-                                    console.log(
-                                      'Correct option ID for question',
-                                      question.question_id,
-                                      ':',
-                                      correctOptionId
-                                    )
-
-                                    const formattedOptions = dbOptions.map((option) => ({
-                                      option_text: option.option_text,
-                                      // Mark as correct if this option ID matches the correct reference answer option ID
-                                      is_correct: correctOptionId === option.id,
-                                    }))
-                                    console.log(
-                                      'Formatted options for form with reference answers:',
-                                      formattedOptions
-                                    )
-                                    return formattedOptions
-                                  }
-                                }
-
-                                // Fallback to existing options or create a default one
-                                const fallbackOptions = question.options || [
-                                  {
-                                    option_text: question.correct_answer || '',
-                                    is_correct: true,
-                                  },
-                                ]
-                                console.log('Using fallback options:', fallbackOptions)
-                                return fallbackOptions
-                              })(),
                             }}
                           />
 
