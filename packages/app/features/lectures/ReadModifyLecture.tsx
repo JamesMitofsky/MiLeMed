@@ -1,3 +1,4 @@
+import type { Database } from '@my/supabase/types'
 import {
   Button,
   Card,
@@ -18,6 +19,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useState } from 'react'
 
 import QuizQuestionForm from './QuizQuestionForm'
+import { useQuizReferenceAnswers } from '../../utils/hooks/queryHooks'
 import { useSupabase } from '../../utils/supabase/useSupabase'
 import { parseMarkdown } from '../general/markdownParser'
 
@@ -36,12 +38,7 @@ interface QuizQuestion {
 
 // Removed unused type
 
-interface QuizOption {
-  id: number
-  question_id: number
-  option_text: string
-  // Add other properties as needed
-}
+type QuizOption = Database['public']['Tables']['quiz_options']['Row']
 
 interface ReadModifyLectureProps {
   lecture: {
@@ -136,6 +133,27 @@ const ReadModifyLecture = ({
       alert('An error occurred while updating the lecture. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Build list of question IDs and load reference (correct) answers for those questions
+  const questionIds = (localQuestions || []).map((q) => q.question_id)
+  const { getReferenceAnswersForQuestion } = useQuizReferenceAnswers(questionIds)
+
+  type RefAnswerRow = Database['public']['Tables']['quiz_reference_answers']['Row']
+
+  const getCorrectOptionIdsForQuestion = (questionId: number): number[] => {
+    try {
+      const refs: RefAnswerRow[] = getReferenceAnswersForQuestion
+        ? getReferenceAnswersForQuestion(questionId)
+        : []
+      // Filter for OPTION type answers and return option_id list
+      return refs
+        .filter((r) => r.answer_type === 'OPTION' && r.option_id != null)
+        .map((r) => r.option_id as number)
+    } catch (e) {
+      console.error('Error determining correct options for question', questionId, e)
+      return []
     }
   }
 
@@ -378,11 +396,17 @@ const ReadModifyLecture = ({
                                 {/* Display options from the quiz_options table */}
                                 {(() => {
                                   const options = getOptionsForQuestion(question.question_id)
+                                  const correctOptionIds = getCorrectOptionIdsForQuestion(
+                                    question.question_id
+                                  )
                                   return options && options.length > 0 ? (
-                                    options.map((option, optIndex) => (
+                                    options.map((option: QuizOption, optIndex) => (
                                       <XStack key={optIndex} gap="$2" alignItems="center">
-                                        {/* This part would need additional logic to determine if an option is correct */}
-                                        {/* For now, display all options without indicating correctness */}
+                                        {correctOptionIds.includes(option.id) ? (
+                                          <Check color="$green10" />
+                                        ) : (
+                                          <X color="$accent5" />
+                                        )}
                                         <Text>{option.option_text}</Text>
                                       </XStack>
                                     ))
